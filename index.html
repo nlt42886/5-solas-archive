@@ -5,22 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>5 Solas Archive</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Rajdhani:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Rajdhani:wght@400;500;600;700&display=swap');
 
   :root {
-    --bg:        #0a0b0d;
-    --bg2:       #111318;
-    --bg3:       #181c22;
-    --bg4:       #1e2330;
-    --border:    #2a2f3d;
-    --border2:   #3a4050;
-    --gold:      #c8860a;
-    --gold2:     #e8a020;
-    --gold3:     #f5c842;
-    --amber:     #d4700a;
-    --text:      #d8cfc0;
-    --text2:     #9a9080;
-    --text3:     #6a6460;
+    --bg:        #0a0a0a;
+    --bg2:       #111111;
+    --bg3:       #1a1a1a;
+    --bg4:       #222222;
+    --border:    #3a3020;
+    --border2:   #4a3f28;
+    --gold:      #d4a017;
+    --gold2:     #e07b00;
+    --gold3:     #f0c040;
+    --amber:     #e07b00;
+    --text:      #fff8e0;
+    --text2:     #e0b87a;
+    --text3:     #a08850;
     --red:       #8b2020;
     --green:     #1a5c2a;
     --sidebar-w: 280px;
@@ -29,7 +29,13 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
-  body { font-family: 'EB Garamond', Georgia, serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.6; }
+  body {
+    font-family: 'EB Garamond', Georgia, serif; color: var(--text); font-size: 17px; line-height: 1.6;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(200,80,0,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 80% 100%, rgba(212,160,23,0.04) 0%, transparent 60%);
+  }
   button { cursor: pointer; font-family: inherit; }
   input, textarea, select { font-family: inherit; }
   a { color: var(--gold2); text-decoration: none; }
@@ -45,10 +51,17 @@
   #header {
     min-height: var(--header-h);
     background: var(--bg2);
-    border-bottom: 1px solid var(--border);
+    border-bottom: none;
     display: flex; align-items: center;
     padding: 0 12px; gap: 10px;
     flex-shrink: 0; z-index: 100; overflow: hidden;
+    position: relative;
+  }
+  #header::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--amber), var(--gold), var(--amber), transparent);
+    pointer-events: none;
   }
   #header-logo { width: 40px; height: 40px; flex-shrink: 0; clip-path: circle(46% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 9px rgba(200,134,10,.7)); }
   #header-title {
@@ -76,14 +89,15 @@
   .hdr-btn:hover { border-color: var(--gold); color: var(--gold2); }
   .hdr-btn.active { border-color: var(--gold); color: var(--gold2); background: rgba(200,134,10,.08); }
 
-  /* Quick Add Button — gold accent */
+  /* Quick Add Button — gradient accent */
   #quick-add-btn {
-    background: var(--gold); border: 1px solid var(--gold2); color: #0a0b0d;
+    background: linear-gradient(135deg, #1a0e00, #2a1800); border: 1px solid var(--amber); color: var(--gold3);
     padding: 6px 12px; border-radius: 4px; font-family: 'Rajdhani', sans-serif;
     font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700;
     transition: all .2s; white-space: nowrap; flex-shrink: 0;
+    box-shadow: 0 0 14px rgba(224,123,0,0.15), inset 0 1px 0 rgba(240,192,64,0.08);
   }
-  #quick-add-btn:hover { background: var(--gold2); }
+  #quick-add-btn:hover { background: linear-gradient(135deg, #2a1800, #3a2200); box-shadow: 0 0 20px rgba(224,123,0,0.25), inset 0 1px 0 rgba(240,192,64,0.12); }
 
   /* ===== BODY SPLIT ===== */
   #body { display: flex; flex: 1; overflow: hidden; }
@@ -101,12 +115,12 @@
   }
   #sidebar-search:focus { border-color: var(--gold); }
   #sidebar-search::placeholder { color: var(--text3); }
-  #add-locus-btn {
+  #add-locus-btn, #collapse-tree-btn {
     background: none; border: 1px solid var(--border); color: var(--gold);
     width: 28px; height: 28px; border-radius: 3px; font-size: 16px;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .2s;
   }
-  #add-locus-btn:hover { border-color: var(--gold); background: rgba(200,134,10,.1); }
+  #add-locus-btn:hover, #collapse-tree-btn:hover { border-color: var(--gold); background: rgba(212,160,23,.1); }
   #sidebar-tree { flex: 1; overflow-y: auto; padding: 6px 0; }
 
   /* Tree nodes */
@@ -174,6 +188,8 @@
   .bc-sep { color: var(--border2); }
   .bc-item { color: var(--text2); }
   .bc-item.current { color: var(--gold2); }
+  .bc-link { cursor: pointer; }
+  .bc-link:hover { color: var(--gold2); }
 
   /* View tabs */
   #view-tabs {
@@ -220,7 +236,8 @@
   .section-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
   .section-header:hover { background: var(--bg4); }
   .section-icon { font-size: 15px; width: 20px; text-align: center; }
-  .section-name { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); flex: 1; }
+  .section-name { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); flex: 1; display: flex; align-items: center; }
+  .section-name::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border2), transparent); margin-left: 10px; }
   .section-count { font-family: 'Rajdhani', sans-serif; font-size: 11px; color: var(--text3); background: var(--bg); padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); }
   .section-toggle { font-size: 10px; color: var(--text3); transition: transform .2s; }
   .section-block.collapsed .section-toggle { transform: rotate(-90deg); }
@@ -295,7 +312,7 @@
     display: flex; align-items: center; gap: 6px;
   }
   .tag-index-pill:hover { border-color: var(--gold); color: var(--gold2); }
-  .tag-index-pill.active { background: rgba(200,134,10,.15); border-color: var(--gold); color: var(--gold2); }
+  .tag-index-pill.active { background: linear-gradient(135deg, #2a1800, #1a1000); border-color: var(--amber); color: var(--amber); box-shadow: 0 0 6px rgba(224,123,0,0.2); }
   .tag-count-badge { font-size: 9px; background: var(--bg); border: 1px solid var(--border); color: var(--text3); padding: 1px 5px; border-radius: 8px; }
   .tag-results-header { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: .1em; color: var(--gold); margin-bottom: 12px; }
 
@@ -308,7 +325,7 @@
     display: flex; align-items: center; gap: 6px;
   }
   .res-filter-btn:hover { border-color: var(--gold); color: var(--gold2); }
-  .res-filter-btn.active { background: rgba(200,134,10,.12); border-color: var(--gold); color: var(--gold2); }
+  .res-filter-btn.active { background: linear-gradient(135deg, #2a1800, #1a1000); border-color: var(--amber); color: var(--amber); box-shadow: 0 0 6px rgba(224,123,0,0.2); }
   .res-search-wrap { position: relative; flex: 1; max-width: 340px; }
   .res-search { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 32px 6px 10px; border-radius: 4px; font-size: 13px; font-family: 'Rajdhani', sans-serif; outline: none; }
   .res-search:focus { border-color: var(--gold); }
@@ -380,8 +397,8 @@
 
   /* Buttons */
   .btn { padding: 8px 18px; border-radius: 4px; font-family: 'Rajdhani', sans-serif; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; border: 1px solid; transition: all .2s; }
-  .btn-primary { background: var(--gold); border-color: var(--gold); color: #0a0b0d; font-weight: 700; }
-  .btn-primary:hover { background: var(--gold2); border-color: var(--gold2); }
+  .btn-primary { background: linear-gradient(135deg, #1a0e00, #2a1800); border-color: var(--amber); color: var(--gold3); font-weight: 700; box-shadow: 0 0 14px rgba(224,123,0,0.15), inset 0 1px 0 rgba(240,192,64,0.08); }
+  .btn-primary:hover { background: linear-gradient(135deg, #2a1800, #3a2200); box-shadow: 0 0 20px rgba(224,123,0,0.25), inset 0 1px 0 rgba(240,192,64,0.12); }
   .btn-secondary { background: none; border-color: var(--border2); color: var(--text2); }
   .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
   .btn-danger { background: none; border-color: #7a2020; color: #c05050; }
@@ -415,7 +432,7 @@
     .ws-num { font-size: 28px; }
   }
   @media (max-width: 520px) {
-    body { font-size: 17px; }
+    :root { --header-h: 60px; }
     #sidebar { position: fixed; left: 0; top: var(--header-h); bottom: 0; z-index: 50; transform: translateX(-100%); transition: transform .25s; }
     #sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,.5); }
     #menu-toggle { display: flex !important; }
@@ -427,15 +444,38 @@
     #welcome-stats { gap: 24px; }
     .ws-num { font-size: 26px; }
     .ws-label { font-size: 11px; }
+    /* View tabs */
+    .view-tab { padding: 10px 18px; font-size: 12px; }
+    /* Sidebar tree — bigger touch targets */
+    .tree-locus-header, .tree-topic-header { min-height: 42px; }
+    .tree-subtopic { font-size: 15px; min-height: 38px; padding: 8px 10px 8px 8px; }
+    .tree-node-add { width: 28px; height: 28px; }
+    #sidebar-search { font-size: 15px; padding: 7px 10px; }
     /* Subtopic */
     #subtopic-view { padding: 16px 14px 60px; }
     #subtopic-title { font-size: 20px; }
     .section-name { font-size: 12px; }
     .section-header { padding: 12px 14px; }
-    .entry-card { padding: 13px 14px; }
-    .entry-card-title { font-size: 14px; }
+    .entry-card { padding: 14px 14px; }
+    .entry-card-title { font-size: 15px; }
     .entry-quote-text { font-size: 16px; }
     .entry-card-body { font-size: 15px; }
+    .entry-action-btn { width: 36px; height: 36px; font-size: 14px; }
+    .add-entry-btn { font-size: 14px; padding: 10px 12px; }
+    /* Quick Add modal — fix overlap */
+    .quick-add-path { flex-direction: column; gap: 12px; }
+    .qa-field-wrap { min-width: 100%; }
+    #modal-overlay { padding: 8px; }
+    #modal-body { padding: 14px; }
+    #modal-header { padding: 14px 16px; }
+    /* Form fields */
+    .form-label { font-size: 12px; }
+    .form-input, .form-textarea, .form-select { font-size: 16px; padding: 10px 12px; }
+    .form-textarea { min-height: 90px; }
+    /* Tag input */
+    .tag-input-wrap { min-height: 44px; }
+    .tag-text-input { font-size: 14px; }
+    .tag-dropdown { max-height: 160px; }
     /* Filter chips */
     .topic-filter-chip { font-size: 12px; padding: 6px 12px; }
     .topic-search-input { font-size: 15px; padding: 8px 30px 8px 12px; }
@@ -464,7 +504,7 @@
     cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 4px;
   }
   .topic-filter-chip:hover { border-color: var(--gold); color: var(--gold2); }
-  .topic-filter-chip.active { background: rgba(200,134,10,.15); border-color: var(--gold); color: var(--gold2); }
+  .topic-filter-chip.active { background: linear-gradient(135deg, #2a1800, #1a1000); border-color: var(--amber); color: var(--amber); box-shadow: 0 0 6px rgba(224,123,0,0.2); }
   .topic-filter-all { border-color: var(--border2); font-weight: 600; }
   .topic-search-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .topic-search-wrap { position: relative; flex: 1; min-width: 140px; max-width: 300px; }
@@ -547,6 +587,7 @@
     <nav id="sidebar">
       <div id="sidebar-header">
         <input type="text" id="sidebar-search" placeholder="Filter loci…" oninput="filterTree(this.value)">
+        <button id="collapse-tree-btn" onclick="collapseAllTree()" title="Collapse all">⊟</button>
         <button id="add-locus-btn" onclick="openAddNodeModal('locus',null,null)" title="Add Locus">+</button>
       </div>
       <div id="sidebar-tree"></div>
@@ -828,7 +869,7 @@ function addEntry(subtopicKey, sectionId, entry) {
 function updateEntry(subtopicKey, sectionId, id, updates) {
   const arr = getEntries(subtopicKey, sectionId);
   const idx = arr.findIndex(e => e.id === id);
-  if (idx !== -1) { arr[idx] = {...arr[idx], ...updates}; setEntries(subtopicKey, sectionId, arr); }
+  if (idx !== -1) { arr[idx] = {...arr[idx], ...updates, updated: Date.now()}; setEntries(subtopicKey, sectionId, arr); }
 }
 function deleteEntry(subtopicKey, sectionId, id) {
   const arr = getEntries(subtopicKey, sectionId).filter(e => e.id !== id);
@@ -878,6 +919,9 @@ let topicTypeFilters = new Set(); // empty = "All"
 let topicSearch = '';
 let topicTagFilter = null;
 let topicSortBy = 'pinned'; // 'pinned' | 'newest' | 'title' | 'author' | 'source'
+
+// Tag view type filter state
+let tagViewTypeFilters = new Set(); // empty = "All"
 
 function subtopicKey(locusId, topicId, subtopicName) {
   return `${locusId}__${topicId}__${subtopicName.replace(/\s+/g,'_')}`;
@@ -967,6 +1011,16 @@ function renderTree(filter = '') {
 function toggleLocus(id) { document.getElementById('lc_'+id)?.classList.toggle('open'); }
 function toggleTopic(id)  { document.getElementById('tp_'+id)?.classList.toggle('open'); }
 function filterTree(v) { renderTree(v); }
+function collapseAllTree() {
+  document.querySelectorAll('.tree-locus.open').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.tree-topic.open').forEach(el => el.classList.remove('open'));
+}
+function focusTreeNode(locusId, topicId) {
+  const le = document.getElementById('lc_'+locusId);
+  const te = document.getElementById('tp_'+topicId);
+  if (le) { le.classList.add('open'); le.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  if (te) te.classList.add('open');
+}
 
 /* ============================================================
    ADD LOCUS / TOPIC / SUBTOPIC
@@ -1096,6 +1150,16 @@ function clearTopicFilters() {
   renderSubtopicView();
 }
 
+function setTagViewTypeFilter(secId) {
+  if (tagViewTypeFilters.has(secId)) tagViewTypeFilters.delete(secId);
+  else tagViewTypeFilters.add(secId);
+  _buildTagView();
+}
+function setTagViewAllFilter() {
+  tagViewTypeFilters = new Set();
+  _buildTagView();
+}
+
 /* ============================================================
    SUBTOPIC VIEW
 ============================================================ */
@@ -1110,9 +1174,9 @@ function selectSubtopic(locusId, topicId, stName, locusName, topicName) {
   topicTagFilter = null;
   topicSortBy = 'pinned';
   document.getElementById('breadcrumb').innerHTML =
-    `<span class="bc-item">${escHtml(locusName)}</span>
+    `<span class="bc-item bc-link" onclick="focusTreeNode('${escAttr(locusId)}','${escAttr(topicId)}')">${escHtml(locusName)}</span>
      <span class="bc-sep">›</span>
-     <span class="bc-item">${escHtml(topicName)}</span>
+     <span class="bc-item bc-link" onclick="focusTreeNode('${escAttr(locusId)}','${escAttr(topicId)}')">${escHtml(topicName)}</span>
      <span class="bc-sep">›</span>
      <span class="bc-item current">${escHtml(stName)}</span>`;
   // switch to loki tab if needed
@@ -1327,17 +1391,28 @@ function renderEntryCard(e, secId, key, showPath) {
     pathHtml = `<div class="entry-locus-path">${escHtml(locus?.name||'')} › ${escHtml(topic?.name||'')} › ${escHtml(stName||'')} <span class="sr-sec-badge">${sec ? sec.icon+' '+sec.name : secId}</span></div>`;
   }
 
+  const updatedHtml = (e.updated && e.updated !== e.created)
+    ? `<div class="entry-meta" style="margin-top:5px;"><span style="opacity:.6;">✎ ${timeAgo(e.updated)}</span></div>`
+    : '';
+
   return `<div class="entry-card${e.pinned?' pinned':''}" id="ec_${e.id}">
     ${pathHtml}
     <div class="entry-card-top">
       <span class="entry-card-title">${escHtml(e.title||'(untitled)')}</span>
       <div class="entry-card-actions">
+        ${(key||currentSubtopicKey) ? `
         <button class="entry-action-btn" onclick="togglePinEntry('${secId}','${e.id}','${escAttr(key||currentSubtopicKey)}')" title="${e.pinned?'Unpin':'Pin'}">⚑</button>
         <button class="entry-action-btn" onclick="openEditModal('${secId}','${e.id}','${escAttr(key||currentSubtopicKey)}')" title="Edit">✎</button>
         <button class="entry-action-btn del" onclick="confirmDelete('${secId}','${e.id}','${escAttr(key||currentSubtopicKey)}')" title="Delete">✕</button>
+        ` : `
+        <button class="entry-action-btn" disabled style="opacity:.3;" title="Pin">⚑</button>
+        <button class="entry-action-btn" disabled style="opacity:.3;" title="Edit">✎</button>
+        <button class="entry-action-btn del" disabled style="opacity:.3;" title="Delete">✕</button>
+        `}
       </div>
     </div>
     <div>${body}</div>
+    ${updatedHtml}
     ${tagsHtml ? `<div class="entry-tags">${tagsHtml}</div>` : ''}
   </div>`;
 }
@@ -1347,6 +1422,7 @@ function renderEntryCard(e, secId, key, showPath) {
 ============================================================ */
 function renderTagView() {
   hideAllViews();
+  tagViewTypeFilters = new Set();
   document.getElementById('tag-view').style.display = 'block';
   document.getElementById('breadcrumb').innerHTML = `<span class="bc-item current">Browse by Tag</span>`;
   _buildTagView();
@@ -1379,8 +1455,24 @@ function _buildTagView() {
   let resultsHtml = '';
   if (activeTagFilter && tagMap[activeTagFilter]) {
     const items = tagMap[activeTagFilter];
-    resultsHtml = `<div class="tag-results-header">— ${escHtml(activeTagFilter)} — ${items.length} entr${items.length!==1?'ies':'y'}</div>`;
-    resultsHtml += items.map(({stKey, secId, entry}) => renderEntryCard(entry, secId, stKey, true)).join('');
+    // Type filter bar
+    const typeBar = `<div class="resource-filter-bar" style="margin-bottom:12px;">
+      <button class="res-filter-btn${tagViewTypeFilters.size===0?' active':''}" onclick="setTagViewAllFilter()">All</button>
+      ${SECTIONS.map(s => {
+        const count = items.filter(i => i.secId === s.id).length;
+        if (!count) return '';
+        return `<button class="res-filter-btn${tagViewTypeFilters.has(s.id)?' active':''}" onclick="setTagViewTypeFilter('${s.id}')">
+          ${s.icon} ${s.name.replace(' / Resources','').replace(' / Bookmarks','')} <span style="opacity:.6;font-size:.85em;">${count}</span>
+        </button>`;
+      }).join('')}
+    </div>`;
+    // Apply type filter
+    const visible = (tagViewTypeFilters.size === 0)
+      ? items
+      : items.filter(i => tagViewTypeFilters.has(i.secId));
+    resultsHtml = typeBar;
+    resultsHtml += `<div class="tag-results-header">— ${escHtml(activeTagFilter)} — ${visible.length} entr${visible.length!==1?'ies':'y'}</div>`;
+    resultsHtml += visible.map(({stKey, secId, entry}) => renderEntryCard(entry, secId, stKey, true)).join('');
   } else if (activeTagFilter) {
     resultsHtml = `<div class="empty-state">No entries for tag "${escHtml(activeTagFilter)}".</div>`;
   } else {
@@ -2107,7 +2199,18 @@ function closeSidebarMobile() { if (window.innerWidth <= 520) document.getElemen
    UTILITIES
 ============================================================ */
 function escHtml(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function escAttr(s) { if (!s) return ''; return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function escAttr(s) { if (!s) return ''; return String(s).replace(/`/g,'\\`').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function timeAgo(ts) {
+  const diff = Date.now() - ts;
+  const days = Math.floor(diff / 86400000);
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 30) return days + ' days ago';
+  const months = Math.floor(days / 30);
+  if (months === 1) return '1 month ago';
+  if (months < 12) return months + ' months ago';
+  return Math.floor(months / 12) + ' year' + (Math.floor(months/12) > 1 ? 's' : '') + ' ago';
+}
 
 /* ============================================================
    INIT
