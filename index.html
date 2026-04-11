@@ -28,7 +28,8 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; }
+  html { height: 100%; }
+  body { height: 100%; overflow: hidden; }
   body {
     font-family: 'EB Garamond', Georgia, serif; color: var(--text); font-size: 17px; line-height: 1.6;
     background: var(--bg);
@@ -63,7 +64,7 @@
     background: linear-gradient(90deg, transparent, var(--amber), var(--gold), var(--amber), transparent);
     pointer-events: none;
   }
-  #header-logo { width: 40px; height: 40px; flex-shrink: 0; clip-path: circle(46% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 9px rgba(200,134,10,.7)); }
+  #header-logo { width: 40px; height: 40px; flex-shrink: 0; clip-path: circle(49% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 9px rgba(200,134,10,.7)); }
   #header-title {
     font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600;
     letter-spacing: .12em; color: var(--gold2); text-transform: uppercase;
@@ -220,7 +221,7 @@
     min-height: 100%; gap: 24px; padding: 40px; text-align: center;
     box-sizing: border-box; max-width: 100%;
   }
-  #welcome-logo { width: 120px; height: 120px; clip-path: circle(46% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 28px rgba(200,134,10,.75)); flex-shrink: 0; }
+  #welcome-logo { width: 120px; height: 120px; clip-path: circle(49% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 28px rgba(200,134,10,.75)); flex-shrink: 0; }
   #welcome h1 { font-family: 'Cinzel', serif; font-size: 26px; letter-spacing: .14em; color: var(--gold2); text-transform: uppercase; overflow-wrap: break-word; word-break: break-word; max-width: 100%; }
   #welcome p { font-family: 'EB Garamond', serif; font-style: italic; font-size: 18px; color: var(--text2); max-width: 480px; line-height: 1.7; }
   #welcome-stats { display: flex; gap: 36px; flex-wrap: wrap; justify-content: center; }
