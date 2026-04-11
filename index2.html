@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sola Scriptura — Reformed Theological Knowledge Base</title>
+<title>5 Solas Archive</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Rajdhani:wght@400;500;600;700&display=swap');
 
@@ -407,6 +407,73 @@
   @media (max-width: 680px) { :root { --sidebar-w: 240px; } #header-title { display: none; } .form-row { grid-template-columns: 1fr; } #welcome-stats { flex-wrap: wrap; gap: 16px; justify-content: center; } }
   @media (max-width: 520px) { #sidebar { position: fixed; left: 0; top: var(--header-h); bottom: 0; z-index: 50; transform: translateX(-100%); transition: transform .25s; } #sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,.5); } #menu-toggle { display: flex !important; } }
   #menu-toggle { display: none; background: none; border: 1px solid var(--border); color: var(--text2); width: 32px; height: 32px; border-radius: 4px; align-items: center; justify-content: center; font-size: 16px; }
+
+  /* ===== COMPARE BUTTON SECONDARY ===== */
+  .hdr-btn.secondary { font-size: 10px; padding: 4px 8px; opacity: .65; }
+  .hdr-btn.secondary:hover { opacity: 1; }
+
+  /* ===== TOPIC CONTROLS (filter bar / search / sort) ===== */
+  .topic-controls { margin-bottom: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .topic-filter-bar { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .topic-filter-chip {
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text3);
+    font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .07em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 12px;
+    cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 4px;
+  }
+  .topic-filter-chip:hover { border-color: var(--gold); color: var(--gold2); }
+  .topic-filter-chip.active { background: rgba(200,134,10,.15); border-color: var(--gold); color: var(--gold2); }
+  .topic-filter-all { border-color: var(--border2); font-weight: 600; }
+  .topic-search-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .topic-search-wrap { position: relative; flex: 1; min-width: 140px; max-width: 300px; }
+  .topic-search-input {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text);
+    padding: 5px 28px 5px 10px; border-radius: 4px; font-size: 13px;
+    font-family: 'Rajdhani', sans-serif; letter-spacing: .03em; outline: none; transition: border-color .2s;
+  }
+  .topic-search-input:focus { border-color: var(--gold); }
+  .topic-search-input::placeholder { color: var(--text3); }
+  .topic-sort-wrap { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+  .topic-sort-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); }
+  .topic-sort-select {
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text2);
+    padding: 4px 8px; border-radius: 3px; font-size: 12px;
+    font-family: 'Rajdhani', sans-serif; outline: none; appearance: none;
+  }
+  .topic-sort-select:focus { border-color: var(--gold); }
+
+  /* ===== TOPIC TAG BAR ===== */
+  .topic-tag-bar { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
+  .topic-tag-chip {
+    background: var(--bg3); border: 1px solid var(--border2); color: var(--text3);
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: .07em;
+    text-transform: uppercase; padding: 2px 9px; border-radius: 10px;
+    cursor: pointer; transition: all .15s;
+  }
+  .topic-tag-chip:hover { border-color: var(--gold); color: var(--gold2); }
+  .topic-tag-chip.active { background: rgba(200,134,10,.22); border-color: var(--gold2); color: var(--gold3); }
+
+  /* ===== FEATURED / PINNED BLOCK ===== */
+  .featured-block {
+    margin-bottom: 20px; border: 1px solid rgba(200,134,10,.4);
+    border-radius: 6px; overflow: hidden;
+  }
+  .featured-block > .section-header { background: rgba(200,134,10,.1); }
+  .featured-block > .section-header .section-name { color: var(--gold2); }
+  .featured-block > .section-body { background: rgba(200,134,10,.03); }
+
+  /* ===== TOPIC STATS ROW ===== */
+  .topic-stats-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text3);
+  }
+  .clear-filters-btn {
+    background: none; border: 1px solid var(--border2); color: var(--text3);
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; padding: 2px 9px; border-radius: 3px; cursor: pointer; transition: all .2s;
+  }
+  .clear-filters-btn:hover { border-color: var(--gold); color: var(--gold2); }
 </style>
 </head>
 <body>
@@ -415,38 +482,16 @@
   <!-- HEADER -->
   <header id="header">
     <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
-    <svg id="header-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="48" stroke="#c8860a" stroke-width="1.5" fill="none"/>
-      <circle cx="50" cy="50" r="44" stroke="#c8860a" stroke-width=".5" fill="none" stroke-dasharray="2,3"/>
-      <g transform="translate(50,52)" fill="none" stroke="#e8a020" stroke-width="2.5" stroke-linejoin="round">
-        <path d="M0,-22 C14,-22 26,-12 26,2 C26,14 18,22 8,24 C-2,26 -12,20 -16,12" />
-        <path d="M-16,12 C-22,2 -20,-10 -12,-18 C-6,-24 4,-24 10,-20" />
-        <path d="M10,-20 C18,-16 22,-6 18,4 C14,12 6,16 -2,14" />
-        <path d="M-2,14 C-10,12 -16,6 -16,0 C-16,-8 -10,-14 -2,-16" />
-        <path d="M-2,-16 C6,-18 14,-14 16,-6 C18,2 14,10 8,14" />
-        <path d="M8,14 C2,18 -6,18 -12,12 C-18,6 -18,-4 -12,-10" />
-        <circle cx="0" cy="-4" r="7" stroke="#c8860a" stroke-width="1.5"/>
-      </g>
-      <text font-family="'Rajdhani',sans-serif" font-size="7" fill="#c8860a" letter-spacing="2">
-        <textPath href="#top-arc">SOLA FIDE • SOLA GRATIA • SOLUS CHRISTUS</textPath>
-      </text>
-      <text font-family="'Rajdhani',sans-serif" font-size="7" fill="#c8860a" letter-spacing="2">
-        <textPath href="#bot-arc">SOLA SCRIPTURA • SOLI DEO GLORIA</textPath>
-      </text>
-      <defs>
-        <path id="top-arc" d="M 8,50 a 42,42 0 0,1 84,0"/>
-        <path id="bot-arc" d="M 92,50 a 42,42 0 0,1 -84,0"/>
-      </defs>
-    </svg>
-    <span id="header-title">Sola Scriptura KB</span>
+    <img id="header-logo" src="20260214_220018.jpg" alt="5 Solas Archive">
+    <span id="header-title">5 Solas Archive</span>
     <div id="header-search-wrap">
-      <input type="text" id="global-search" placeholder="Search all entries…" oninput="handleGlobalSearch(this.value)">
+      <input type="text" id="global-search" placeholder="Search all references…" oninput="handleGlobalSearch(this.value)">
       <span class="search-icon">⌕</span>
     </div>
     <div id="header-actions">
       <button id="quick-add-btn" onclick="openQuickAddModal()">+ Add Entry</button>
       <button class="hdr-btn" onclick="showView('recent')">Recent</button>
-      <button class="hdr-btn" id="compare-btn" onclick="showView('compare')">Compare</button>
+      <button class="hdr-btn secondary" id="compare-btn" onclick="showView('compare')">Compare</button>
       <button class="hdr-btn" onclick="exportData()">Export</button>
       <button class="hdr-btn" onclick="document.getElementById('import-file').click()">Import</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
@@ -478,31 +523,9 @@
 
       <div id="content-area">
         <div id="welcome">
-          <svg id="welcome-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="48" stroke="#c8860a" stroke-width="1.5" fill="none"/>
-            <circle cx="50" cy="50" r="44" stroke="#c8860a" stroke-width=".5" fill="none" stroke-dasharray="2,3"/>
-            <g transform="translate(50,52)" fill="none" stroke="#e8a020" stroke-width="3" stroke-linejoin="round">
-              <path d="M0,-22 C14,-22 26,-12 26,2 C26,14 18,22 8,24 C-2,26 -12,20 -16,12" />
-              <path d="M-16,12 C-22,2 -20,-10 -12,-18 C-6,-24 4,-24 10,-20" />
-              <path d="M10,-20 C18,-16 22,-6 18,4 C14,12 6,16 -2,14" />
-              <path d="M-2,14 C-10,12 -16,6 -16,0 C-16,-8 -10,-14 -2,-16" />
-              <path d="M-2,-16 C6,-18 14,-14 16,-6 C18,2 14,10 8,14" />
-              <path d="M8,14 C2,18 -6,18 -12,12 C-18,6 -18,-4 -12,-10" />
-              <circle cx="0" cy="-4" r="7" stroke="#c8860a" stroke-width="2"/>
-            </g>
-            <text font-family="'Rajdhani',sans-serif" font-size="7" fill="#c8860a" letter-spacing="2">
-              <textPath href="#top-arc2">SOLA FIDE • SOLA GRATIA • SOLUS CHRISTUS</textPath>
-            </text>
-            <text font-family="'Rajdhani',sans-serif" font-size="7" fill="#c8860a" letter-spacing="2">
-              <textPath href="#bot-arc2">SOLA SCRIPTURA • SOLI DEO GLORIA</textPath>
-            </text>
-            <defs>
-              <path id="top-arc2" d="M 8,50 a 42,42 0 0,1 84,0"/>
-              <path id="bot-arc2" d="M 92,50 a 42,42 0 0,1 -84,0"/>
-            </defs>
-          </svg>
-          <h1>Reformed Theological Knowledge Base</h1>
-          <p>A structured scholastic system for organizing theological material. Select a subtopic from the Loci tree, or browse by Tag or Resource Type.</p>
+          <img id="welcome-logo" src="20260214_220018.jpg" alt="5 Solas Archive">
+          <h1>5 Solas Archive</h1>
+          <p>A Reformed reference tool for Scripture, confessions, quotes, books, and resources</p>
           <div id="welcome-stats">
             <div class="ws-stat"><div class="ws-num" id="stat-loci">17</div><div class="ws-label">Loci</div></div>
             <div class="ws-stat"><div class="ws-num" id="stat-entries">0</div><div class="ws-label">Entries</div></div>
@@ -808,6 +831,12 @@ let activeResFilters = new Set(['quotations','confessional','books','websites','
 let resSearchQuery = '';
 let resSortBy = 'created';
 
+// In-topic filter state (reset on every subtopic navigation)
+let topicTypeFilters = new Set(); // empty = "All"
+let topicSearch = '';
+let topicTagFilter = null;
+let topicSortBy = 'pinned'; // 'pinned' | 'newest' | 'title' | 'author' | 'source'
+
 function subtopicKey(locusId, topicId, subtopicName) {
   return `${locusId}__${topicId}__${subtopicName.replace(/\s+/g,'_')}`;
 }
@@ -955,6 +984,77 @@ function saveAddNode() {
 }
 
 /* ============================================================
+   TOPIC FILTER HELPERS
+============================================================ */
+let _topicSearchTimer = null;
+
+function matchesTopicSearch(entry, q) {
+  const ql = q.toLowerCase();
+  const fields = [
+    entry.title, entry.author, entry.source, entry.confession,
+    entry.quote, entry.text, entry.content, entry.notes,
+    entry.reference, entry.verseText, entry.url, entry.description,
+    entry.position, entry.claim, entry.supportingScripture,
+    entry.objections, entry.responses, entry.fileRef, entry.fileName
+  ];
+  if (fields.some(f => f && String(f).toLowerCase().includes(ql))) return true;
+  if ((entry.tags||[]).some(t => t.toLowerCase().includes(ql))) return true;
+  return false;
+}
+
+function applyTopicFilters(entries) {
+  let out = entries.slice();
+  if (topicSearch)     out = out.filter(e => matchesTopicSearch(e, topicSearch));
+  if (topicTagFilter)  out = out.filter(e => (e.tags||[]).includes(topicTagFilter));
+  if (topicSortBy === 'newest') {
+    out.sort((a,b) => (b.created||0) - (a.created||0));
+  } else if (topicSortBy === 'title') {
+    out.sort((a,b) => (a.title||'').localeCompare(b.title||''));
+  } else if (topicSortBy === 'author') {
+    out.sort((a,b) => (a.author||'').localeCompare(b.author||''));
+  } else if (topicSortBy === 'source') {
+    out.sort((a,b) => (a.source||a.confession||a.url||'').localeCompare(b.source||b.confession||b.url||''));
+  } else {
+    // 'pinned' — pinned first, then newest
+    out.sort((a,b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return (b.created||0) - (a.created||0);
+    });
+  }
+  return out;
+}
+
+function setTopicTypeFilter(secId) {
+  if (topicTypeFilters.has(secId)) topicTypeFilters.delete(secId);
+  else topicTypeFilters.add(secId);
+  renderSubtopicView();
+}
+function setTopicAllFilter() {
+  topicTypeFilters = new Set();
+  renderSubtopicView();
+}
+function setTopicSearchDebounced(q) {
+  clearTimeout(_topicSearchTimer);
+  _topicSearchTimer = setTimeout(() => { topicSearch = q; renderSubtopicView(); }, 250);
+}
+function setTopicTagFilter(tag) {
+  topicTagFilter = (topicTagFilter === tag) ? null : tag;
+  renderSubtopicView();
+}
+function setTopicSort(val) {
+  topicSortBy = val;
+  renderSubtopicView();
+}
+function clearTopicFilters() {
+  topicTypeFilters = new Set();
+  topicSearch = '';
+  topicTagFilter = null;
+  topicSortBy = 'pinned';
+  renderSubtopicView();
+}
+
+/* ============================================================
    SUBTOPIC VIEW
 ============================================================ */
 function selectSubtopic(locusId, topicId, stName, locusName, topicName) {
@@ -962,6 +1062,11 @@ function selectSubtopic(locusId, topicId, stName, locusName, topicName) {
   currentSubtopicLabel = stName;
   currentLocusName = locusName;
   currentTopicName = topicName;
+  // Reset in-topic filters on every navigation
+  topicTypeFilters = new Set();
+  topicSearch = '';
+  topicTagFilter = null;
+  topicSortBy = 'pinned';
   document.getElementById('breadcrumb').innerHTML =
     `<span class="bc-item">${escHtml(locusName)}</span>
      <span class="bc-sep">›</span>
@@ -981,25 +1086,142 @@ function selectSubtopic(locusId, topicId, stName, locusName, topicName) {
 function renderSubtopicView() {
   const el = document.getElementById('subtopic-view');
   const key = currentSubtopicKey;
-  let html = `<div id="subtopic-title">${escHtml(currentSubtopicLabel)}</div>
-  <div id="subtopic-meta">${escHtml(currentLocusName)} &nbsp;›&nbsp; ${escHtml(currentTopicName)}</div>`;
-  SECTIONS.forEach(sec => {
-    const entries = getEntries(key, sec.id);
-    html += `<div class="section-block" id="sb_${sec.id}">
+
+  // ── Type filter chips ──
+  const allActive = topicTypeFilters.size === 0;
+  const typeChipsHtml =
+    `<button class="topic-filter-chip topic-filter-all${allActive?' active':''}" onclick="setTopicAllFilter()">All</button>` +
+    SECTIONS.map(s =>
+      `<button class="topic-filter-chip${topicTypeFilters.has(s.id)?' active':''}" onclick="setTopicTypeFilter('${s.id}')">
+        ${s.icon} ${s.name.replace(' / Resources','').replace(' / Bookmarks','')}
+      </button>`
+    ).join('');
+
+  // ── Sort select ──
+  const sortOptsHtml = [
+    ['pinned','Pinned First'],['newest','Newest'],
+    ['title','Title A–Z'],['author','Author A–Z'],['source','Source A–Z']
+  ].map(([v,l]) => `<option value="${v}"${topicSortBy===v?' selected':''}>${l}</option>`).join('');
+
+  const controlsHtml = `<div class="topic-controls">
+    <div class="topic-filter-bar">${typeChipsHtml}</div>
+    <div class="topic-search-row">
+      <div class="topic-search-wrap">
+        <input class="topic-search-input" type="text" placeholder="Search within this subtopic…"
+          value="${escHtml(topicSearch)}"
+          oninput="setTopicSearchDebounced(this.value)">
+        <span class="search-icon" style="font-size:12px;">⌕</span>
+      </div>
+      <div class="topic-sort-wrap">
+        <span class="topic-sort-label">Sort:</span>
+        <select class="topic-sort-select" onchange="setTopicSort(this.value)">${sortOptsHtml}</select>
+      </div>
+    </div>
+  </div>`;
+
+  // ── Determine which sections are active (type filter) ──
+  const activeSections = SECTIONS.filter(s =>
+    topicTypeFilters.size === 0 || topicTypeFilters.has(s.id)
+  );
+
+  // ── Gather entries per section with search+tag filters ──
+  // First pass: apply search only (for building the tag cloud)
+  const sectionDataPreTag = activeSections.map(sec => {
+    const raw = getEntries(key, sec.id);
+    const afterSearch = (topicSearch)
+      ? raw.filter(e => matchesTopicSearch(e, topicSearch))
+      : raw.slice();
+    return { sec, raw, afterSearch };
+  });
+
+  // ── Tag bar — unique tags from post-search entries (before tag filter) ──
+  const tagSet = new Set();
+  sectionDataPreTag.forEach(({afterSearch}) =>
+    afterSearch.forEach(e => (e.tags||[]).forEach(t => tagSet.add(t)))
+  );
+  const sortedTags = [...tagSet].sort();
+  const tagBarHtml = sortedTags.length
+    ? `<div class="topic-tag-bar">${sortedTags.map(t =>
+        `<button class="topic-tag-chip${topicTagFilter===t?' active':''}" onclick="setTopicTagFilter('${escAttr(t)}')">${escHtml(t)}</button>`
+      ).join('')}</div>`
+    : '';
+
+  // ── Second pass: apply tag filter + sort ──
+  const sectionDataFinal = sectionDataPreTag.map(({sec, raw, afterSearch}) => {
+    const filtered = applyTopicFilters(
+      topicTagFilter ? afterSearch.filter(e => (e.tags||[]).includes(topicTagFilter)) : afterSearch
+    );
+    return { sec, raw, filtered };
+  });
+
+  // ── Stats row ──
+  const totalRaw = SECTIONS.reduce((sum, s) => sum + getEntries(key, s.id).length, 0);
+  const totalVisible = sectionDataFinal.reduce((sum, {filtered}) => sum + filtered.length, 0);
+  const filtersActive = topicTypeFilters.size > 0 || topicSearch !== '' || topicTagFilter !== null;
+  const statsRowHtml = filtersActive
+    ? `<div class="topic-stats-row">
+        <span>Showing ${totalVisible} of ${totalRaw} entr${totalRaw !== 1 ? 'ies' : 'y'}</span>
+        <button class="clear-filters-btn" onclick="clearTopicFilters()">✕ Clear filters</button>
+      </div>`
+    : '';
+
+  // ── Featured (pinned) block ──
+  const pinnedItems = [];
+  sectionDataFinal.forEach(({sec, filtered}) =>
+    filtered.filter(e => e.pinned).forEach(e => pinnedItems.push({e, sec}))
+  );
+  const featuredHtml = pinnedItems.length
+    ? `<div class="section-block featured-block" id="sb___featured__">
+        <div class="section-header" onclick="toggleSection('__featured__')">
+          <span class="section-icon">★</span>
+          <span class="section-name">Featured References</span>
+          <span class="section-count">${pinnedItems.length}</span>
+          <span class="section-toggle">▾</span>
+        </div>
+        <div class="section-body">
+          ${pinnedItems.map(({e, sec}) => renderEntryCard(e, sec.id, key)).join('')}
+        </div>
+      </div>`
+    : '';
+
+  // ── Section blocks ──
+  let sectionsHtml = '';
+  sectionDataFinal.forEach(({sec, raw, filtered}) => {
+    // When filters active, hide sections with zero visible entries
+    if (filtersActive && filtered.length === 0) return;
+    // When no filters active, hide sections with zero entries entirely (clean view)
+    if (!filtersActive && raw.length === 0) return;
+    const entriesToShow = filtersActive ? filtered : raw;
+    const displayCount = filtersActive ? filtered.length : raw.length;
+    sectionsHtml += `<div class="section-block" id="sb_${sec.id}">
       <div class="section-header" onclick="toggleSection('${sec.id}')">
         <span class="section-icon">${sec.icon}</span>
         <span class="section-name">${sec.name}</span>
-        <span class="section-count">${entries.length}</span>
+        <span class="section-count">${displayCount}</span>
         <button class="section-add-inline" onclick="event.stopPropagation();openAddModal('${sec.id}')" title="Add entry">+</button>
         <span class="section-toggle">▾</span>
       </div>
       <div class="section-body">
-        ${renderEntries(entries, sec.id, key)}
+        ${renderEntries(entriesToShow, sec.id, key)}
         <button class="add-entry-btn" onclick="openAddModal('${sec.id}')">+ Add ${escHtml(sec.name.replace(' / Resources','').replace(' / Bookmarks',''))}</button>
       </div>
     </div>`;
   });
-  el.innerHTML = html;
+
+  // ── No results message when filters are active but nothing matches ──
+  if (filtersActive && totalVisible === 0) {
+    sectionsHtml = `<div class="empty-state">No entries match the current filters. <button class="clear-filters-btn" style="margin-left:8px;" onclick="clearTopicFilters()">Clear filters</button></div>`;
+  }
+
+  el.innerHTML = `
+    <div id="subtopic-title">${escHtml(currentSubtopicLabel)}</div>
+    <div id="subtopic-meta">${escHtml(currentLocusName)} &nbsp;›&nbsp; ${escHtml(currentTopicName)}</div>
+    ${controlsHtml}
+    ${tagBarHtml}
+    ${statsRowHtml}
+    ${featuredHtml}
+    ${sectionsHtml}
+  `;
   updateStats();
 }
 
@@ -1812,7 +2034,7 @@ function exportData() {
   const blob = new Blob([JSON.stringify(DB, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `reformed-kb-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `5-solas-archive-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 }
 function importData(input) {
