@@ -183,11 +183,11 @@
     display: flex; align-items: center; gap: 6px;
     font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .1em;
     text-transform: uppercase; color: var(--text3); flex-shrink: 0;
-    background: var(--bg2); flex-wrap: wrap;
+    background: var(--bg2); flex-wrap: wrap; overflow: hidden;
   }
-  .bc-sep { color: var(--border2); }
-  .bc-item { color: var(--text2); }
-  .bc-item.current { color: var(--gold2); }
+  .bc-sep { color: var(--border2); flex-shrink: 0; }
+  .bc-item { color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+  .bc-item.current { color: var(--gold2); max-width: 220px; }
   .bc-link { cursor: pointer; }
   .bc-link:hover { color: var(--gold2); }
 
@@ -206,7 +206,7 @@
   .view-tab.active { color: var(--gold2); border-bottom-color: var(--gold); }
 
   /* Content area */
-  #content-area { flex: 1; overflow-y: auto; padding: 0; }
+  #content-area { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0; }
   #subtopic-view { padding: 20px 20px 60px 20px; }
   #recent-view   { padding: 20px 20px 60px 20px; }
   #search-results { padding: 20px 20px 60px 20px; }
@@ -217,12 +217,13 @@
   /* ===== WELCOME SCREEN ===== */
   #welcome {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100%; gap: 24px; padding: 40px; text-align: center;
+    min-height: 100%; gap: 24px; padding: 40px; text-align: center;
+    box-sizing: border-box; max-width: 100%;
   }
-  #welcome-logo { width: 130px; height: 130px; clip-path: circle(46% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 28px rgba(200,134,10,.75)); }
-  #welcome h1 { font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: .18em; color: var(--gold2); text-transform: uppercase; }
+  #welcome-logo { width: 130px; height: 130px; clip-path: circle(46% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 28px rgba(200,134,10,.75)); flex-shrink: 0; }
+  #welcome h1 { font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: .18em; color: var(--gold2); text-transform: uppercase; overflow-wrap: break-word; word-break: break-word; max-width: 100%; }
   #welcome p { font-family: 'EB Garamond', serif; font-style: italic; font-size: 18px; color: var(--text2); max-width: 480px; line-height: 1.7; }
-  #welcome-stats { display: flex; gap: 36px; }
+  #welcome-stats { display: flex; gap: 36px; flex-wrap: wrap; justify-content: center; }
   .ws-stat { text-align: center; }
   .ws-num { font-family: 'Cinzel', serif; font-size: 32px; color: var(--gold); }
   .ws-label { font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text3); }
@@ -339,7 +340,7 @@
   #modal-overlay.open { display: flex; }
   #modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; width: 100%; max-width: 600px; max-height: 88vh; overflow-y: auto; display: flex; flex-direction: column; }
   #modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; background: var(--bg3); }
-  #modal-title { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: .1em; color: var(--gold2); flex: 1; }
+  #modal-title { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: .1em; color: var(--gold2); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   #modal-close { background: none; border: none; color: var(--text3); font-size: 18px; padding: 4px; transition: color .2s; }
   #modal-close:hover { color: var(--text); }
   #modal-body { padding: 20px; flex: 1; overflow-y: auto; }
@@ -425,10 +426,11 @@
     :root { --sidebar-w: 240px; }
     #header-title { display: none; }
     .form-row { grid-template-columns: 1fr; }
+    #welcome { padding: 32px 24px; gap: 20px; }
     #welcome-stats { flex-wrap: wrap; gap: 20px; justify-content: center; }
-    #welcome h1 { font-size: 24px; }
-    #welcome p { font-size: 17px; }
-    #welcome-logo { width: 110px; height: 110px; }
+    #welcome h1 { font-size: 22px; letter-spacing: .12em; }
+    #welcome p { font-size: 16px; }
+    #welcome-logo { width: 100px; height: 100px; }
     .ws-num { font-size: 28px; }
   }
   @media (max-width: 520px) {
@@ -437,12 +439,12 @@
     #sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,.5); }
     #menu-toggle { display: flex !important; }
     /* Welcome */
-    #welcome { gap: 20px; padding: 28px 20px; }
-    #welcome h1 { font-size: 22px; letter-spacing: .12em; }
-    #welcome p { font-size: 16px; }
-    #welcome-logo { width: 100px; height: 100px; }
-    #welcome-stats { gap: 24px; }
-    .ws-num { font-size: 26px; }
+    #welcome { gap: 16px; padding: 24px 18px 32px; justify-content: flex-start; padding-top: 28px; }
+    #welcome h1 { font-size: 20px; letter-spacing: .10em; }
+    #welcome p { font-size: 15px; }
+    #welcome-logo { width: 80px; height: 80px; }
+    #welcome-stats { gap: 20px; }
+    .ws-num { font-size: 24px; }
     .ws-label { font-size: 11px; }
     /* View tabs */
     .view-tab { padding: 10px 18px; font-size: 12px; }
@@ -556,6 +558,77 @@
     text-transform: uppercase; padding: 2px 9px; border-radius: 3px; cursor: pointer; transition: all .2s;
   }
   .clear-filters-btn:hover { border-color: var(--gold); color: var(--gold2); }
+
+  /* ===== ADD MODAL — DESTINATION PICKER ===== */
+  .qa-dest-bar {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 9px 12px; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 5px; margin-bottom: 12px;
+  }
+  .qa-dest-label {
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text3); flex-shrink: 0;
+  }
+  .qa-dest-path {
+    flex: 1; font-family: 'EB Garamond', serif; font-size: 15px; color: var(--text2);
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .qa-dest-btn {
+    background: none; border: 1px solid var(--border2); color: var(--text3);
+    font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: .08em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 3px;
+    cursor: pointer; transition: all .2s; flex-shrink: 0;
+  }
+  .qa-dest-btn:hover { border-color: var(--gold); color: var(--gold2); }
+  .qa-dest-picker {
+    display: none; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 5px; padding: 10px 12px; margin-bottom: 12px;
+  }
+  .qa-dest-picker.open { display: block; }
+  .qa-dest-search {
+    width: 100%; background: var(--bg); border: 1px solid var(--border2);
+    color: var(--text); padding: 8px 12px; border-radius: 4px;
+    font-size: 15px; font-family: 'EB Garamond', serif; outline: none;
+    transition: border-color .2s; margin-bottom: 8px;
+  }
+  .qa-dest-search:focus { border-color: var(--gold); }
+  .qa-dest-search::placeholder { color: var(--text3); }
+  .qa-recent-label {
+    font-family: 'Rajdhani', sans-serif; font-size: 9px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--text3); margin: 4px 0 5px;
+  }
+  .qa-dest-recent-item, .qa-dest-result {
+    display: block; width: 100%; text-align: left; background: none;
+    border: 1px solid var(--border); color: var(--text2);
+    font-family: 'EB Garamond', serif; font-size: 14px;
+    padding: 6px 10px; border-radius: 3px; cursor: pointer;
+    transition: all .15s; margin-bottom: 4px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .qa-dest-recent-item:hover, .qa-dest-result:hover { border-color: var(--gold); color: var(--gold2); background: rgba(212,160,23,.05); }
+  #qa-dest-results .qa-dest-result:last-child { margin-bottom: 0; }
+  .qa-no-results { font-size: 13px; color: var(--text3); padding: 4px 2px; font-style: italic; }
+  .qa-create-dest {
+    margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px;
+  }
+  .qa-create-dest > summary {
+    font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text3); cursor: pointer; padding: 3px 0;
+    list-style: none; display: flex; align-items: center; gap: 5px;
+  }
+  .qa-create-dest > summary::-webkit-details-marker { display: none; }
+  .qa-create-dest > summary::before { content: '▶'; font-size: 8px; }
+  .qa-create-dest[open] > summary::before { content: '▼'; }
+  .qa-create-dest > summary:hover { color: var(--gold2); }
+  .qa-create-sel-group { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .qa-use-dest-btn {
+    width: 100%; margin-top: 6px; text-align: center;
+    padding: 8px; background: none; border: 1px solid var(--border2);
+    color: var(--text2); font-family: 'Rajdhani', sans-serif; font-size: 12px;
+    letter-spacing: .08em; text-transform: uppercase; border-radius: 3px;
+    cursor: pointer; transition: all .2s;
+  }
+  .qa-use-dest-btn:hover { border-color: var(--gold); color: var(--gold2); }
 </style>
 </head>
 <body>
@@ -922,6 +995,11 @@ let topicSortBy = 'pinned'; // 'pinned' | 'newest' | 'title' | 'author' | 'sourc
 
 // Tag view type filter state
 let tagViewTypeFilters = new Set(); // empty = "All"
+
+// Add-modal destination state
+let addDestLocusId = null;
+let addDestTopicId = null;
+let addDestStName = null;
 
 function subtopicKey(locusId, topicId, subtopicName) {
   return `${locusId}__${topicId}__${subtopicName.replace(/\s+/g,'_')}`;
@@ -1572,63 +1650,206 @@ function toggleResFilter(secId) {
 }
 
 /* ============================================================
+   ADD MODAL — DESTINATION HELPERS
+============================================================ */
+function getRecentDests() {
+  try { return JSON.parse(localStorage.getItem('5sa_rdests') || '[]'); } catch { return []; }
+}
+function saveRecentDest(locusId, topicId, stName) {
+  const k = `${locusId}||${topicId}||${stName}`;
+  let r = getRecentDests().filter(x => x.k !== k);
+  r.unshift({ k, locusId, topicId, stName });
+  localStorage.setItem('5sa_rdests', JSON.stringify(r.slice(0, 6)));
+}
+function pathLabel(locusId, topicId, stName) {
+  const tree = getFullTree();
+  const l = tree.find(x => x.id === locusId);
+  const t = l?.topics.find(x => x.id === topicId);
+  return `${l?.name || locusId} › ${t?.name || topicId} › ${stName}`;
+}
+function allDestPaths() {
+  const out = [];
+  getFullTree().forEach(l => l.topics.forEach(t => t.subtopics.forEach(st => {
+    out.push({ locusId: l.id, topicId: t.id, stName: st,
+               label: `${l.name} › ${t.name} › ${st}` });
+  })));
+  return out;
+}
+
+/* ============================================================
    QUICK ADD MODAL (no sidebar navigation required)
 ============================================================ */
 function openQuickAddModal() {
+  // Auto-set destination from current subtopic or fall back to most recent
+  if (currentSubtopicKey) {
+    const parts = currentSubtopicKey.split('__');
+    addDestLocusId = parts[0];
+    addDestTopicId = parts[1];
+    addDestStName  = (parts[2] || '').replace(/_/g, ' ');
+  } else {
+    const recent = getRecentDests();
+    if (recent.length) {
+      addDestLocusId = recent[0].locusId;
+      addDestTopicId = recent[0].topicId;
+      addDestStName  = recent[0].stName;
+    } else {
+      addDestLocusId = addDestTopicId = addDestStName = null;
+    }
+  }
+
+  const hasDest = !!(addDestLocusId && addDestTopicId && addDestStName);
+  const secId   = SECTIONS[0].id;
+
+  modalState = { mode: 'quickAdd' };
+  document.getElementById('modal-title').textContent = 'Add Entry';
+  document.getElementById('modal-body').innerHTML = _buildAddModalHtml(hasDest, secId);
+
+  document.getElementById('modal-overlay').classList.add('open');
+
+  // If no destination yet, open the picker and focus search
+  if (!hasDest) {
+    document.getElementById('qa-dest-picker').classList.add('open');
+    _qaDestSearch('');
+    setTimeout(() => document.getElementById('qa-dest-search-input')?.focus(), 80);
+  }
+
+  // Populate advanced selectors
+  updateQATopics();
+}
+
+function _buildAddModalHtml(hasDest, secId) {
+  const destLabel = hasDest ? escHtml(pathLabel(addDestLocusId, addDestTopicId, addDestStName)) : '';
   const tree = getFullTree();
-  // Build locus options
   const locusOpts = tree.map(l => `<option value="${l.id}">${escHtml(l.name)}</option>`).join('');
-  document.getElementById('modal-title').textContent = 'Quick Add Entry';
-  document.getElementById('modal-body').innerHTML = `
-    <div class="quick-add-path">
-      <div class="qa-field-wrap">
-        <label class="form-label">Locus</label>
-        <div class="qa-row">
-          <select class="form-select" id="qa_locus" onchange="updateQATopics()">${locusOpts}</select>
-          <button class="qa-add-btn" onclick="toggleQAInline('locus')" title="Add new locus">+</button>
+
+  return `
+    <div class="qa-dest-bar">
+      <span class="qa-dest-label">Destination</span>
+      ${hasDest
+        ? `<span class="qa-dest-path" id="qa-dest-display">${destLabel}</span>
+           <button class="qa-dest-btn" id="qa-dest-btn" onclick="toggleQADestPicker()">Change</button>`
+        : `<span class="qa-dest-path" id="qa-dest-display" style="color:var(--text3);font-style:italic;">None chosen</span>
+           <button class="qa-dest-btn" id="qa-dest-btn" onclick="toggleQADestPicker()">Choose…</button>`
+      }
+    </div>
+    <div id="qa-dest-picker" class="qa-dest-picker">
+      <input class="qa-dest-search" id="qa-dest-search-input" type="text"
+        placeholder="Search destinations…" autocomplete="off"
+        oninput="_qaDestSearch(this.value)">
+      <div id="qa-recent-dests">${_buildRecentDestsHtml()}</div>
+      <div id="qa-dest-results"></div>
+      <details class="qa-create-dest">
+        <summary>Create new destination</summary>
+        <div class="qa-create-sel-group">
+          <div class="qa-field-wrap">
+            <label class="form-label">Locus</label>
+            <div class="qa-row">
+              <select class="form-select" id="qa_locus" onchange="updateQATopics()">${locusOpts}</select>
+              <button class="qa-add-btn" onclick="toggleQAInline('locus')" title="New locus">+</button>
+            </div>
+            <div class="qa-inline-form" id="qa_inline_locus">
+              <input type="text" id="qa_new_locus" placeholder="New locus name…" onkeydown="if(event.key==='Enter')saveQALocus()">
+              <button class="btn btn-primary" onclick="saveQALocus()">Add</button>
+              <button class="btn btn-secondary" onclick="toggleQAInline('locus',false)">✕</button>
+            </div>
+          </div>
+          <div class="qa-field-wrap">
+            <label class="form-label">Topic</label>
+            <div class="qa-row">
+              <select class="form-select" id="qa_topic" onchange="updateQASubtopics()"></select>
+              <button class="qa-add-btn" onclick="toggleQAInline('topic')" title="New topic">+</button>
+            </div>
+            <div class="qa-inline-form" id="qa_inline_topic">
+              <input type="text" id="qa_new_topic" placeholder="New topic name…" onkeydown="if(event.key==='Enter')saveQATopic()">
+              <button class="btn btn-primary" onclick="saveQATopic()">Add</button>
+              <button class="btn btn-secondary" onclick="toggleQAInline('topic',false)">✕</button>
+            </div>
+          </div>
+          <div class="qa-field-wrap">
+            <label class="form-label">Subtopic</label>
+            <div class="qa-row">
+              <select class="form-select" id="qa_subtopic"></select>
+              <button class="qa-add-btn" onclick="toggleQAInline('subtopic')" title="New subtopic">+</button>
+            </div>
+            <div class="qa-inline-form" id="qa_inline_subtopic">
+              <input type="text" id="qa_new_subtopic" placeholder="New subtopic name…" onkeydown="if(event.key==='Enter')saveQASubtopic()">
+              <button class="btn btn-primary" onclick="saveQASubtopic()">Add</button>
+              <button class="btn btn-secondary" onclick="toggleQAInline('subtopic',false)">✕</button>
+            </div>
+          </div>
+          <button class="qa-use-dest-btn" onclick="applyQACreate()">Use This Destination</button>
         </div>
-        <div class="qa-inline-form" id="qa_inline_locus">
-          <input type="text" id="qa_new_locus" placeholder="New locus name…" onkeydown="if(event.key==='Enter')saveQALocus()">
-          <button class="btn btn-primary" onclick="saveQALocus()">Add</button>
-          <button class="btn btn-secondary" onclick="toggleQAInline('locus',false)">✕</button>
-        </div>
-      </div>
-      <div class="qa-field-wrap">
-        <label class="form-label">Topic</label>
-        <div class="qa-row">
-          <select class="form-select" id="qa_topic" onchange="updateQASubtopics()"></select>
-          <button class="qa-add-btn" onclick="toggleQAInline('topic')" title="Add new topic">+</button>
-        </div>
-        <div class="qa-inline-form" id="qa_inline_topic">
-          <input type="text" id="qa_new_topic" placeholder="New topic name…" onkeydown="if(event.key==='Enter')saveQATopic()">
-          <button class="btn btn-primary" onclick="saveQATopic()">Add</button>
-          <button class="btn btn-secondary" onclick="toggleQAInline('topic',false)">✕</button>
-        </div>
-      </div>
-      <div class="qa-field-wrap">
-        <label class="form-label">Subtopic</label>
-        <div class="qa-row">
-          <select class="form-select" id="qa_subtopic"></select>
-          <button class="qa-add-btn" onclick="toggleQAInline('subtopic')" title="Add new subtopic">+</button>
-        </div>
-        <div class="qa-inline-form" id="qa_inline_subtopic">
-          <input type="text" id="qa_new_subtopic" placeholder="New subtopic name…" onkeydown="if(event.key==='Enter')saveQASubtopic()">
-          <button class="btn btn-primary" onclick="saveQASubtopic()">Add</button>
-          <button class="btn btn-secondary" onclick="toggleQAInline('subtopic',false)">✕</button>
-        </div>
-      </div>
+      </details>
     </div>
     <div class="form-group">
       <label class="form-label">Resource Type</label>
-      <select class="form-select" id="qa_section" onchange="updateQAForm()">
+      <select class="form-select" id="qa_section" onchange="_qaUpdateForm()">
         ${SECTIONS.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('')}
       </select>
     </div>
-    <div id="qa_form"></div>`;
-  modalState = { mode: 'quickAdd' };
-  updateQATopics();
-  updateQAForm();
-  document.getElementById('modal-overlay').classList.add('open');
+    <div id="qa_form">${buildFormHtml(secId, null)}</div>
+  `;
+}
+
+function toggleQADestPicker() {
+  const picker = document.getElementById('qa-dest-picker');
+  const opening = !picker.classList.contains('open');
+  picker.classList.toggle('open', opening);
+  if (opening) {
+    const inp = document.getElementById('qa-dest-search-input');
+    if (inp) { inp.value = ''; _qaDestSearch(''); setTimeout(() => inp.focus(), 50); }
+  }
+}
+
+function _qaDestSearch(q) {
+  const results = document.getElementById('qa-dest-results');
+  if (!results) return;
+  const ql = q.trim().toLowerCase();
+  if (!ql) { results.innerHTML = ''; return; }
+  const paths = allDestPaths();
+  const filtered = paths.filter(p => p.label.toLowerCase().includes(ql));
+  if (filtered.length) {
+    results.innerHTML = filtered.slice(0, 12).map(p =>
+      `<button class="qa-dest-result" onclick="pickQADest('${escAttr(p.locusId)}','${escAttr(p.topicId)}','${escAttr(p.stName)}')">${escHtml(p.label)}</button>`
+    ).join('');
+  } else {
+    results.innerHTML = `<div class="qa-no-results">No match — use "Create new destination" below</div>`;
+  }
+}
+
+function pickQADest(locusId, topicId, stName) {
+  addDestLocusId = locusId;
+  addDestTopicId = topicId;
+  addDestStName  = stName;
+  const disp = document.getElementById('qa-dest-display');
+  const btn  = document.getElementById('qa-dest-btn');
+  if (disp) { disp.textContent = pathLabel(locusId, topicId, stName); disp.style.fontStyle = ''; disp.style.color = ''; }
+  if (btn)  { btn.textContent = 'Change'; }
+  document.getElementById('qa-dest-picker')?.classList.remove('open');
+}
+
+function _buildRecentDestsHtml() {
+  const recent = getRecentDests();
+  if (!recent.length) return '';
+  return `<div class="qa-recent-label">Recent</div>` +
+    recent.map(r => {
+      const label = pathLabel(r.locusId, r.topicId, r.stName);
+      return `<button class="qa-dest-recent-item" onclick="pickQADest('${escAttr(r.locusId)}','${escAttr(r.topicId)}','${escAttr(r.stName)}')">${escHtml(label)}</button>`;
+    }).join('');
+}
+
+function applyQACreate() {
+  const locusId = document.getElementById('qa_locus')?.value;
+  const topicId = document.getElementById('qa_topic')?.value;
+  const stName  = document.getElementById('qa_subtopic')?.value;
+  if (!locusId || !topicId || !stName) { alert('Please select a complete Locus › Topic › Subtopic.'); return; }
+  pickQADest(locusId, topicId, stName);
+}
+
+function _qaUpdateForm() {
+  const secId = document.getElementById('qa_section')?.value;
+  if (!secId) return;
+  document.getElementById('qa_form').innerHTML = buildFormHtml(secId, null);
 }
 
 function updateQATopics() {
@@ -1727,11 +1948,8 @@ function saveQASubtopic() {
   }
   renderTree();
 }
-function updateQAForm() {
-  const secId = document.getElementById('qa_section')?.value;
-  if (!secId) return;
-  document.getElementById('qa_form').innerHTML = buildFormHtml(secId, null);
-}
+// updateQAForm retained for compatibility; _qaUpdateForm is the new version
+function updateQAForm() { _qaUpdateForm && _qaUpdateForm(); }
 
 /* ============================================================
    MODAL FORMS
@@ -1988,19 +2206,21 @@ function saveModalEntry() {
   if (modalState.mode === 'addNode') { saveAddNode(); return; }
 
   if (modalState.mode === 'quickAdd') {
-    const locusId   = document.getElementById('qa_locus')?.value;
-    const topicId   = document.getElementById('qa_topic')?.value;
-    const stName    = document.getElementById('qa_subtopic')?.value;
-    const secId     = document.getElementById('qa_section')?.value;
-    if (!locusId || !topicId || !stName || !secId) return;
-    const key = subtopicKey(locusId, topicId, stName);
+    if (!addDestLocusId || !addDestTopicId || !addDestStName) {
+      // Open the picker for the user to choose
+      document.getElementById('qa-dest-picker')?.classList.add('open');
+      document.getElementById('qa-dest-search-input')?.focus();
+      return;
+    }
+    const secId = document.getElementById('qa_section')?.value;
+    if (!secId) return;
+    const key = subtopicKey(addDestLocusId, addDestTopicId, addDestStName);
     const data = gatherFormData(secId);
     addEntry(key, secId, data);
+    saveRecentDest(addDestLocusId, addDestTopicId, addDestStName);
     closeModal();
     updateStats();
-    // If we're currently on that subtopic, refresh the view
     if (currentSubtopicKey === key) renderSubtopicView();
-    // If resource or tag view is showing, refresh it
     if (currentTab === 'tags') _buildTagView();
     if (currentTab === 'resource') _buildResourceView();
     return;
