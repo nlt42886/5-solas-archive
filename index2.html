@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sola Scriptura — Reformed Theological Knowledge Base</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg:        #0a0b0d;
+    --bg2:       #111318;
+    --bg3:       #181c22;
+    --bg4:       #1e2330;
+    --border:    #2a2f3d;
+    --border2:   #3a4050;
+    --gold:      #c8860a;
+    --gold2:     #e8a020;
+    --gold3:     #f5c842;
+    --amber:     #d4700a;
+    --text:      #d8cfc0;
+    --text2:     #9a9080;
+    --text3:     #6a6460;
+    --red:       #8b2020;
+    --green:     #1a5c2a;
+    --sidebar-w: 280px;
+    --header-h:  56px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: 'EB Garamond', Georgia, serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.6; }
+  button { cursor: pointer; font-family: inherit; }
+  input, textarea, select { font-family: inherit; }
+  a { color: var(--gold2); text-decoration: none; }
+  a:hover { color: var(--gold3); }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ===== LAYOUT ===== */
+  #app { display: flex; flex-direction: column; height: 100vh; }
+
+  /* ===== HEADER ===== */
+  #header {
+    min-height: var(--header-h);
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 12px; gap: 10px;
+    flex-shrink: 0; z-index: 100; overflow: hidden;
+  }
+  #header-logo { width: 36px; height: 36px; flex-shrink: 0; }
+  #header-title {
+    font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600;
+    letter-spacing: .12em; color: var(--gold2); text-transform: uppercase;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  #header-search-wrap { flex: 1; max-width: 420px; position: relative; margin: 0 auto; }
+  #global-search {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text); padding: 7px 36px 7px 12px; border-radius: 4px;
+    font-size: 14px; font-family: 'Rajdhani', sans-serif; letter-spacing: .04em;
+    outline: none; transition: border-color .2s;
+  }
+  #global-search:focus { border-color: var(--gold); }
+  #global-search::placeholder { color: var(--text3); }
+  .search-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 14px; pointer-events: none; }
+  #header-actions { display: flex; gap: 6px; flex-shrink: 0; margin-left: auto; }
+  .hdr-btn {
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text2);
+    padding: 6px 10px; border-radius: 4px; font-family: 'Rajdhani', sans-serif;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    transition: all .2s; white-space: nowrap; flex-shrink: 0;
+  }
+  .hdr-btn:hover { border-color: var(--gold); color: var(--gold2); }
+  .hdr-btn.active { border-color: var(--gold); color: var(--gold2); background: rgba(200,134,10,.08); }
+
+  /* Quick Add Button — gold accent */
+  #quick-add-btn {
+    background: var(--gold); border: 1px solid var(--gold2); color: #0a0b0d;
+    padding: 6px 12px; border-radius: 4px; font-family: 'Rajdhani', sans-serif;
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700;
+    transition: all .2s; white-space: nowrap; flex-shrink: 0;
+  }
+  #quick-add-btn:hover { background: var(--gold2); }
+
+  /* ===== BODY SPLIT ===== */
+  #body { display: flex; flex: 1; overflow: hidden; }
+
+  /* ===== SIDEBAR ===== */
+  #sidebar {
+    width: var(--sidebar-w); background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;
+  }
+  #sidebar-header { padding: 12px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  #sidebar-search {
+    flex: 1; background: var(--bg3); border: 1px solid var(--border); color: var(--text);
+    padding: 5px 9px; border-radius: 3px; font-size: 13px; font-family: 'Rajdhani', sans-serif; outline: none;
+  }
+  #sidebar-search:focus { border-color: var(--gold); }
+  #sidebar-search::placeholder { color: var(--text3); }
+  #add-locus-btn {
+    background: none; border: 1px solid var(--border); color: var(--gold);
+    width: 28px; height: 28px; border-radius: 3px; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .2s;
+  }
+  #add-locus-btn:hover { border-color: var(--gold); background: rgba(200,134,10,.1); }
+  #sidebar-tree { flex: 1; overflow-y: auto; padding: 6px 0; }
+
+  /* Tree nodes */
+  .tree-locus-header {
+    display: flex; align-items: center; padding: 5px 10px 5px 14px;
+    cursor: pointer; user-select: none; transition: background .15s; gap: 6px;
+    position: relative;
+  }
+  .tree-locus-header:hover { background: var(--bg3); }
+  .tree-locus-header:hover .tree-node-add { opacity: 1; }
+  .tree-arrow { font-size: 10px; color: var(--text3); width: 14px; flex-shrink: 0; transition: transform .2s; }
+  .tree-locus.open > .tree-locus-header > .tree-arrow { transform: rotate(90deg); }
+  .tree-locus-num { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: var(--gold); letter-spacing: .08em; flex-shrink: 0; }
+  .tree-locus-name { font-family: 'Cinzel', serif; font-size: 11.5px; letter-spacing: .06em; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tree-locus.selected > .tree-locus-header { background: rgba(200,134,10,.12); }
+  .tree-locus.selected > .tree-locus-header .tree-locus-name { color: var(--gold2); }
+  .tree-children { display: none; padding-left: 12px; }
+  .tree-locus.open > .tree-children { display: block; }
+
+  .tree-topic-header {
+    display: flex; align-items: center; padding: 4px 10px 4px 10px;
+    cursor: pointer; transition: background .15s; gap: 6px; position: relative;
+  }
+  .tree-topic-header:hover { background: var(--bg3); }
+  .tree-topic-header:hover .tree-node-add { opacity: 1; }
+  .tree-topic-name {
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--text2); flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .tree-topic.selected > .tree-topic-header .tree-topic-name { color: var(--gold); }
+  .tree-subtopics { display: none; padding-left: 14px; }
+  .tree-topic.open > .tree-subtopics { display: block; }
+
+  .tree-subtopic {
+    padding: 3px 10px 3px 8px; cursor: pointer; font-family: 'EB Garamond', serif;
+    font-size: 13px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    border-left: 2px solid transparent; transition: all .15s;
+    display: flex; align-items: center; gap: 4px; position: relative;
+  }
+  .tree-subtopic:hover { color: var(--text); background: var(--bg3); }
+  .tree-subtopic.active { color: var(--gold2); border-left-color: var(--gold); background: rgba(200,134,10,.08); }
+  .tree-subtopic span.st-label { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Inline add buttons on hover in tree */
+  .tree-node-add {
+    opacity: 0; background: none; border: 1px solid var(--border2); color: var(--gold);
+    width: 18px; height: 18px; border-radius: 2px; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all .15s; line-height: 1;
+  }
+  .tree-node-add:hover { background: rgba(200,134,10,.2); border-color: var(--gold); }
+
+  /* ===== MAIN PANEL ===== */
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* Breadcrumb */
+  #breadcrumb {
+    padding: 10px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--text3); flex-shrink: 0;
+    background: var(--bg2); flex-wrap: wrap;
+  }
+  .bc-sep { color: var(--border2); }
+  .bc-item { color: var(--text2); }
+  .bc-item.current { color: var(--gold2); }
+
+  /* View tabs */
+  #view-tabs {
+    display: flex; gap: 0; border-bottom: 1px solid var(--border);
+    background: var(--bg2); flex-shrink: 0; padding: 0 16px;
+  }
+  .view-tab {
+    padding: 8px 16px; font-family: 'Rajdhani', sans-serif; font-size: 11px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--text3);
+    border: none; background: none; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; cursor: pointer; transition: all .2s;
+  }
+  .view-tab:hover { color: var(--text2); }
+  .view-tab.active { color: var(--gold2); border-bottom-color: var(--gold); }
+
+  /* Content area */
+  #content-area { flex: 1; overflow-y: auto; padding: 0; }
+  #subtopic-view { padding: 20px 20px 60px 20px; }
+  #recent-view   { padding: 20px 20px 60px 20px; }
+  #search-results { padding: 20px 20px 60px 20px; }
+  #tag-view      { padding: 20px 20px 60px 20px; }
+  #resource-view { padding: 20px 20px 60px 20px; }
+  #compare-view  { padding: 20px; height: 100%; display: flex; flex-direction: column; }
+
+  /* ===== WELCOME SCREEN ===== */
+  #welcome {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; gap: 24px; padding: 40px; text-align: center;
+  }
+  #welcome-logo { width: 100px; height: 100px; opacity: .8; }
+  #welcome h1 { font-family: 'Cinzel', serif; font-size: 22px; letter-spacing: .18em; color: var(--gold2); text-transform: uppercase; }
+  #welcome p { font-family: 'EB Garamond', serif; font-style: italic; font-size: 16px; color: var(--text2); max-width: 440px; }
+  #welcome-stats { display: flex; gap: 30px; }
+  .ws-stat { text-align: center; }
+  .ws-num { font-family: 'Cinzel', serif; font-size: 26px; color: var(--gold); }
+  .ws-label { font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); }
+
+  /* ===== SUBTOPIC VIEW ===== */
+  #subtopic-title { font-family: 'Cinzel', serif; font-size: 20px; letter-spacing: .1em; color: var(--gold2); margin-bottom: 4px; }
+  #subtopic-meta { font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+
+  /* SECTIONS */
+  .section-block { margin-bottom: 20px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .section-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
+  .section-header:hover { background: var(--bg4); }
+  .section-icon { font-size: 14px; width: 18px; text-align: center; }
+  .section-name { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); flex: 1; }
+  .section-count { font-family: 'Rajdhani', sans-serif; font-size: 11px; color: var(--text3); background: var(--bg); padding: 2px 7px; border-radius: 10px; border: 1px solid var(--border); }
+  .section-toggle { font-size: 10px; color: var(--text3); transition: transform .2s; }
+  .section-block.collapsed .section-toggle { transform: rotate(-90deg); }
+  .section-add-inline {
+    background: none; border: 1px solid var(--border2); color: var(--gold);
+    width: 26px; height: 26px; border-radius: 3px; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all .2s; font-family: monospace; line-height: 1;
+  }
+  .section-add-inline:hover { border-color: var(--gold2); background: rgba(200,134,10,.15); color: var(--gold2); }
+  .section-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; background: var(--bg2); }
+  .section-block.collapsed .section-body { display: none; }
+  @media (hover: none) { .entry-card-actions { opacity: 1 !important; } }
+  .add-entry-btn {
+    display: flex; align-items: center; gap: 6px; background: none;
+    border: 1px dashed var(--border2); color: var(--text3); padding: 8px 12px; border-radius: 4px;
+    font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    transition: all .2s; width: 100%;
+  }
+  .add-entry-btn:hover { border-color: var(--gold); color: var(--gold2); background: rgba(200,134,10,.05); }
+
+  /* ENTRY CARDS */
+  .entry-card { background: var(--bg); border: 1px solid var(--border); border-radius: 5px; padding: 12px 14px; position: relative; transition: border-color .2s; }
+  .entry-card:hover { border-color: var(--border2); }
+  .entry-card.pinned { border-left: 3px solid var(--gold); }
+  .entry-card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+  .entry-card-title { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: .04em; color: var(--text); flex: 1; }
+  .entry-card-actions { display: flex; gap: 4px; opacity: 0; transition: opacity .2s; }
+  .entry-card:hover .entry-card-actions { opacity: 1; }
+  .entry-action-btn { background: none; border: 1px solid var(--border); color: var(--text3); width: 24px; height: 24px; border-radius: 3px; font-size: 11px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .entry-action-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .entry-action-btn.del:hover { border-color: #b03030; color: #b03030; }
+  .entry-card-body { font-size: 14px; color: var(--text2); line-height: 1.5; }
+  .entry-quote-text { font-style: italic; color: var(--text); font-size: 15px; border-left: 3px solid var(--gold); padding-left: 12px; margin-bottom: 6px; }
+  .entry-meta { font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .06em; color: var(--text3); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+  .entry-meta span { display: flex; align-items: center; gap: 4px; }
+  .entry-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+  .tag-pill {
+    background: rgba(200,134,10,.12); border: 1px solid rgba(200,134,10,.25);
+    color: var(--gold2); font-family: 'Rajdhani', sans-serif; font-size: 10px;
+    letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px;
+    border-radius: 12px; cursor: pointer; transition: all .15s;
+  }
+  .tag-pill:hover { background: rgba(200,134,10,.25); }
+  .tag-pill.selected { background: rgba(200,134,10,.4); border-color: var(--gold2); color: var(--gold3); }
+
+  /* Scripture */
+  .scripture-ref { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold2); margin-bottom: 4px; }
+  .scripture-type { font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; margin-left: 8px; }
+  .scripture-type.proof { background: rgba(26,92,42,.3); color: #5cb87a; border: 1px solid rgba(26,92,42,.5); }
+  .scripture-type.typological { background: rgba(200,134,10,.15); color: var(--gold2); border: 1px solid rgba(200,134,10,.3); }
+  .scripture-type.disputed { background: rgba(139,32,32,.2); color: #d06060; border: 1px solid rgba(139,32,32,.4); }
+
+  /* ===== SEARCH RESULTS ===== */
+  #search-results h2, #tag-view h2, #resource-view h2, #recent-view h2, #compare-view h2 {
+    font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold2);
+    letter-spacing: .1em; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .search-result-item { background: var(--bg3); border: 1px solid var(--border); border-radius: 5px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; transition: all .2s; }
+  .search-result-item:hover { border-color: var(--gold); background: var(--bg4); }
+  .sr-path { font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
+  .sr-title { font-family: 'Cinzel', serif; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+  .sr-snippet { font-size: 13px; color: var(--text2); }
+  .sr-sec-badge { font-family: 'Rajdhani', sans-serif; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; background: var(--bg4); border: 1px solid var(--border2); color: var(--text3); padding: 1px 6px; border-radius: 8px; margin-left: 8px; }
+
+  /* ===== TAG VIEW ===== */
+  .tag-index-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .tag-index-pill {
+    background: var(--bg3); border: 1px solid var(--border2); color: var(--text2);
+    font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .08em;
+    text-transform: uppercase; padding: 4px 12px; border-radius: 14px; cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tag-index-pill:hover { border-color: var(--gold); color: var(--gold2); }
+  .tag-index-pill.active { background: rgba(200,134,10,.15); border-color: var(--gold); color: var(--gold2); }
+  .tag-count-badge { font-size: 9px; background: var(--bg); border: 1px solid var(--border); color: var(--text3); padding: 1px 5px; border-radius: 8px; }
+  .tag-results-header { font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: .1em; color: var(--gold); margin-bottom: 12px; }
+
+  /* ===== RESOURCE VIEW ===== */
+  .resource-filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .res-filter-btn {
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text3);
+    font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .08em;
+    text-transform: uppercase; padding: 5px 12px; border-radius: 4px; cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .res-filter-btn:hover { border-color: var(--gold); color: var(--gold2); }
+  .res-filter-btn.active { background: rgba(200,134,10,.12); border-color: var(--gold); color: var(--gold2); }
+  .res-search-wrap { position: relative; flex: 1; max-width: 340px; }
+  .res-search { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 6px 32px 6px 10px; border-radius: 4px; font-size: 13px; font-family: 'Rajdhani', sans-serif; outline: none; }
+  .res-search:focus { border-color: var(--gold); }
+  .res-search::placeholder { color: var(--text3); }
+  .res-sort-wrap { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+  .res-sort-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); }
+  .res-sort-select { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 4px 8px; border-radius: 3px; font-size: 12px; font-family: 'Rajdhani', sans-serif; outline: none; appearance: none; }
+
+  /* ===== MODAL ===== */
+  #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+  #modal-overlay.open { display: flex; }
+  #modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; width: 100%; max-width: 600px; max-height: 88vh; overflow-y: auto; display: flex; flex-direction: column; }
+  #modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; background: var(--bg3); }
+  #modal-title { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: .1em; color: var(--gold2); flex: 1; }
+  #modal-close { background: none; border: none; color: var(--text3); font-size: 18px; padding: 4px; transition: color .2s; }
+  #modal-close:hover { color: var(--text); }
+  #modal-body { padding: 20px; flex: 1; overflow-y: auto; }
+  #modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; }
+
+  /* Forms */
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-family: 'Rajdhani', sans-serif; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text3); display: block; margin-bottom: 5px; }
+  .form-input, .form-textarea, .form-select {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text);
+    padding: 8px 10px; border-radius: 4px; font-family: 'EB Garamond', serif; font-size: 14px; outline: none; transition: border-color .2s;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--gold); }
+  .form-textarea { min-height: 80px; resize: vertical; }
+  .form-select { appearance: none; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Tag input */
+  .tag-input-wrap { border: 1px solid var(--border); border-radius: 4px; background: var(--bg3); padding: 6px 8px; display: flex; flex-wrap: wrap; gap: 5px; cursor: text; transition: border-color .2s; }
+  .tag-input-wrap:focus-within { border-color: var(--gold); }
+  .tag-input-wrap .tag-pill { cursor: default; display: flex; align-items: center; gap: 4px; }
+  .tag-pill-remove { background: none; border: none; color: var(--gold3); font-size: 11px; padding: 0 0 0 2px; line-height: 1; opacity: .7; }
+  .tag-pill-remove:hover { opacity: 1; }
+  .tag-text-input { background: none; border: none; outline: none; color: var(--text); font-size: 13px; font-family: 'Rajdhani', sans-serif; flex: 1; min-width: 80px; padding: 2px 4px; }
+  .tag-dropdown {
+    position: absolute; z-index: 200; background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 4px; max-height: 200px; overflow-y: auto; width: 100%;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  }
+  .tag-dropdown-item { padding: 6px 12px; font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; color: var(--text2); transition: all .15s; }
+  .tag-dropdown-item:hover { background: var(--bg3); color: var(--gold2); }
+  .tag-input-container { position: relative; }
+
+  /* Quick add locus/topic/subtopic selectors */
+  .quick-add-path { display: flex; gap: 8px; margin-bottom: 14px; align-items: flex-end; flex-wrap: wrap; }
+  .quick-add-path .form-select { flex: 1; }
+  .qa-field-wrap { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 120px; }
+  .qa-row { display: flex; gap: 5px; align-items: center; }
+  .qa-add-btn { background: none; border: 1px solid var(--border2); color: var(--gold); height: 34px; padding: 0 8px; border-radius: 3px; font-size: 16px; font-family: monospace; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .2s; line-height: 1; }
+  .qa-add-btn:hover { border-color: var(--gold2); background: rgba(200,134,10,.15); color: var(--gold2); }
+  .qa-inline-form { background: var(--bg3); border: 1px solid var(--border2); border-radius: 4px; padding: 8px 10px; margin-top: 4px; gap: 6px; align-items: center; display: none; }
+  .qa-inline-form.open { display: flex; }
+  .qa-inline-form input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 5px 8px; border-radius: 3px; font-size: 13px; font-family: inherit; outline: none; }
+  .qa-inline-form input:focus { border-color: var(--gold); }
+  .qa-inline-form .btn { padding: 5px 10px; font-size: 11px; }
+  .file-upload-zone { border: 1px dashed var(--border2); border-radius: 4px; padding: 14px 12px; text-align: center; cursor: pointer; transition: all .2s; background: var(--bg3); font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .06em; color: var(--text3); }
+  .file-upload-zone:hover, .file-upload-zone.dragover { border-color: var(--gold); color: var(--gold2); background: rgba(200,134,10,.05); }
+  .file-preview-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 4px; margin-top: 8px; }
+  .file-preview-img { width: 44px; height: 44px; object-fit: cover; border-radius: 3px; border: 1px solid var(--border); }
+  .file-preview-info { flex: 1; min-width: 0; }
+  .file-preview-name { font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-preview-size { font-size: 11px; color: var(--text3); font-family: 'Rajdhani', sans-serif; letter-spacing: .04em; }
+  .file-preview-remove { background: none; border: none; color: var(--text3); font-size: 16px; padding: 2px; cursor: pointer; transition: color .15s; }
+  .file-preview-remove:hover { color: #c05050; }
+
+  /* Buttons */
+  .btn { padding: 8px 18px; border-radius: 4px; font-family: 'Rajdhani', sans-serif; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; border: 1px solid; transition: all .2s; }
+  .btn-primary { background: var(--gold); border-color: var(--gold); color: #0a0b0d; font-weight: 700; }
+  .btn-primary:hover { background: var(--gold2); border-color: var(--gold2); }
+  .btn-secondary { background: none; border-color: var(--border2); color: var(--text2); }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-danger { background: none; border-color: #7a2020; color: #c05050; }
+  .btn-danger:hover { background: rgba(139,32,32,.15); }
+
+  /* Compare */
+  #compare-view h2 { flex-shrink: 0; }
+  .compare-controls { display: flex; gap: 12px; margin-bottom: 16px; flex-shrink: 0; }
+  .compare-columns { display: flex; gap: 16px; flex: 1; overflow: hidden; }
+  .compare-col { flex: 1; overflow-y: auto; }
+  .compare-col-header { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold); letter-spacing: .08em; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 1; }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 30px 20px; color: var(--text3); font-style: italic; font-size: 14px; }
+
+  /* Divider */
+  .gold-divider { height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 0; opacity: .3; }
+
+  /* Section path badge on resource view */
+  .entry-locus-path { font-family: 'Rajdhani', sans-serif; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; opacity: .8; }
+
+  /* Responsive */
+  @media (max-width: 680px) { :root { --sidebar-w: 240px; } #header-title { display: none; } .form-row { grid-template-columns: 1fr; } #welcome-stats { flex-wrap: wrap; gap: 16px; justify-content: center; } }
+  @media (max-width: 520px) { #sidebar { position: fixed; left: 0; top: var(--header-h); bottom: 0; z-index: 50; transform: translateX(-100%); transition: transform .25s; } #sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,.5); } #menu-toggle { display: flex !important; } }
+  #menu-toggle { display: none; background: none; border: 1px solid var(--border); color: var(--text2); width: 32px; height: 32px; border-radius: 4px; align-items: center; justify-content: center; font-size: 16px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="header">
+    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <svg id="header-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="48" stroke="#c8860a" stroke-width="1.5" fill="none"/>
+      <circle cx="50" cy="50" r="44" stroke="#c8860a" stroke-width=".5" fill="none" stroke-dasharray="2,3"/>
+      <g transform="translate(50,52)" fill="none" stroke="#e8a020" stroke-width="2.5" stroke-linejoin="round">
+        <path d="M0,-22 C14,-22 26,-12 26,2 C26,14 18,22 8,24 C-2,26 -12,20 -16,12" />
+        <path d="M-16,12 C-22,2 -20,-10 -12,-18 C-6,-24 4,-24 10,-20" />
+        <path d="M10,-20 C18,-16 22,-6 18,4 C14,12 6,16 -2,14" />
+        <path d="M-2,14 C-10,12 -16,6 -16,0 C-16,-8 -10,-14 -2,-16" />
+        <path d="M-2,-16 C6,-18 14,-14 16,-6 C18,2 14,10 8,14" />
+        <path d="M8,14 C2,18 -6,18 -12,12 C-18,6 -18,-4 -12,-10" />
+        <circle cx="0" cy="-4" r="7" stroke="#c8860a" stroke-width="1.5"/>
+      </g>
+      <text font-family="'Rajdhani',sans-serif" font-size="7" fill="#c8860a" letter-spacing="2">
+        <textPath href="#top-arc">SOLA FIDE • SOLA GRATIA • SOLUS CHRISTUS</textPath>
+      </text>
+      <text font-family="'Rajdhani',sans-serif" font-size="7" fill="#c8860a" letter-spacing="2">
+        <textPath href="#bot-arc">SOLA SCRIPTURA • SOLI DEO GLORIA</textPath>
+      </text>
+      <defs>
+        <path id="top-arc" d="M 8,50 a 42,42 0 0,1 84,0"/>
+        <path id="bot-arc" d="M 92,50 a 42,42 0 0,1 -84,0"/>
+      </defs>
+    </svg>
+    <span id="header-title">Sola Scriptura KB</span>
+    <div id="header-search-wrap">
+      <input type="text" id="global-search" placeholder="Search all entries…" oninput="handleGlobalSearch(this.value)">
+      <span class="search-icon">⌕</span>
+    </div>
+    <div id="header-actions">
+      <button id="quick-add-btn" onclick="openQuickAddModal()">+ Add Entry</button>
+      <button class="hdr-btn" onclick="showView('recent')">Recent</button>
+      <button class="hdr-btn" id="compare-btn" onclick="showView('compare')">Compare</button>
+      <button class="hdr-btn" onclick="exportData()">Export</button>
+      <button class="hdr-btn" onclick="document.getElementById('import-file').click()">Import</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <div id="body">
+
+    <!-- SIDEBAR -->
+    <nav id="sidebar">
+      <div id="sidebar-header">
+        <input type="text" id="sidebar-search" placeholder="Filter loci…" oninput="filterTree(this.value)">
+        <button id="add-locus-btn" onclick="openAddNodeModal('locus',null,null)" title="Add Locus">+</button>
+      </div>
+      <div id="sidebar-tree"></div>
+    </nav>
+
+    <!-- MAIN -->
+    <div id="main">
+      <div id="breadcrumb"><span class="bc-item">Select a subtopic</span></div>
+
+      <!-- VIEW TABS -->
+      <div id="view-tabs">
+        <button class="view-tab active" id="tab-loki" onclick="switchTab('loki')">📚 Loci</button>
+        <button class="view-tab" id="tab-tags" onclick="switchTab('tags')">🏷 By Tag</button>
+        <button class="view-tab" id="tab-resource" onclick="switchTab('resource')">🗂 By Type</button>
+      </div>
+
+      <div id="content-area">
+        <div id="welcome">
+          <svg id="welcome-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" stroke="#c8860a" stroke-width="1.5" fill="none"/>
+            <circle cx="50" cy="50" r="44" stroke="#c8860a" stroke-width=".5" fill="none" stroke-dasharray="2,3"/>
+            <g transform="translate(50,52)" fill="none" stroke="#e8a020" stroke-width="3" stroke-linejoin="round">
+              <path d="M0,-22 C14,-22 26,-12 26,2 C26,14 18,22 8,24 C-2,26 -12,20 -16,12" />
+              <path d="M-16,12 C-22,2 -20,-10 -12,-18 C-6,-24 4,-24 10,-20" />
+              <path d="M10,-20 C18,-16 22,-6 18,4 C14,12 6,16 -2,14" />
+              <path d="M-2,14 C-10,12 -16,6 -16,0 C-16,-8 -10,-14 -2,-16" />
+              <path d="M-2,-16 C6,-18 14,-14 16,-6 C18,2 14,10 8,14" />
+              <path d="M8,14 C2,18 -6,18 -12,12 C-18,6 -18,-4 -12,-10" />
+              <circle cx="0" cy="-4" r="7" stroke="#c8860a" stroke-width="2"/>
+            </g>
+            <text font-family="'Rajdhani',sans-serif" font-size="7" fill="#c8860a" letter-spacing="2">
+              <textPath href="#top-arc2">SOLA FIDE • SOLA GRATIA • SOLUS CHRISTUS</textPath>
+            </text>
+            <text font-family="'Rajdhani',sans-serif" font-size="7" fill="#c8860a" letter-spacing="2">
+              <textPath href="#bot-arc2">SOLA SCRIPTURA • SOLI DEO GLORIA</textPath>
+            </text>
+            <defs>
+              <path id="top-arc2" d="M 8,50 a 42,42 0 0,1 84,0"/>
+              <path id="bot-arc2" d="M 92,50 a 42,42 0 0,1 -84,0"/>
+            </defs>
+          </svg>
+          <h1>Reformed Theological Knowledge Base</h1>
+          <p>A structured scholastic system for organizing theological material. Select a subtopic from the Loci tree, or browse by Tag or Resource Type.</p>
+          <div id="welcome-stats">
+            <div class="ws-stat"><div class="ws-num" id="stat-loci">17</div><div class="ws-label">Loci</div></div>
+            <div class="ws-stat"><div class="ws-num" id="stat-entries">0</div><div class="ws-label">Entries</div></div>
+            <div class="ws-stat"><div class="ws-num" id="stat-tags">0</div><div class="ws-label">Tags</div></div>
+          </div>
+        </div>
+        <div id="subtopic-view"   style="display:none"></div>
+        <div id="search-results"  style="display:none"></div>
+        <div id="recent-view"     style="display:none"></div>
+        <div id="tag-view"        style="display:none"></div>
+        <div id="resource-view"   style="display:none"></div>
+        <div id="compare-view"    style="display:none"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div id="modal">
+    <div id="modal-header">
+      <span id="modal-title">Add Entry</span>
+      <button id="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+    <div id="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveModalEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SECTIONS
+============================================================ */
+const SECTIONS = [
+  { id:'quotations',    name:'Quotations',             icon:'❝' },
+  { id:'confessional',  name:'Confessional Statements', icon:'⛪' },
+  { id:'books',         name:'Books / Resources',       icon:'📖' },
+  { id:'websites',      name:'Websites / Bookmarks',    icon:'🔗' },
+  { id:'scripture',     name:'Scripture',               icon:'✝' },
+  { id:'arguments',     name:'Arguments',               icon:'⚖' },
+  { id:'notes',         name:'Notes',                   icon:'✏' },
+  { id:'media',         name:'Media',                   icon:'🖼' },
+];
+
+/* ============================================================
+   DEFAULT TAGS — exhaustive Reformed theological topics A-Z
+============================================================ */
+const DEFAULT_TAGS = [
+  "Abrahamic Covenant","Active Obedience","Adoption","Adiaphora","Amillennialism",
+  "Angelology","Annihilationism","Anthropology","Apologetics","Apostles' Creed",
+  "Apostolic Succession","Arianism","Arminianism","Assurance","Athanasian Creed",
+  "Atonement","Aseity","Baptism","Baptismal Regeneration","Belgic Confession",
+  "Biblical Theology","Canon of Scripture","Canons of Dort","Chalcedonian Definition",
+  "Christian Ethics","Christian Liberty","Christology","Church Discipline",
+  "Church Government","Church History","Classic Theism","Communicatio Idiomatum",
+  "Conditional Election","Confession","Confessional Standards","Conscience",
+  "Conversion","Covenant","Covenant of Grace","Covenant of Redemption",
+  "Covenant of Works","Covenant Theology","Credobaptism","Davidic Covenant",
+  "Dead Orthodoxy","Decree","Definite Atonement","Demonology","Depravity",
+  "Dispensationalism","Divine Decree","Divine Simplicity","Divine Sovereignty",
+  "Ecclesiology","Election","Eschatology","Eternal Generation","Eternal Life",
+  "Eternal Punishment","Eucharist","Exaltation","Excommunication",
+  "Existential Theology","Faith","Fall of Man","Federal Headship","Federal Vision",
+  "Filioque","Foreknowledge","Forensic Justification","Free Will",
+  "General Revelation","God's Attributes","Gospel","Grace","Guilt",
+  "Heaven","Heidelberg Catechism","Hell","Hermeneutics","Holiness",
+  "Holy Spirit","Humiliation of Christ","Hypostatic Union","Image of God",
+  "Imputation","Incarnation","Infant Baptism","Inerrancy","Infallibility",
+  "Infralapsarianism","Inspiration","Intermediate State","Irresistible Grace",
+  "Israel and the Church","Justification","Kingdom of God","Law and Gospel",
+  "Law of God","Liberalism","Limited Atonement","Lord's Supper","Love of God",
+  "Lutheran Theology","Means of Grace","Millennialism","Molinism",
+  "Monergism","Moral Argument","Mosaic Covenant","Natural Law",
+  "Natural Theology","Neo-Orthodoxy","New Covenant","New Heavens and New Earth",
+  "New Perspective on Paul","Nicene Creed","Omnipotence","Omniscience",
+  "Open Theism","Ordo Salutis","Original Sin","Pactum Salutis","Paedobaptism",
+  "Particular Redemption","Pastoral Ministry","Penal Substitution","Perseverance",
+  "Postmillennialism","Prayer","Predestination","Premillennialism","Presbyterian",
+  "Preservation","Prolegomena","Prophecy","Providence","Purgatory",
+  "Regeneration","Regulative Principle","Repentance","Reprobation",
+  "Resurrection","Revelation","Roman Catholicism","Sabbath",
+  "Sacraments","Sanctification","Satan","Scripture","Second Advent",
+  "Sola Fide","Sola Gratia","Sola Scriptura","Solus Christus","Soli Deo Gloria",
+  "Soul Sleep","Special Revelation","Spiritual Gifts","Supralapsarianism",
+  "Systematic Theology","Ten Commandments","Theodicy","Theology Proper",
+  "Total Depravity","TULIP","Trinity","Typology","Union with Christ",
+  "Universal Atonement","Universalism","Virgin Birth","Vocation",
+  "Westminster Confession","Westminster Larger Catechism","Westminster Shorter Catechism",
+  "Word of Faith","Works of the Law","Worship","Wrath of God"
+].sort();
+
+/* ============================================================
+   TREE DATA
+============================================================ */
+const DEFAULT_TREE = [
+  { id:'l1',  name:'Prolegomena', topics:[
+    { id:'t1a', name:'Nature of Theology',   subtopics:['Definition & Object','Theology as Science','Theologia Archetypa & Ectypa','Principia Theologiae'] },
+    { id:'t1b', name:'Holy Scripture',       subtopics:['Inspiration & Theopneustia','Inerrancy & Infallibility','Canonicity','Authority & Autopistia','Sufficiency','Perspicuity','Preservation of Text'] },
+    { id:'t1c', name:'Revelation',           subtopics:['General Revelation','Special Revelation','Revelation & Reason'] },
+    { id:'t1d', name:'Hermeneutics',         subtopics:['Grammatical-Historical Method','Analogy of Faith','Typology & Allegory','Use of OT in NT'] },
+  ]},
+  { id:'l2',  name:'Theology Proper', topics:[
+    { id:'t2a', name:'Existence of God',       subtopics:['Cosmological Argument','Teleological Argument','Ontological Argument','Moral Argument','Sensus Divinitatis'] },
+    { id:'t2b', name:'Divine Essence',         subtopics:['Divine Simplicity','Divine Immutability','Divine Impassibility','Aseity','Infinity & Omnipresence'] },
+    { id:'t2c', name:'Incommunicable Attributes', subtopics:['Omniscience','Omnipotence','Omnipresence','Eternity & Immensity','Independence'] },
+    { id:'t2d', name:'Communicable Attributes',   subtopics:['Holiness','Love & Goodness','Justice & Righteousness','Truth & Faithfulness','Mercy & Grace','Wrath'] },
+    { id:'t2e', name:'The Divine Will',        subtopics:['Will of Decree','Will of Command','Beneplacit vs Signum','Compatibilism'] },
+  ]},
+  { id:'l3',  name:'Trinity', topics:[
+    { id:'t3a', name:'Doctrine of the Trinity', subtopics:['One Essence Three Persons','Trinitarian Ontology','Inseparable Operations','Perichoresis','Economic vs Immanent Trinity'] },
+    { id:'t3b', name:'The Father',              subtopics:['Paternity & Unbegottenness','Father as First Person'] },
+    { id:'t3c', name:'The Son',                 subtopics:['Eternal Generation','Logos Doctrine','Subordination vs Equality'] },
+    { id:'t3d', name:'The Holy Spirit',         subtopics:['Eternal Procession','Filioque Controversy','Personhood of the Spirit','Procession from Father & Son'] },
+    { id:'t3e', name:'Trinitarian Heresies',    subtopics:['Arianism','Modalism / Sabellianism','Tritheism','Subordinationism'] },
+  ]},
+  { id:'l4',  name:'Divine Decrees', topics:[
+    { id:'t4a', name:'Decree in General',  subtopics:['Nature of the Decree','Decree & Contingency','Order of the Decrees'] },
+    { id:'t4b', name:'Predestination',     subtopics:['Double Predestination','Supralapsarianism','Infralapsarianism','Sublapsarianism'] },
+    { id:'t4c', name:'Election',           subtopics:['Unconditional Election','Particular Election','Election in Christ','Corporate vs Individual'] },
+    { id:'t4d', name:'Reprobation',        subtopics:['Preterition','Condemnation / Praedamnatio','Objections to Reprobation'] },
+    { id:'t4e', name:'Foreknowledge',      subtopics:['Middle Knowledge / Molinism','Simple Foreknowledge','Open Theism Response'] },
+  ]},
+  { id:'l5',  name:'Creation', topics:[
+    { id:'t5a', name:'Creation ex nihilo',     subtopics:['Against Eternal Matter','Creation & Time','Six-Day Creation','Framework & Analogical Views'] },
+    { id:'t5b', name:'The Cosmological Order', subtopics:['Days of Creation','Purpose of Creation','Goodness of Creation'] },
+    { id:'t5c', name:'Angelology',             subtopics:['Nature & Orders of Angels','Ministry of Angels','Angelophanies','Satanology & Demonology','Fall of Angels'] },
+  ]},
+  { id:'l6',  name:'Providence', topics:[
+    { id:'t6a', name:'General Providence',   subtopics:['Preservation','Concurrence','Government','Meticulous vs General Providence'] },
+    { id:'t6b', name:'Particular Providence',subtopics:['Primary & Secondary Causation','Miracles','Special Providence in Redemption'] },
+    { id:'t6c', name:'Providence & Evil',    subtopics:['Theodicy','Decree & Sin','Compatibilism & Free Will','The Problem of Evil'] },
+  ]},
+  { id:'l7',  name:'Anthropology', topics:[
+    { id:'t7a', name:'Constitution of Man',   subtopics:['Dichotomy vs Trichotomy','Body & Soul','Traducian vs Creationist Soul Origin'] },
+    { id:'t7b', name:'Image of God',          subtopics:['Structural Image','Functional Image','Relational Image','Narrower & Broader Image'] },
+    { id:'t7c', name:'Original Righteousness',subtopics:['Posse Non Peccare','Pre-Fall Integrity','Original Knowledge, Righteousness, Holiness'] },
+    { id:'t7d', name:'The Fall',              subtopics:['Historical Fall','Temptation & Transgression','Immediate Effects','Federal Headship of Adam'] },
+    { id:'t7e', name:'Original Sin',          subtopics:["Imputation of Adam's Sin",'Inherited Corruption','Total Depravity','Non Posse Non Peccare'] },
+  ]},
+  { id:'l8',  name:'Covenant Theology', topics:[
+    { id:'t8a', name:'Covenant of Redemption', subtopics:['Pactum Salutis','Intratrinitarian Covenant','Objections & Defenses'] },
+    { id:'t8b', name:'Covenant of Works',      subtopics:['Adam as Federal Head','Condition & Promise','Penalty of Death','Pre-Fall Probation','Republication Question'] },
+    { id:'t8c', name:'Covenant of Grace',      subtopics:['One Covenant of Grace','Unity of the Covenants','Dispensations of the CoG','Condition: Faith in Christ'] },
+    { id:'t8d', name:'Abrahamic Covenant',     subtopics:['Land Promise','Seed Promise','Sign of Circumcision','Fulfillment in Christ'] },
+    { id:'t8e', name:'Mosaic Covenant',        subtopics:['Sinai as Administration of CoG','Civil Law','Ceremonial Law','Moral Law','Threefold Division'] },
+    { id:'t8f', name:'Davidic Covenant',       subtopics:['Royal Seed Promise','Eternal Throne','Fulfillment in Christ the King'] },
+    { id:'t8g', name:'New Covenant',           subtopics:['Fulfillment of All Covenants','Internal Law Written on Heart','Forgiveness & Knowing God','New Covenant Members','Baptism & New Covenant'] },
+  ]},
+  { id:'l9',  name:'Christology', topics:[
+    { id:'t9a', name:'Person of Christ',       subtopics:['Hypostatic Union','Communicatio Idiomatum','One Person Two Natures','Chalcedonian Definition'] },
+    { id:'t9b', name:'Two Natures',            subtopics:['True & Proper Deity','True & Proper Humanity','Sinlessness of Christ','Genus Idiomaticum'] },
+    { id:'t9c', name:'Christological Heresies',subtopics:['Nestorianism','Eutychianism','Apollinarianism','Kenoticism'] },
+    { id:'t9d', name:'Threefold Office',       subtopics:['Munus Propheticum','Munus Sacerdotale','Munus Regium'] },
+    { id:'t9e', name:'States of Christ',       subtopics:['Humiliation: Incarnation','Humiliation: Suffering & Death','Humiliation: Burial & Descent','Exaltation: Resurrection','Exaltation: Ascension','Exaltation: Session','Exaltation: Return'] },
+    { id:'t9f', name:'Virgin Birth',           subtopics:['Historical & Theological Defense','Significance for Atonement'] },
+  ]},
+  { id:'l10', name:'Soteriology', topics:[
+    { id:'t10a', name:'Atonement',         subtopics:['Necessity of Atonement','Satisfaction Theory','Penal Substitution','Definite / Limited Atonement','Active & Passive Obedience','Theories of Atonement'] },
+    { id:'t10b', name:'Ordo Salutis',      subtopics:['Overview & Order','Union with Christ as Ground'] },
+    { id:'t10c', name:'Effectual Calling', subtopics:['Internal vs External Call','Irresistible Grace','Monergism in Calling'] },
+    { id:'t10d', name:'Regeneration',      subtopics:['Nature of New Birth','Regeneration Precedes Faith','Monergism in Regeneration','Spirit & Word'] },
+    { id:'t10e', name:'Conversion',        subtopics:['Saving Faith: Nature','Saving Faith: Object','True Repentance','Faith & Repentance Distinguished'] },
+    { id:'t10f', name:'Justification',     subtopics:["Forensic Justification","Imputation of Christ's Righteousness","Faith Alone / Sola Fide","Justification & Rome","Active Obedience & Justification","Eternal Justification Question"] },
+    { id:'t10g', name:'Adoption',          subtopics:['Legal & Relational Dimensions','Privileges of Adoption','Spirit of Adoption'] },
+    { id:'t10h', name:'Sanctification',    subtopics:['Definitive Sanctification','Progressive Sanctification','Role of the Law','Means of Sanctification','Perfectionism Refuted'] },
+    { id:'t10i', name:'Perseverance',      subtopics:['Perseverance of the Saints','Preservation by God','Apostasy Texts','Warning Passages in Hebrews'] },
+    { id:'t10j', name:'Assurance',         subtopics:['Grounds of Assurance','Syllogismus Practicus','Role of the Spirit','False Assurance','Westminster on Assurance'] },
+    { id:'t10k', name:'Union with Christ', subtopics:['Mystical Union','Federal Union','Vital Union','Union as Architectonic Category'] },
+  ]},
+  { id:'l11', name:'Ecclesiology', topics:[
+    { id:'t11a', name:'Nature of the Church',subtopics:['Visible & Invisible Church','Marks of the True Church','Word, Sacrament, Discipline','Church as Covenant Community'] },
+    { id:'t11b', name:'Church Government',   subtopics:['Presbyterianism','Episcopalianism','Congregationalism','Teaching & Ruling Elders','Deacons'] },
+    { id:'t11c', name:'Church & Kingdom',    subtopics:['Distinction of Church & Kingdom','Redemptive-Historical Kingdom','Church as Outpost of Kingdom'] },
+    { id:'t11d', name:'Worship',             subtopics:["Regulative Principle of Worship","Normative Principle","Elements of Worship","Circumstances","Church Music","Lord's Day"] },
+    { id:'t11e', name:'Church Discipline',   subtopics:['Keys of the Kingdom','Binding & Loosing','Stages of Discipline','Excommunication & Restoration'] },
+  ]},
+  { id:'l12', name:'Sacraments', topics:[
+    { id:'t12a', name:'Doctrine of Sacraments', subtopics:['Definition & Nature','Sign & Seal','Sacraments & Covenant','Word & Sacrament'] },
+    { id:'t12b', name:'Baptism',             subtopics:['Infant Baptism (Paedobaptism)',"Believer's Baptism (Credobaptism)",'Mode of Baptism','Baptism & Regeneration','Covenant Sign & Circumcision'] },
+    { id:'t12c', name:"Lord's Supper",       subtopics:['Reformed / Calvinist View','Lutheran Consubstantiation','Roman Catholic Transubstantiation','Zwinglian Memorialism','Frequency & Fencing'] },
+  ]},
+  { id:'l13', name:'Eschatology', topics:[
+    { id:'t13a', name:'Individual Eschatology',  subtopics:['Physical Death','Particular Judgment','Intermediate State','Soul Sleep Refuted','Purgatory Refuted'] },
+    { id:'t13b', name:'General Eschatology',     subtopics:['Return of Christ','Millennium: Amillennialism','Millennium: Postmillennialism','Millennium: Premillennialism','Rapture Question'] },
+    { id:'t13c', name:'Resurrection & Judgment', subtopics:['Resurrection of the Body','General Resurrection','Final Judgment','Degrees of Glory & Punishment'] },
+    { id:'t13d', name:'Eternal States',          subtopics:['Heaven & Eternal Life','New Heavens & New Earth','Hell & Eternal Punishment','Annihilationism Refuted','Universalism Refuted'] },
+  ]},
+  { id:'l14', name:'Ethics & Law', topics:[
+    { id:'t14a', name:'Natural Law & General Equity', subtopics:['Natural Law Tradition','General Equity of Mosaic Law','Natural Law & Scripture'] },
+    { id:'t14b', name:'The Law of God',          subtopics:['Threefold Division of Law','Ten Commandments','Moral Law Perpetuity','First Table','Second Table'] },
+    { id:'t14c', name:'Three Uses of the Law',   subtopics:['Civil / Restraining Use','Convicting / Mirror Use','Normative / Guide Use'] },
+    { id:'t14d', name:'Christian Ethics',        subtopics:["Christian Liberty","Adiaphora","Conscience","Vocation & Calling","Sabbath & Lord's Day"] },
+  ]},
+  { id:'l15', name:'Polemics & Controversies', topics:[
+    { id:'t15a', name:'Roman Catholicism',    subtopics:["Sola Fide vs Rome's Doctrine","Sola Scriptura vs Tradition & Magisterium","Papacy & Infallibility","Purgatory","Marian Dogmas","Mass as Sacrifice","Merit & Indulgences"] },
+    { id:'t15b', name:'Arminianism',          subtopics:['Five Arminian Articles','Prevenient Grace','Conditional Election','Universal Atonement','Resistible Grace','Falling from Grace','Remonstrant History'] },
+    { id:'t15c', name:'Federal Vision',       subtopics:['FV on Covenant & Election','FV on Justification','FV on Baptismal Regeneration','PCA & OPC Reports on FV'] },
+    { id:'t15d', name:'New Perspective on Paul', subtopics:['Sanders & Covenantal Nomism','Dunn on Works of Law','Wright on Justification','Reformed Response to NPP'] },
+    { id:'t15e', name:'Dispensationalism',    subtopics:['Classic Dispensationalism','Progressive Dispensationalism','Israel vs Church Distinction','Rapture Theology','Reformed Critique'] },
+    { id:'t15f', name:'Theological Liberalism',subtopics:['Historical-Critical Method','JEDP & Documentary Hypothesis','Mythological Interpretation','Neo-Orthodoxy','Liberation Theology'] },
+    { id:'t15g', name:'Charismatic Issues',   subtopics:['Cessationism vs Continuationism','Tongues & Prophecy Today','Word of Faith','Prosperity Gospel'] },
+  ]},
+  { id:'l16', name:'Biblical Theology', topics:[
+    { id:'t16a', name:'Redemptive History',    subtopics:['Promise & Fulfillment','Typology','Geerhardus Vos & BT','BT vs ST Relationship'] },
+    { id:'t16b', name:'Kingdom of God',        subtopics:['Already / Not Yet','Kingdom & Covenant','Kingdom & Church'] },
+    { id:'t16c', name:'Old Testament Theology',subtopics:['Pentateuch','Prophets & Eschatology','Psalms & Worship','Wisdom Literature'] },
+    { id:'t16d', name:'New Testament Theology',subtopics:['Synoptic Theology','Pauline Theology','Johannine Theology','Hebrews & General Epistles'] },
+  ]},
+  { id:'l17', name:'Confessional Standards', topics:[
+    { id:'t17a', name:'Westminster Standards',     subtopics:['Westminster Confession of Faith','Westminster Larger Catechism','Westminster Shorter Catechism','Three Forms of Unity Comparison'] },
+    { id:'t17b', name:'Three Forms of Unity',      subtopics:['Belgic Confession','Heidelberg Catechism','Canons of Dort'] },
+    { id:'t17c', name:'Other Reformed Confessions',subtopics:['Second Helvetic Confession','Scots Confession','London Baptist Confession 1689'] },
+    { id:'t17d', name:'Ecumenical Creeds',         subtopics:["Apostles' Creed","Nicene Creed","Athanasian Creed","Chalcedonian Definition"] },
+  ]},
+];
+
+/* custom nodes added at runtime */
+let CUSTOM_TREE = [];  // array of loci (same shape as DEFAULT_TREE entries)
+
+function getFullTree() {
+  return [...DEFAULT_TREE, ...CUSTOM_TREE];
+}
+
+/* ============================================================
+   STORAGE
+============================================================ */
+function loadData() {
+  try { return JSON.parse(localStorage.getItem('reformed_kb') || '{}'); } catch(e) { return {}; }
+}
+function saveData(d) { localStorage.setItem('reformed_kb', JSON.stringify(d)); }
+function loadCustomTree() {
+  try { return JSON.parse(localStorage.getItem('reformed_kb_custom_tree') || '[]'); } catch(e) { return []; }
+}
+function saveCustomTree() { localStorage.setItem('reformed_kb_custom_tree', JSON.stringify(CUSTOM_TREE)); }
+
+let DB = loadData();
+CUSTOM_TREE = loadCustomTree();
+
+function getEntries(subtopicKey, sectionId) {
+  return (DB[subtopicKey] && DB[subtopicKey][sectionId]) ? DB[subtopicKey][sectionId] : [];
+}
+function setEntries(subtopicKey, sectionId, arr) {
+  if (!DB[subtopicKey]) DB[subtopicKey] = {};
+  DB[subtopicKey][sectionId] = arr;
+  saveData(DB);
+}
+function addEntry(subtopicKey, sectionId, entry) {
+  const arr = getEntries(subtopicKey, sectionId);
+  entry.id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  entry.created = Date.now();
+  arr.push(entry);
+  setEntries(subtopicKey, sectionId, arr);
+  return entry;
+}
+function updateEntry(subtopicKey, sectionId, id, updates) {
+  const arr = getEntries(subtopicKey, sectionId);
+  const idx = arr.findIndex(e => e.id === id);
+  if (idx !== -1) { arr[idx] = {...arr[idx], ...updates}; setEntries(subtopicKey, sectionId, arr); }
+}
+function deleteEntry(subtopicKey, sectionId, id) {
+  const arr = getEntries(subtopicKey, sectionId).filter(e => e.id !== id);
+  setEntries(subtopicKey, sectionId, arr);
+}
+function togglePin(subtopicKey, sectionId, id) {
+  const arr = getEntries(subtopicKey, sectionId);
+  const idx = arr.findIndex(e => e.id === id);
+  if (idx !== -1) { arr[idx].pinned = !arr[idx].pinned; setEntries(subtopicKey, sectionId, arr); }
+}
+function allEntries() {
+  const result = [];
+  for (const [stKey, sections] of Object.entries(DB)) {
+    for (const [secId, entries] of Object.entries(sections)) {
+      if (Array.isArray(entries)) entries.forEach(e => result.push({stKey, secId, entry: e}));
+    }
+  }
+  return result;
+}
+function allTags() {
+  const tags = new Set();
+  allEntries().forEach(({entry}) => { (entry.tags||[]).forEach(t => tags.add(t)); });
+  return [...tags].sort();
+}
+function updateStats() {
+  const entries = allEntries();
+  document.getElementById('stat-entries').textContent = entries.length;
+  document.getElementById('stat-tags').textContent = allTags().length;
+  document.getElementById('stat-loci').textContent = getFullTree().length;
+}
+
+/* ============================================================
+   STATE
+============================================================ */
+let currentSubtopicKey = null;
+let currentSubtopicLabel = null;
+let currentLocusName = null, currentTopicName = null;
+let modalState = null;
+let currentTab = 'loki';   // 'loki' | 'tags' | 'resource'
+let activeTagFilter = null;
+let activeResFilters = new Set(['quotations','confessional','books','websites','scripture','arguments','notes','media']);
+let resSearchQuery = '';
+let resSortBy = 'created';
+
+function subtopicKey(locusId, topicId, subtopicName) {
+  return `${locusId}__${topicId}__${subtopicName.replace(/\s+/g,'_')}`;
+}
+
+/* ============================================================
+   TABS
+============================================================ */
+function switchTab(tab) {
+  currentTab = tab;
+  ['loki','tags','resource'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'loki') {
+    // show whatever was last active in loki
+    if (currentSubtopicKey) { showSubtopicView(); }
+    else { showWelcome(); }
+  } else if (tab === 'tags') {
+    renderTagView();
+  } else if (tab === 'resource') {
+    renderResourceView();
+  }
+}
+
+/* ============================================================
+   TREE RENDERING
+============================================================ */
+function renderTree(filter = '') {
+  const tree = document.getElementById('sidebar-tree');
+  const fl = filter.toLowerCase();
+  let html = '';
+  getFullTree().forEach((locus, li) => {
+    const locusMatch = !fl || locus.name.toLowerCase().includes(fl);
+    let topicsHtml = '';
+    let anyTopic = false;
+    locus.topics.forEach(topic => {
+      const topicMatch = !fl || topic.name.toLowerCase().includes(fl);
+      let stHtml = '';
+      let anySt = false;
+      topic.subtopics.forEach(st => {
+        const stMatch = !fl || st.toLowerCase().includes(fl);
+        if (locusMatch || topicMatch || stMatch) {
+          const key = subtopicKey(locus.id, topic.id, st);
+          const isActive = currentSubtopicKey === key;
+          stHtml += `<div class="tree-subtopic${isActive?' active':''}" onclick="selectSubtopic('${locus.id}','${topic.id}','${escAttr(st)}','${escAttr(locus.name)}','${escAttr(topic.name)}')">
+            <span class="st-label">${escHtml(st)}</span>
+          </div>`;
+          anySt = true;
+        }
+      });
+      if (locusMatch || topicMatch || anySt) {
+        const isOpen = !fl ? '' : 'open';
+        topicsHtml += `<div class="tree-topic ${isOpen}" id="tp_${topic.id}">
+          <div class="tree-topic-header" onclick="toggleTopic('${topic.id}')">
+            <span class="tree-arrow">▶</span>
+            <span class="tree-topic-name">${escHtml(topic.name)}</span>
+            <button class="tree-node-add" onclick="event.stopPropagation();openAddNodeModal('subtopic','${locus.id}','${topic.id}')" title="Add Subtopic">+</button>
+          </div>
+          <div class="tree-subtopics">${stHtml}</div>
+        </div>`;
+        anyTopic = true;
+      }
+    });
+    if (locusMatch || anyTopic) {
+      const isOpen = !fl ? '' : 'open';
+      html += `<div class="tree-locus ${isOpen}" id="lc_${locus.id}">
+        <div class="tree-locus-header" onclick="toggleLocus('${locus.id}')">
+          <span class="tree-arrow">▶</span>
+          <span class="tree-locus-num">${String(li+1).padStart(2,'0')}</span>
+          <span class="tree-locus-name">${escHtml(locus.name)}</span>
+          <button class="tree-node-add" onclick="event.stopPropagation();openAddNodeModal('topic','${locus.id}',null)" title="Add Topic">+</button>
+        </div>
+        <div class="tree-children">${topicsHtml}</div>
+      </div>`;
+    }
+  });
+  tree.innerHTML = html;
+  if (currentSubtopicKey) {
+    const parts = currentSubtopicKey.split('__');
+    const le = document.getElementById('lc_'+parts[0]);
+    const te = document.getElementById('tp_'+parts[1]);
+    if (le) le.classList.add('open');
+    if (te) te.classList.add('open');
+  }
+}
+
+function toggleLocus(id) { document.getElementById('lc_'+id)?.classList.toggle('open'); }
+function toggleTopic(id)  { document.getElementById('tp_'+id)?.classList.toggle('open'); }
+function filterTree(v) { renderTree(v); }
+
+/* ============================================================
+   ADD LOCUS / TOPIC / SUBTOPIC
+============================================================ */
+function openAddNodeModal(type, locusId, topicId) {
+  let titleText = '', bodyHtml = '';
+  if (type === 'locus') {
+    titleText = 'Add New Locus';
+    bodyHtml = `<div class="form-group"><label class="form-label">Locus Name</label><input class="form-input" id="f_nodeName" type="text" placeholder="e.g. Missiology"></div>`;
+  } else if (type === 'topic') {
+    const locus = getFullTree().find(l => l.id === locusId);
+    titleText = `Add Topic to: ${locus ? locus.name : locusId}`;
+    bodyHtml = `<div class="form-group"><label class="form-label">Topic Name</label><input class="form-input" id="f_nodeName" type="text" placeholder="e.g. Missional Ecclesiology"></div>`;
+  } else if (type === 'subtopic') {
+    const locus = getFullTree().find(l => l.id === locusId);
+    const topic = locus?.topics.find(t => t.id === topicId);
+    titleText = `Add Subtopic to: ${topic ? topic.name : topicId}`;
+    bodyHtml = `<div class="form-group"><label class="form-label">Subtopic Name</label><input class="form-input" id="f_nodeName" type="text" placeholder="e.g. Church Planting Theology"></div>`;
+  }
+  modalState = { mode: 'addNode', nodeType: type, locusId, topicId };
+  document.getElementById('modal-title').textContent = titleText;
+  document.getElementById('modal-body').innerHTML = bodyHtml;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function saveAddNode() {
+  const name = document.getElementById('f_nodeName')?.value.trim();
+  if (!name) return;
+  const { nodeType, locusId, topicId } = modalState;
+  if (nodeType === 'locus') {
+    const newId = 'lc_' + Date.now().toString(36);
+    CUSTOM_TREE.push({ id: newId, name, topics: [] });
+  } else if (nodeType === 'topic') {
+    const tree = getFullTree();
+    const locus = tree.find(l => l.id === locusId);
+    if (locus) {
+      const newId = 't_' + Date.now().toString(36);
+      locus.topics.push({ id: newId, name, subtopics: [] });
+      // persist to CUSTOM_TREE if custom, else mark as custom edit
+      const isCustom = CUSTOM_TREE.find(l => l.id === locusId);
+      if (!isCustom) {
+        // find in DEFAULT_TREE and persist change
+        const dl = DEFAULT_TREE.find(l => l.id === locusId);
+        if (dl) dl.topics.push({ id: newId, name, subtopics: [] });
+      }
+    }
+  } else if (nodeType === 'subtopic') {
+    const tree = getFullTree();
+    const locus = tree.find(l => l.id === locusId);
+    const topic = locus?.topics.find(t => t.id === topicId);
+    if (topic) topic.subtopics.push(name);
+  }
+  saveCustomTree();
+  closeModal();
+  renderTree();
+  updateStats();
+}
+
+/* ============================================================
+   SUBTOPIC VIEW
+============================================================ */
+function selectSubtopic(locusId, topicId, stName, locusName, topicName) {
+  currentSubtopicKey = subtopicKey(locusId, topicId, stName);
+  currentSubtopicLabel = stName;
+  currentLocusName = locusName;
+  currentTopicName = topicName;
+  document.getElementById('breadcrumb').innerHTML =
+    `<span class="bc-item">${escHtml(locusName)}</span>
+     <span class="bc-sep">›</span>
+     <span class="bc-item">${escHtml(topicName)}</span>
+     <span class="bc-sep">›</span>
+     <span class="bc-item current">${escHtml(stName)}</span>`;
+  // switch to loki tab if needed
+  currentTab = 'loki';
+  ['loki','tags','resource'].forEach(t => document.getElementById('tab-'+t).classList.toggle('active', t === 'loki'));
+  hideAllViews();
+  renderSubtopicView();
+  document.getElementById('subtopic-view').style.display = 'block';
+  renderTree();
+  closeSidebarMobile();
+}
+
+function renderSubtopicView() {
+  const el = document.getElementById('subtopic-view');
+  const key = currentSubtopicKey;
+  let html = `<div id="subtopic-title">${escHtml(currentSubtopicLabel)}</div>
+  <div id="subtopic-meta">${escHtml(currentLocusName)} &nbsp;›&nbsp; ${escHtml(currentTopicName)}</div>`;
+  SECTIONS.forEach(sec => {
+    const entries = getEntries(key, sec.id);
+    html += `<div class="section-block" id="sb_${sec.id}">
+      <div class="section-header" onclick="toggleSection('${sec.id}')">
+        <span class="section-icon">${sec.icon}</span>
+        <span class="section-name">${sec.name}</span>
+        <span class="section-count">${entries.length}</span>
+        <button class="section-add-inline" onclick="event.stopPropagation();openAddModal('${sec.id}')" title="Add entry">+</button>
+        <span class="section-toggle">▾</span>
+      </div>
+      <div class="section-body">
+        ${renderEntries(entries, sec.id, key)}
+        <button class="add-entry-btn" onclick="openAddModal('${sec.id}')">+ Add ${escHtml(sec.name.replace(' / Resources','').replace(' / Bookmarks',''))}</button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+  updateStats();
+}
+
+function toggleSection(secId) { document.getElementById('sb_'+secId)?.classList.toggle('collapsed'); }
+function renderEntries(entries, secId, key) {
+  if (!entries.length) return '';
+  return entries.map(e => renderEntryCard(e, secId, key)).join('');
+}
+
+function renderEntryCard(e, secId, key, showPath) {
+  const tagsHtml = (e.tags||[]).map(t => `<span class="tag-pill" onclick="filterByTag('${escAttr(t)}')">${escHtml(t)}</span>`).join('');
+  const sec = SECTIONS.find(s => s.id === secId);
+  let body = '';
+  if (secId === 'quotations') {
+    body = `<div class="entry-quote-text">${escHtml(e.quote||'')}</div>
+    <div class="entry-meta">
+      ${e.author ? `<span>— ${escHtml(e.author)}</span>` : ''}
+      ${e.source ? `<span>📖 ${escHtml(e.source)}</span>` : ''}
+      ${e.page   ? `<span>p. ${escHtml(e.page)}</span>` : ''}
+    </div>`;
+  } else if (secId === 'confessional') {
+    body = `<div style="font-style:italic;color:var(--text);">${escHtml(e.text||'')}</div>
+    <div class="entry-meta">
+      ${e.confession ? `<span>⛪ ${escHtml(e.confession)}</span>` : ''}
+      ${e.chapter    ? `<span>§ ${escHtml(e.chapter)}</span>` : ''}
+    </div>`;
+  } else if (secId === 'books') {
+    body = `<div class="entry-meta">
+      ${e.author ? `<span>✍ ${escHtml(e.author)}</span>` : ''}
+      ${e.link   ? `<span><a href="${escAttr(e.link)}" target="_blank">🔗 Link</a></span>` : ''}
+    </div>
+    ${e.notes ? `<div class="entry-card-body" style="margin-top:6px;">${escHtml(e.notes)}</div>` : ''}`;
+  } else if (secId === 'websites') {
+    body = `${e.url ? `<div class="entry-meta"><a href="${escAttr(e.url)}" target="_blank">🔗 ${escHtml(e.url)}</a></div>` : ''}
+    ${e.description ? `<div class="entry-card-body">${escHtml(e.description)}</div>` : ''}`;
+  } else if (secId === 'scripture') {
+    const typeClass = e.verseType || 'proof';
+    body = `<div class="scripture-ref">${escHtml(e.reference||'')} <span class="scripture-type ${typeClass}">${typeClass}</span></div>
+    <div class="entry-card-body">${escHtml(e.verseText||'')}</div>
+    ${e.notes ? `<div class="entry-card-body" style="color:var(--text3);font-size:13px;margin-top:4px;">${escHtml(e.notes)}</div>` : ''}`;
+  } else if (secId === 'arguments') {
+    body = `<div class="entry-card-body"><strong style="color:var(--gold);">Position:</strong> ${escHtml(e.position||'')}</div>
+    <div class="entry-card-body"><strong>Claim:</strong> ${escHtml(e.claim||'')}</div>
+    ${e.objections ? `<div class="entry-card-body"><strong style="color:#c05050;">Objection:</strong> ${escHtml(e.objections)}</div>` : ''}
+    ${e.responses  ? `<div class="entry-card-body"><strong style="color:#5cb87a;">Response:</strong> ${escHtml(e.responses)}</div>` : ''}`;
+  } else if (secId === 'notes') {
+    body = `<div class="entry-card-body">${escHtml(e.content||'')}</div>`;
+  } else if (secId === 'media') {
+    const imgHtml = e.fileDataURL
+      ? `<img src="${escAttr(e.fileDataURL)}" alt="${escHtml(e.fileName||'')}" style="max-width:100%;max-height:200px;border-radius:4px;border:1px solid var(--border);margin-bottom:6px;display:block;">`
+      : '';
+    body = `${imgHtml}<div class="entry-card-body">${escHtml(e.fileRef||e.fileName||'')} ${e.description ? '— '+escHtml(e.description) : ''}</div>`;
+  }
+
+  let pathHtml = '';
+  if (showPath && key) {
+    const parts = key.split('__');
+    const locus = getFullTree().find(l => l.id === parts[0]);
+    const topic = locus?.topics.find(t => t.id === parts[1]);
+    const stName = parts[2]?.replace(/_/g,' ');
+    pathHtml = `<div class="entry-locus-path">${escHtml(locus?.name||'')} › ${escHtml(topic?.name||'')} › ${escHtml(stName||'')} <span class="sr-sec-badge">${sec ? sec.icon+' '+sec.name : secId}</span></div>`;
+  }
+
+  return `<div class="entry-card${e.pinned?' pinned':''}" id="ec_${e.id}">
+    ${pathHtml}
+    <div class="entry-card-top">
+      <span class="entry-card-title">${escHtml(e.title||'(untitled)')}</span>
+      <div class="entry-card-actions">
+        <button class="entry-action-btn" onclick="togglePinEntry('${secId}','${e.id}','${escAttr(key||currentSubtopicKey)}')" title="${e.pinned?'Unpin':'Pin'}">⚑</button>
+        <button class="entry-action-btn" onclick="openEditModal('${secId}','${e.id}','${escAttr(key||currentSubtopicKey)}')" title="Edit">✎</button>
+        <button class="entry-action-btn del" onclick="confirmDelete('${secId}','${e.id}','${escAttr(key||currentSubtopicKey)}')" title="Delete">✕</button>
+      </div>
+    </div>
+    <div>${body}</div>
+    ${tagsHtml ? `<div class="entry-tags">${tagsHtml}</div>` : ''}
+  </div>`;
+}
+
+/* ============================================================
+   TAG VIEW
+============================================================ */
+function renderTagView() {
+  hideAllViews();
+  document.getElementById('tag-view').style.display = 'block';
+  document.getElementById('breadcrumb').innerHTML = `<span class="bc-item current">Browse by Tag</span>`;
+  _buildTagView();
+}
+
+function _buildTagView() {
+  const el = document.getElementById('tag-view');
+  // gather tag → entries map
+  const tagMap = {};
+  allEntries().forEach(({stKey, secId, entry}) => {
+    (entry.tags||[]).forEach(t => {
+      if (!tagMap[t]) tagMap[t] = [];
+      tagMap[t].push({stKey, secId, entry});
+    });
+  });
+  const sortedTags = Object.keys(tagMap).sort();
+
+  if (!sortedTags.length) {
+    el.innerHTML = `<h2>Browse by Tag</h2><div class="empty-state">No tags yet. Add entries with tags to browse here.</div>`;
+    return;
+  }
+
+  let pillsHtml = sortedTags.map(t => {
+    const cnt = tagMap[t].length;
+    return `<div class="tag-index-pill${activeTagFilter===t?' active':''}" onclick="setTagFilter('${escAttr(t)}')">
+      ${escHtml(t)} <span class="tag-count-badge">${cnt}</span>
+    </div>`;
+  }).join('');
+
+  let resultsHtml = '';
+  if (activeTagFilter && tagMap[activeTagFilter]) {
+    const items = tagMap[activeTagFilter];
+    resultsHtml = `<div class="tag-results-header">— ${escHtml(activeTagFilter)} — ${items.length} entr${items.length!==1?'ies':'y'}</div>`;
+    resultsHtml += items.map(({stKey, secId, entry}) => renderEntryCard(entry, secId, stKey, true)).join('');
+  } else if (activeTagFilter) {
+    resultsHtml = `<div class="empty-state">No entries for tag "${escHtml(activeTagFilter)}".</div>`;
+  } else {
+    resultsHtml = `<div class="empty-state" style="padding:16px 0;">Select a tag above to see all entries with that tag.</div>`;
+  }
+
+  el.innerHTML = `<h2>Browse by Tag</h2>
+    <div class="tag-index-grid">${pillsHtml}</div>
+    <div id="tag-results">${resultsHtml}</div>`;
+}
+
+function setTagFilter(tag) {
+  activeTagFilter = (activeTagFilter === tag) ? null : tag;
+  _buildTagView();
+}
+
+function filterByTag(tag) {
+  activeTagFilter = tag;
+  currentTab = 'tags';
+  ['loki','tags','resource'].forEach(t => document.getElementById('tab-'+t).classList.toggle('active', t === 'tags'));
+  renderTagView();
+}
+
+/* ============================================================
+   RESOURCE / TYPE VIEW
+============================================================ */
+function renderResourceView() {
+  hideAllViews();
+  document.getElementById('resource-view').style.display = 'block';
+  document.getElementById('breadcrumb').innerHTML = `<span class="bc-item current">Browse by Resource Type</span>`;
+  _buildResourceView();
+}
+
+function _buildResourceView() {
+  const el = document.getElementById('resource-view');
+
+  // Filter bar
+  const filterBtns = SECTIONS.map(s =>
+    `<button class="res-filter-btn${activeResFilters.has(s.id)?' active':''}" onclick="toggleResFilter('${s.id}')">
+      ${s.icon} ${s.name.replace(' / Resources','').replace(' / Bookmarks','')}
+    </button>`
+  ).join('');
+
+  // Sort options
+  const sortOpts = `<select class="res-sort-select" id="res-sort" onchange="resSortBy=this.value;_buildResourceView()">
+    <option value="created"${resSortBy==='created'?' selected':''}>Newest</option>
+    <option value="title"${resSortBy==='title'?' selected':''}>Title A–Z</option>
+    <option value="author"${resSortBy==='author'?' selected':''}>Author</option>
+    <option value="section"${resSortBy==='section'?' selected':''}>Type</option>
+  </select>`;
+
+  // Gather entries
+  let entries = allEntries().filter(({secId}) => activeResFilters.has(secId));
+
+  // Text search
+  if (resSearchQuery) {
+    const ql = resSearchQuery.toLowerCase();
+    entries = entries.filter(({entry}) => JSON.stringify(entry).toLowerCase().includes(ql));
+  }
+
+  // Sort
+  if (resSortBy === 'title') entries.sort((a,b) => (a.entry.title||'').localeCompare(b.entry.title||''));
+  else if (resSortBy === 'author') entries.sort((a,b) => (a.entry.author||'').localeCompare(b.entry.author||''));
+  else if (resSortBy === 'section') entries.sort((a,b) => a.secId.localeCompare(b.secId));
+  else entries.sort((a,b) => (b.entry.created||0) - (a.entry.created||0));
+
+  const entriesHtml = entries.length
+    ? entries.map(({stKey, secId, entry}) => renderEntryCard(entry, secId, stKey, true)).join('')
+    : `<div class="empty-state">No entries match the current filters.</div>`;
+
+  el.innerHTML = `<h2>Browse by Resource Type</h2>
+    <div class="resource-filter-bar">
+      ${filterBtns}
+      <div class="res-sort-wrap">
+        <span class="res-sort-label">Sort:</span>
+        ${sortOpts}
+      </div>
+    </div>
+    <div class="resource-filter-bar" style="margin-top:-6px;margin-bottom:12px;">
+      <div class="res-search-wrap">
+        <input class="res-search" id="res-search-input" type="text" placeholder="Search within filtered results…"
+          value="${escHtml(resSearchQuery)}" oninput="resSearchQuery=this.value;_buildResourceView()">
+        <span class="search-icon" style="font-size:12px;">⌕</span>
+      </div>
+      <span style="font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:.08em;color:var(--text3);margin-left:8px;">${entries.length} result${entries.length!==1?'s':''}</span>
+    </div>
+    <div id="res-results">${entriesHtml}</div>`;
+}
+
+function toggleResFilter(secId) {
+  if (activeResFilters.has(secId)) {
+    if (activeResFilters.size > 1) activeResFilters.delete(secId);
+  } else {
+    activeResFilters.add(secId);
+  }
+  _buildResourceView();
+}
+
+/* ============================================================
+   QUICK ADD MODAL (no sidebar navigation required)
+============================================================ */
+function openQuickAddModal() {
+  const tree = getFullTree();
+  // Build locus options
+  const locusOpts = tree.map(l => `<option value="${l.id}">${escHtml(l.name)}</option>`).join('');
+  document.getElementById('modal-title').textContent = 'Quick Add Entry';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="quick-add-path">
+      <div class="qa-field-wrap">
+        <label class="form-label">Locus</label>
+        <div class="qa-row">
+          <select class="form-select" id="qa_locus" onchange="updateQATopics()">${locusOpts}</select>
+          <button class="qa-add-btn" onclick="toggleQAInline('locus')" title="Add new locus">+</button>
+        </div>
+        <div class="qa-inline-form" id="qa_inline_locus">
+          <input type="text" id="qa_new_locus" placeholder="New locus name…" onkeydown="if(event.key==='Enter')saveQALocus()">
+          <button class="btn btn-primary" onclick="saveQALocus()">Add</button>
+          <button class="btn btn-secondary" onclick="toggleQAInline('locus',false)">✕</button>
+        </div>
+      </div>
+      <div class="qa-field-wrap">
+        <label class="form-label">Topic</label>
+        <div class="qa-row">
+          <select class="form-select" id="qa_topic" onchange="updateQASubtopics()"></select>
+          <button class="qa-add-btn" onclick="toggleQAInline('topic')" title="Add new topic">+</button>
+        </div>
+        <div class="qa-inline-form" id="qa_inline_topic">
+          <input type="text" id="qa_new_topic" placeholder="New topic name…" onkeydown="if(event.key==='Enter')saveQATopic()">
+          <button class="btn btn-primary" onclick="saveQATopic()">Add</button>
+          <button class="btn btn-secondary" onclick="toggleQAInline('topic',false)">✕</button>
+        </div>
+      </div>
+      <div class="qa-field-wrap">
+        <label class="form-label">Subtopic</label>
+        <div class="qa-row">
+          <select class="form-select" id="qa_subtopic"></select>
+          <button class="qa-add-btn" onclick="toggleQAInline('subtopic')" title="Add new subtopic">+</button>
+        </div>
+        <div class="qa-inline-form" id="qa_inline_subtopic">
+          <input type="text" id="qa_new_subtopic" placeholder="New subtopic name…" onkeydown="if(event.key==='Enter')saveQASubtopic()">
+          <button class="btn btn-primary" onclick="saveQASubtopic()">Add</button>
+          <button class="btn btn-secondary" onclick="toggleQAInline('subtopic',false)">✕</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Resource Type</label>
+      <select class="form-select" id="qa_section" onchange="updateQAForm()">
+        ${SECTIONS.map(s => `<option value="${s.id}">${s.icon} ${s.name}</option>`).join('')}
+      </select>
+    </div>
+    <div id="qa_form"></div>`;
+  modalState = { mode: 'quickAdd' };
+  updateQATopics();
+  updateQAForm();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function updateQATopics() {
+  const locusId = document.getElementById('qa_locus')?.value;
+  const locus = getFullTree().find(l => l.id === locusId);
+  if (!locus) return;
+  const sel = document.getElementById('qa_topic');
+  sel.innerHTML = locus.topics.map(t => `<option value="${t.id}">${escHtml(t.name)}</option>`).join('');
+  updateQASubtopics();
+}
+function updateQASubtopics() {
+  const locusId = document.getElementById('qa_locus')?.value;
+  const topicId = document.getElementById('qa_topic')?.value;
+  const locus = getFullTree().find(l => l.id === locusId);
+  const topic = locus?.topics.find(t => t.id === topicId);
+  if (!topic) return;
+  const sel = document.getElementById('qa_subtopic');
+  sel.innerHTML = topic.subtopics.map(st => `<option value="${escAttr(st)}">${escHtml(st)}</option>`).join('');
+}
+
+/* ============================================================
+   QUICK ADD INLINE + BUTTONS
+============================================================ */
+function toggleQAInline(type, forceOpen) {
+  const el = document.getElementById('qa_inline_' + type);
+  if (!el) return;
+  const isOpen = el.classList.contains('open');
+  const shouldOpen = forceOpen !== undefined ? forceOpen : !isOpen;
+  el.classList.toggle('open', shouldOpen);
+  if (shouldOpen) {
+    const inp = document.getElementById('qa_new_' + type);
+    if (inp) { inp.value = ''; setTimeout(() => inp.focus(), 50); }
+  }
+}
+
+function saveQALocus() {
+  const name = document.getElementById('qa_new_locus')?.value.trim();
+  if (!name) return;
+  const newId = 'lc_' + Date.now().toString(36);
+  CUSTOM_TREE.push({ id: newId, name, topics: [] });
+  saveCustomTree();
+  toggleQAInline('locus', false);
+  // Rebuild locus dropdown and select new one
+  const sel = document.getElementById('qa_locus');
+  if (sel) {
+    const opt = document.createElement('option');
+    opt.value = newId; opt.textContent = name; opt.selected = true;
+    sel.appendChild(opt);
+    updateQATopics();
+  }
+  renderTree(); updateStats();
+}
+
+function saveQATopic() {
+  const name = document.getElementById('qa_new_topic')?.value.trim();
+  const locusId = document.getElementById('qa_locus')?.value;
+  if (!name || !locusId) return;
+  const tree = getFullTree();
+  const locus = tree.find(l => l.id === locusId);
+  if (!locus) return;
+  const newId = 't_' + Date.now().toString(36);
+  locus.topics.push({ id: newId, name, subtopics: [] });
+  const isCustom = CUSTOM_TREE.find(l => l.id === locusId);
+  if (!isCustom) { const dl = DEFAULT_TREE.find(l => l.id === locusId); if (dl) dl.topics.push({ id: newId, name, subtopics: [] }); }
+  saveCustomTree();
+  toggleQAInline('topic', false);
+  // Rebuild topic dropdown and select new one
+  const sel = document.getElementById('qa_topic');
+  if (sel) {
+    const opt = document.createElement('option');
+    opt.value = newId; opt.textContent = name; opt.selected = true;
+    sel.appendChild(opt);
+    updateQASubtopics();
+  }
+  renderTree(); updateStats();
+}
+
+function saveQASubtopic() {
+  const name = document.getElementById('qa_new_subtopic')?.value.trim();
+  const locusId = document.getElementById('qa_locus')?.value;
+  const topicId = document.getElementById('qa_topic')?.value;
+  if (!name || !locusId || !topicId) return;
+  const tree = getFullTree();
+  const locus = tree.find(l => l.id === locusId);
+  const topic = locus?.topics.find(t => t.id === topicId);
+  if (!topic) return;
+  topic.subtopics.push(name);
+  saveCustomTree();
+  toggleQAInline('subtopic', false);
+  // Rebuild subtopic dropdown and select new one
+  const sel = document.getElementById('qa_subtopic');
+  if (sel) {
+    const opt = document.createElement('option');
+    opt.value = name; opt.textContent = name; opt.selected = true;
+    sel.appendChild(opt);
+  }
+  renderTree();
+}
+function updateQAForm() {
+  const secId = document.getElementById('qa_section')?.value;
+  if (!secId) return;
+  document.getElementById('qa_form').innerHTML = buildFormHtml(secId, null);
+}
+
+/* ============================================================
+   MODAL FORMS
+============================================================ */
+const SECTION_FIELDS = {
+  quotations:   ['title','quote','author','source','page','tags','notes'],
+  confessional: ['title','text','confession','chapter','tags','notes'],
+  books:        ['title','author','link','tags','notes'],
+  websites:     ['title','url','description','tags'],
+  scripture:    ['title','reference','verseText','verseType','tags','notes'],
+  arguments:    ['title','position','claim','supportingScripture','objections','responses','tags','notes'],
+  notes:        ['title','content','tags'],
+  media:        ['title','fileRef','description','tags'],
+};
+
+function buildFormHtml(secId, existing) {
+  const ev = existing || {};
+  const field = (id, label, type='input', opts=[]) => {
+    const v = ev[id] || '';
+    const lbl = `<label class="form-label">${label}</label>`;
+    if (type === 'textarea') return `<div class="form-group">${lbl}<textarea class="form-textarea" id="f_${id}" placeholder="${label}">${escHtml(v)}</textarea></div>`;
+    if (type === 'select')   return `<div class="form-group">${lbl}<select class="form-select" id="f_${id}">${opts.map(o=>`<option value="${o}"${v===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
+    if (type === 'tags')     return buildTagInputHtml(id, Array.isArray(v)?v:(v?v.split(',').map(t=>t.trim()).filter(Boolean):[]));
+    return `<div class="form-group">${lbl}<input class="form-input" id="f_${id}" type="text" placeholder="${label}" value="${escHtml(v)}"></div>`;
+  };
+  let html = '';
+  if (secId === 'quotations')   html = field('title','Title') + field('quote','Quote Text','textarea') + `<div class="form-row">` + field('author','Author') + field('source','Source (Book)') + `</div>` + field('page','Page Number') + field('tags','Tags','tags') + field('notes','Notes','textarea');
+  else if (secId === 'confessional') html = field('title','Title') + field('text','Text','textarea') + `<div class="form-row">` + field('confession','Confession Name') + field('chapter','Chapter / Section') + `</div>` + field('tags','Tags','tags') + field('notes','Notes','textarea');
+  else if (secId === 'books')        html = field('title','Title') + field('author','Author') + field('link','URL / Link') + field('tags','Tags','tags') + field('notes','Notes','textarea');
+  else if (secId === 'websites')     html = field('title','Title') + field('url','URL') + field('description','Description','textarea') + field('tags','Tags','tags');
+  else if (secId === 'scripture')    html = field('title','Label / Title') + `<div class="form-row">` + field('reference','Reference (e.g. Rom 5:1)') + field('verseType','Type','select',['proof','typological','disputed']) + `</div>` + field('verseText','Verse Text','textarea') + field('tags','Tags','tags') + field('notes','Notes','textarea');
+  else if (secId === 'arguments')    html = field('title','Title') + field('position','Position') + field('claim','Claim','textarea') + field('supportingScripture','Supporting Scripture') + field('objections','Objections','textarea') + field('responses','Responses','textarea') + field('tags','Tags','tags');
+  else if (secId === 'notes')        html = field('title','Title') + field('content','Content','textarea') + field('tags','Tags','tags');
+  else if (secId === 'media')        html = field('title','Title') + buildFileUploadHtml(ev) + field('fileRef','File Reference / URL (optional)') + field('description','Description','textarea') + field('tags','Tags','tags');
+  return html;
+}
+
+/* ============================================================
+   FILE UPLOAD
+============================================================ */
+function buildFileUploadHtml(existing) {
+  // Reset pending file state
+  window._pendingFileDataURL = (existing && existing.fileDataURL) || '';
+  window._pendingFileName = (existing && existing.fileName) || '';
+  const existingPreview = (existing && existing.fileDataURL)
+    ? `<div class="file-preview-row" id="file-preview-row">
+        <img class="file-preview-img" src="${escAttr(existing.fileDataURL)}" alt="${escHtml(existing.fileName||'')}">
+        <div class="file-preview-info">
+          <div class="file-preview-name">${escHtml(existing.fileName||'Attached file')}</div>
+        </div>
+        <button class="file-preview-remove" onclick="clearFileUpload()">✕</button>
+      </div>`
+    : '<div id="file-preview-row"></div>';
+  return `<div class="form-group">
+    <label class="form-label">Image / File Upload</label>
+    <div class="file-upload-zone" id="file-drop-zone"
+      ondragover="event.preventDefault();this.classList.add('dragover')"
+      ondragleave="this.classList.remove('dragover')"
+      ondrop="handleFileDrop(event)"
+      onclick="document.getElementById('f_file_input').click()">
+      <input type="file" id="f_file_input" accept="image/*,.pdf,.txt" style="display:none" onchange="handleFileSelect(this)">
+      Drop image/file here or <strong>click to browse</strong>
+    </div>
+    ${existingPreview}
+  </div>`;
+}
+
+function handleFileSelect(input) {
+  if (input.files && input.files[0]) processUploadedFile(input.files[0]);
+}
+function handleFileDrop(event) {
+  event.preventDefault();
+  document.getElementById('file-drop-zone')?.classList.remove('dragover');
+  const file = event.dataTransfer.files[0];
+  if (file) processUploadedFile(file);
+}
+function processUploadedFile(file) {
+  if (file.size > 5 * 1024 * 1024) { alert('File too large — max 5 MB.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    window._pendingFileDataURL = e.target.result;
+    window._pendingFileName = file.name;
+    const isImage = file.type.startsWith('image/');
+    const row = document.getElementById('file-preview-row');
+    if (row) row.innerHTML = `<div class="file-preview-row">
+      ${isImage ? `<img class="file-preview-img" src="${e.target.result}" alt="${escHtml(file.name)}">` : '<span style="font-size:24px;">📄</span>'}
+      <div class="file-preview-info">
+        <div class="file-preview-name">${escHtml(file.name)}</div>
+        <div class="file-preview-size">${(file.size/1024).toFixed(1)} KB</div>
+      </div>
+      <button class="file-preview-remove" onclick="clearFileUpload()">✕</button>
+    </div>`;
+  };
+  reader.readAsDataURL(file);
+}
+function clearFileUpload() {
+  window._pendingFileDataURL = '';
+  window._pendingFileName = '';
+  const row = document.getElementById('file-preview-row');
+  if (row) row.innerHTML = '';
+  const inp = document.getElementById('f_file_input');
+  if (inp) inp.value = '';
+}
+
+/* ============================================================
+   TAG INPUT WIDGET
+============================================================ */
+function buildTagInputHtml(fieldId, existingTags) {
+  const tagsJson = JSON.stringify(existingTags).replace(/"/g,'&quot;');
+  return `<div class="form-group">
+    <label class="form-label">Tags</label>
+    <div class="tag-input-container" id="tic_${fieldId}">
+      <div class="tag-input-wrap" id="tiw_${fieldId}" onclick="focusTagInput('${fieldId}')">
+        ${existingTags.map(t => `<span class="tag-pill" data-tag="${escAttr(t)}">${escHtml(t)}<button class="tag-pill-remove" onclick="removeTag('${fieldId}','${escAttr(t)}')">×</button></span>`).join('')}
+        <input class="tag-text-input" id="f_tags_${fieldId}" placeholder="Type or pick a tag…"
+          oninput="showTagDropdown('${fieldId}',this.value)"
+          onkeydown="tagKeyDown(event,'${fieldId}')"
+          onfocus="showTagDropdown('${fieldId}',this.value)"
+        >
+      </div>
+      <div class="tag-dropdown" id="tdd_${fieldId}" style="display:none;"></div>
+    </div>
+    <input type="hidden" id="f_tags" data-tags-for="${fieldId}">
+  </div>`;
+}
+
+function focusTagInput(fieldId) { document.getElementById('f_tags_'+fieldId)?.focus(); }
+
+function showTagDropdown(fieldId, query) {
+  const dd = document.getElementById('tdd_'+fieldId);
+  if (!dd) return;
+  const existing = getTagsFromWidget(fieldId);
+  const ql = query.toLowerCase();
+  const allT = [...new Set([...DEFAULT_TAGS, ...allTags()])].sort();
+  const filtered = allT.filter(t => !existing.includes(t) && t.toLowerCase().includes(ql));
+  if (!filtered.length) { dd.style.display = 'none'; return; }
+  dd.innerHTML = filtered.map(t => `<div class="tag-dropdown-item" onmousedown="addTagFromDropdown('${fieldId}','${escAttr(t)}')">${escHtml(t)}</div>`).join('');
+  dd.style.display = 'block';
+}
+
+function addTagFromDropdown(fieldId, tag) {
+  addTagToWidget(fieldId, tag);
+  const inp = document.getElementById('f_tags_'+fieldId);
+  if (inp) inp.value = '';
+  const dd = document.getElementById('tdd_'+fieldId);
+  if (dd) dd.style.display = 'none';
+  // re-show dropdown for next pick
+  setTimeout(() => { if (inp) { inp.focus(); showTagDropdown(fieldId, ''); } }, 50);
+}
+
+function addTagToWidget(fieldId, tag) {
+  tag = tag.trim();
+  if (!tag) return;
+  const existing = getTagsFromWidget(fieldId);
+  if (existing.includes(tag)) return;
+  const wrap = document.getElementById('tiw_'+fieldId);
+  if (!wrap) return;
+  const inp = document.getElementById('f_tags_'+fieldId);
+  const pill = document.createElement('span');
+  pill.className = 'tag-pill';
+  pill.dataset.tag = tag;
+  pill.innerHTML = `${escHtml(tag)}<button class="tag-pill-remove" onclick="removeTag('${fieldId}','${escAttr(tag)}')">×</button>`;
+  wrap.insertBefore(pill, inp);
+}
+
+function removeTag(fieldId, tag) {
+  const wrap = document.getElementById('tiw_'+fieldId);
+  if (!wrap) return;
+  const pills = wrap.querySelectorAll('.tag-pill[data-tag]');
+  pills.forEach(p => { if (p.dataset.tag === tag) p.remove(); });
+}
+
+function tagKeyDown(e, fieldId) {
+  const inp = document.getElementById('f_tags_'+fieldId);
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = inp.value.trim().replace(/,/g,'');
+    if (val) { addTagToWidget(fieldId, val); inp.value = ''; showTagDropdown(fieldId,''); }
+  } else if (e.key === 'Escape') {
+    const dd = document.getElementById('tdd_'+fieldId);
+    if (dd) dd.style.display = 'none';
+  }
+}
+
+function getTagsFromWidget(fieldId) {
+  const wrap = document.getElementById('tiw_'+fieldId);
+  if (!wrap) return [];
+  return [...wrap.querySelectorAll('.tag-pill[data-tag]')].map(p => p.dataset.tag);
+}
+
+// Hide dropdowns when clicking outside
+document.addEventListener('click', e => {
+  document.querySelectorAll('.tag-dropdown').forEach(dd => {
+    if (!dd.closest('.tag-input-container')?.contains(e.target)) dd.style.display = 'none';
+  });
+});
+
+/* ============================================================
+   GATHER FORM DATA
+============================================================ */
+function gatherFormData(secId) {
+  const get = id => { const el = document.getElementById('f_'+id); return el ? el.value.trim() : ''; };
+  // Tags can come from widget or legacy text input
+  let tags = [];
+  const tagWidgetWrap = document.querySelector('.tag-input-wrap');
+  if (tagWidgetWrap) {
+    // find the fieldId from the wrap's id: "tiw_tags"
+    const fieldId = tagWidgetWrap.id.replace('tiw_','');
+    tags = getTagsFromWidget(fieldId);
+  } else {
+    tags = get('tags').split(',').map(t=>t.trim()).filter(Boolean);
+  }
+  const base = { title: get('title'), tags };
+  if (secId === 'quotations')   return {...base, quote: get('quote'), author: get('author'), source: get('source'), page: get('page'), notes: get('notes') };
+  if (secId === 'confessional') return {...base, text: get('text'), confession: get('confession'), chapter: get('chapter'), notes: get('notes') };
+  if (secId === 'books')        return {...base, author: get('author'), link: get('link'), notes: get('notes') };
+  if (secId === 'websites')     return {...base, url: get('url'), description: get('description') };
+  if (secId === 'scripture')    return {...base, reference: get('reference'), verseText: get('verseText'), verseType: get('verseType'), notes: get('notes') };
+  if (secId === 'arguments')    return {...base, position: get('position'), claim: get('claim'), supportingScripture: get('supportingScripture'), objections: get('objections'), responses: get('responses') };
+  if (secId === 'notes')        return {...base, content: get('content') };
+  if (secId === 'media')        return {...base, fileRef: get('fileRef'), description: get('description'), fileDataURL: window._pendingFileDataURL||'', fileName: window._pendingFileName||'' };
+  return base;
+}
+
+/* ============================================================
+   MODAL OPEN / SAVE / CLOSE
+============================================================ */
+function openAddModal(secId) {
+  const sec = SECTIONS.find(s => s.id === secId);
+  modalState = { mode:'add', subtopicKey: currentSubtopicKey, sectionId: secId };
+  document.getElementById('modal-title').textContent = `Add ${sec.name}`;
+  document.getElementById('modal-body').innerHTML = buildFormHtml(secId, null);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openEditModal(secId, entryId, stKey) {
+  const key = stKey || currentSubtopicKey;
+  const entries = getEntries(key, secId);
+  const entry = entries.find(e => e.id === entryId);
+  if (!entry) return;
+  const sec = SECTIONS.find(s => s.id === secId);
+  modalState = { mode:'edit', subtopicKey: key, sectionId: secId, entryId };
+  // Pre-load file state for media entries
+  window._pendingFileDataURL = entry.fileDataURL || '';
+  window._pendingFileName = entry.fileName || '';
+  document.getElementById('modal-title').textContent = `Edit ${sec.name}`;
+  document.getElementById('modal-body').innerHTML = buildFormHtml(secId, entry);
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function saveModalEntry() {
+  if (!modalState) return;
+
+  if (modalState.mode === 'addNode') { saveAddNode(); return; }
+
+  if (modalState.mode === 'quickAdd') {
+    const locusId   = document.getElementById('qa_locus')?.value;
+    const topicId   = document.getElementById('qa_topic')?.value;
+    const stName    = document.getElementById('qa_subtopic')?.value;
+    const secId     = document.getElementById('qa_section')?.value;
+    if (!locusId || !topicId || !stName || !secId) return;
+    const key = subtopicKey(locusId, topicId, stName);
+    const data = gatherFormData(secId);
+    addEntry(key, secId, data);
+    closeModal();
+    updateStats();
+    // If we're currently on that subtopic, refresh the view
+    if (currentSubtopicKey === key) renderSubtopicView();
+    // If resource or tag view is showing, refresh it
+    if (currentTab === 'tags') _buildTagView();
+    if (currentTab === 'resource') _buildResourceView();
+    return;
+  }
+
+  const data = gatherFormData(modalState.sectionId);
+  if (modalState.mode === 'add') {
+    addEntry(modalState.subtopicKey, modalState.sectionId, data);
+  } else {
+    updateEntry(modalState.subtopicKey, modalState.sectionId, modalState.entryId, data);
+  }
+  closeModal();
+  if (currentSubtopicKey === modalState.subtopicKey) renderSubtopicView();
+  if (currentTab === 'tags') _buildTagView();
+  if (currentTab === 'resource') _buildResourceView();
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  modalState = null;
+  window._pendingFileDataURL = '';
+  window._pendingFileName = '';
+}
+function closeModalOnOverlay(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+function confirmDelete(secId, entryId, stKey) {
+  const key = stKey || currentSubtopicKey;
+  if (confirm('Delete this entry?')) {
+    deleteEntry(key, secId, entryId);
+    if (currentSubtopicKey === key) renderSubtopicView();
+    if (currentTab === 'tags') _buildTagView();
+    if (currentTab === 'resource') _buildResourceView();
+  }
+}
+
+function togglePinEntry(secId, entryId, stKey) {
+  const key = stKey || currentSubtopicKey;
+  togglePin(key, secId, entryId);
+  if (currentSubtopicKey === key) renderSubtopicView();
+  if (currentTab === 'tags') _buildTagView();
+  if (currentTab === 'resource') _buildResourceView();
+}
+
+/* ============================================================
+   GLOBAL SEARCH
+============================================================ */
+let searchTimeout;
+function handleGlobalSearch(q) {
+  clearTimeout(searchTimeout);
+  if (!q.trim()) { if (currentSubtopicKey) showSubtopicView(); else showWelcome(); return; }
+  searchTimeout = setTimeout(() => performSearch(q.trim()), 250);
+}
+
+function performSearch(q) {
+  hideAllViews();
+  const ql = q.toLowerCase();
+  const results = [];
+  allEntries().forEach(({stKey, secId, entry}) => {
+    const text = JSON.stringify(entry).toLowerCase();
+    if (text.includes(ql)) {
+      const parts = stKey.split('__');
+      const locus = getFullTree().find(l => l.id === parts[0]);
+      const topic  = locus?.topics.find(t => t.id === parts[1]);
+      const stName = parts[2]?.replace(/_/g,' ');
+      results.push({ stKey, secId, entry, locusName: locus?.name||parts[0], topicName: topic?.name||parts[1], stName });
+    }
+  });
+  const sec = document.getElementById('search-results');
+  sec.style.display = 'block';
+  if (!results.length) {
+    sec.innerHTML = `<h2>Search: "${escHtml(q)}"</h2><div class="empty-state">No results found.</div>`;
+    return;
+  }
+  sec.innerHTML = `<h2>Search: "${escHtml(q)}" &nbsp;<span style="color:var(--text3);font-size:13px;">${results.length} result${results.length!==1?'s':''}</span></h2>` +
+    results.map(r => {
+      const snippet = JSON.stringify(r.entry).replace(/["{}\[\]]/g,' ').substring(0,120);
+      return `<div class="search-result-item" onclick="goToEntry('${escAttr(r.stKey)}','${escAttr(r.locusName)}','${escAttr(r.topicName)}','${escAttr(r.stName||'')}')">
+        <div class="sr-path">${escHtml(r.locusName)} › ${escHtml(r.topicName)} › ${escHtml(r.stName||'')} › ${escHtml(r.secId)}</div>
+        <div class="sr-title">${escHtml(r.entry.title||'(untitled)')}</div>
+        <div class="sr-snippet">${escHtml(snippet)}…</div>
+      </div>`;
+    }).join('');
+  document.getElementById('breadcrumb').innerHTML = `<span class="bc-item current">Search: ${escHtml(q)}</span>`;
+}
+
+function goToEntry(stKey, locusName, topicName, stName) {
+  const parts = stKey.split('__');
+  selectSubtopic(parts[0], parts[1], stName.replace(/_/g,' '), locusName, topicName);
+}
+
+/* ============================================================
+   VIEWS
+============================================================ */
+function hideAllViews() {
+  ['welcome','subtopic-view','search-results','recent-view','tag-view','resource-view','compare-view'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+}
+function showWelcome() { hideAllViews(); document.getElementById('welcome').style.display = ''; updateStats(); }
+function showSubtopicView() { hideAllViews(); document.getElementById('subtopic-view').style.display = 'block'; }
+
+function showView(name) {
+  hideAllViews();
+  document.getElementById('breadcrumb').innerHTML = `<span class="bc-item current">${name.charAt(0).toUpperCase()+name.slice(1)}</span>`;
+  if (name === 'recent') {
+    const el = document.getElementById('recent-view');
+    el.style.display = 'block';
+    const all = allEntries().sort((a,b) => (b.entry.created||0)-(a.entry.created||0)).slice(0,30);
+    if (!all.length) { el.innerHTML = `<h2>Recently Added</h2><div class="empty-state">No entries yet.</div>`; return; }
+    el.innerHTML = `<h2>Recently Added</h2>` + all.map(({stKey, secId, entry}) => {
+      const parts = stKey.split('__');
+      const locus = getFullTree().find(l=>l.id===parts[0]);
+      const topic = locus?.topics.find(t=>t.id===parts[1]);
+      const stName = parts[2]?.replace(/_/g,' ');
+      return `<div class="search-result-item" onclick="goToEntry('${escAttr(stKey)}','${escAttr(locus?.name||'')}','${escAttr(topic?.name||'')}','${escAttr(stName||'')}')">
+        <div class="sr-path">${escHtml(locus?.name||'')} › ${escHtml(topic?.name||'')} › ${escHtml(stName||'')} › ${escHtml(secId)}</div>
+        <div class="sr-title">${escHtml(entry.title||'(untitled)')}</div>
+        <div class="sr-snippet" style="font-size:11px;color:var(--text3);">${new Date(entry.created||0).toLocaleDateString()}</div>
+      </div>`;
+    }).join('');
+  }
+  if (name === 'compare') {
+    const el = document.getElementById('compare-view');
+    el.style.display = 'flex';
+    const opts = [];
+    getFullTree().forEach(l => l.topics.forEach(t => t.subtopics.forEach(st => {
+      const k = subtopicKey(l.id, t.id, st);
+      opts.push(`<option value="${escAttr(k)}|${escAttr(l.name)}|${escAttr(t.name)}|${escAttr(st)}">${escHtml(l.name)} › ${escHtml(t.name)} › ${escHtml(st)}</option>`);
+    })));
+    el.innerHTML = `<h2>Compare Subtopics</h2>
+    <div class="compare-controls">
+      <select class="form-select" id="cmp-left" style="flex:1;">${opts.join('')}</select>
+      <select class="form-select" id="cmp-right" style="flex:1;">${opts.join('')}</select>
+      <button class="btn btn-primary" onclick="renderCompare()">Compare</button>
+    </div>
+    <div class="compare-columns" id="cmp-cols"><div class="empty-state" style="flex:1;">Select two subtopics and click Compare.</div></div>`;
+  }
+}
+
+function renderCompare() {
+  const lv = document.getElementById('cmp-left').value;
+  const rv = document.getElementById('cmp-right').value;
+  const parse = v => { const [key,ln,tn,st] = v.split('|'); return {key,ln,tn,st}; };
+  const L = parse(lv), R = parse(rv);
+  const col = (side) => `<div class="compare-col">
+    <div class="compare-col-header">${escHtml(side.ln)} › ${escHtml(side.st)}</div>
+    ${SECTIONS.map(s => {
+      const entries = getEntries(side.key, s.id);
+      return `<div class="section-block" style="margin-bottom:10px;">
+        <div class="section-header" style="cursor:default;">
+          <span class="section-icon">${s.icon}</span><span class="section-name">${s.name}</span><span class="section-count">${entries.length}</span>
+        </div>
+        ${entries.length ? `<div class="section-body">${entries.map(e=>renderEntryCard(e,s.id,side.key)).join('')}</div>` : ''}
+      </div>`;
+    }).join('')}
+  </div>`;
+  document.getElementById('cmp-cols').innerHTML = col(L) + col(R);
+}
+
+/* ============================================================
+   IMPORT / EXPORT
+============================================================ */
+function exportData() {
+  const blob = new Blob([JSON.stringify(DB, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `reformed-kb-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      DB = {...DB, ...imported};
+      saveData(DB);
+      if (currentSubtopicKey) renderSubtopicView();
+      updateStats();
+      alert('Import successful!');
+    } catch(err) { alert('Invalid JSON file.'); }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+/* ============================================================
+   MOBILE
+============================================================ */
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+function closeSidebarMobile() { if (window.innerWidth <= 520) document.getElementById('sidebar').classList.remove('open'); }
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+function escHtml(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(s) { if (!s) return ''; return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+/* ============================================================
+   INIT
+============================================================ */
+renderTree();
+updateStats();
+</script>
+</body>
+</html>
