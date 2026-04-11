@@ -220,8 +220,8 @@
     min-height: 100%; gap: 24px; padding: 40px; text-align: center;
     box-sizing: border-box; max-width: 100%;
   }
-  #welcome-logo { width: 130px; height: 130px; clip-path: circle(46% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 28px rgba(200,134,10,.75)); flex-shrink: 0; }
-  #welcome h1 { font-family: 'Cinzel', serif; font-size: 28px; letter-spacing: .18em; color: var(--gold2); text-transform: uppercase; overflow-wrap: break-word; word-break: break-word; max-width: 100%; }
+  #welcome-logo { width: 120px; height: 120px; clip-path: circle(46% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 28px rgba(200,134,10,.75)); flex-shrink: 0; }
+  #welcome h1 { font-family: 'Cinzel', serif; font-size: 26px; letter-spacing: .14em; color: var(--gold2); text-transform: uppercase; overflow-wrap: break-word; word-break: break-word; max-width: 100%; }
   #welcome p { font-family: 'EB Garamond', serif; font-style: italic; font-size: 18px; color: var(--text2); max-width: 480px; line-height: 1.7; }
   #welcome-stats { display: flex; gap: 36px; flex-wrap: wrap; justify-content: center; }
   .ws-stat { text-align: center; }
@@ -426,12 +426,12 @@
     :root { --sidebar-w: 240px; }
     #header-title { display: none; }
     .form-row { grid-template-columns: 1fr; }
-    #welcome { padding: 32px 24px; gap: 20px; }
+    #welcome { padding: 28px 20px; gap: 18px; justify-content: flex-start; }
     #welcome-stats { flex-wrap: wrap; gap: 20px; justify-content: center; }
-    #welcome h1 { font-size: 22px; letter-spacing: .12em; }
-    #welcome p { font-size: 16px; }
-    #welcome-logo { width: 100px; height: 100px; }
-    .ws-num { font-size: 28px; }
+    #welcome h1 { font-size: 20px; letter-spacing: .09em; }
+    #welcome p { font-size: 15px; }
+    #welcome-logo { width: 86px; height: 86px; }
+    .ws-num { font-size: 26px; }
   }
   @media (max-width: 520px) {
     :root { --header-h: 60px; }
@@ -439,12 +439,12 @@
     #sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,.5); }
     #menu-toggle { display: flex !important; }
     /* Welcome */
-    #welcome { gap: 16px; padding: 24px 18px 32px; justify-content: flex-start; padding-top: 28px; }
-    #welcome h1 { font-size: 20px; letter-spacing: .10em; }
-    #welcome p { font-size: 15px; }
-    #welcome-logo { width: 80px; height: 80px; }
-    #welcome-stats { gap: 20px; }
-    .ws-num { font-size: 24px; }
+    #welcome { gap: 14px; padding: 22px 16px 28px; justify-content: flex-start; }
+    #welcome h1 { font-size: 17px; letter-spacing: .06em; }
+    #welcome p { font-size: 14px; }
+    #welcome-logo { width: 72px; height: 72px; }
+    #welcome-stats { gap: 18px; }
+    .ws-num { font-size: 22px; }
     .ws-label { font-size: 11px; }
     /* View tabs */
     .view-tab { padding: 10px 18px; font-size: 12px; }
@@ -599,13 +599,23 @@
   }
   .qa-dest-recent-item, .qa-dest-result {
     display: block; width: 100%; text-align: left; background: none;
-    border: 1px solid var(--border); color: var(--text2);
-    font-family: 'EB Garamond', serif; font-size: 14px;
-    padding: 6px 10px; border-radius: 3px; cursor: pointer;
+    border: 1px solid var(--border);
+    padding: 7px 10px; border-radius: 3px; cursor: pointer;
     transition: all .15s; margin-bottom: 4px;
+    white-space: normal; word-break: break-word;
+  }
+  .qa-dest-recent-item:hover, .qa-dest-result:hover { border-color: var(--gold); background: rgba(212,160,23,.05); }
+  .qa-dest-result-path, .qa-dest-recent-path {
+    display: block; font-family: 'Rajdhani', sans-serif; font-size: 10px;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--text3); margin-bottom: 2px;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .qa-dest-recent-item:hover, .qa-dest-result:hover { border-color: var(--gold); color: var(--gold2); background: rgba(212,160,23,.05); }
+  .qa-dest-result-sub, .qa-dest-recent-sub {
+    display: block; font-family: 'EB Garamond', serif; font-size: 15px; color: var(--text2);
+    line-height: 1.3;
+  }
+  .qa-dest-recent-item:hover .qa-dest-recent-sub,
+  .qa-dest-result:hover .qa-dest-result-sub { color: var(--gold2); }
   #qa-dest-results .qa-dest-result:last-child { margin-bottom: 0; }
   .qa-no-results { font-size: 13px; color: var(--text3); padding: 4px 2px; font-style: italic; }
   .qa-create-dest {
@@ -1671,7 +1681,8 @@ function allDestPaths() {
   const out = [];
   getFullTree().forEach(l => l.topics.forEach(t => t.subtopics.forEach(st => {
     out.push({ locusId: l.id, topicId: t.id, stName: st,
-               label: `${l.name} › ${t.name} › ${st}` });
+               label: `${l.name} › ${t.name} › ${st}`,
+               parentLabel: `${l.name} › ${t.name}` });
   })));
   return out;
 }
@@ -1810,7 +1821,10 @@ function _qaDestSearch(q) {
   const filtered = paths.filter(p => p.label.toLowerCase().includes(ql));
   if (filtered.length) {
     results.innerHTML = filtered.slice(0, 12).map(p =>
-      `<button class="qa-dest-result" onclick="pickQADest('${escAttr(p.locusId)}','${escAttr(p.topicId)}','${escAttr(p.stName)}')">${escHtml(p.label)}</button>`
+      `<button class="qa-dest-result" onclick="pickQADest('${escAttr(p.locusId)}','${escAttr(p.topicId)}','${escAttr(p.stName)}')">
+        <span class="qa-dest-result-path">${escHtml(p.parentLabel)}</span>
+        <span class="qa-dest-result-sub">${escHtml(p.stName)}</span>
+      </button>`
     ).join('');
   } else {
     results.innerHTML = `<div class="qa-no-results">No match — use "Create new destination" below</div>`;
@@ -1833,8 +1847,14 @@ function _buildRecentDestsHtml() {
   if (!recent.length) return '';
   return `<div class="qa-recent-label">Recent</div>` +
     recent.map(r => {
-      const label = pathLabel(r.locusId, r.topicId, r.stName);
-      return `<button class="qa-dest-recent-item" onclick="pickQADest('${escAttr(r.locusId)}','${escAttr(r.topicId)}','${escAttr(r.stName)}')">${escHtml(label)}</button>`;
+      const tree = getFullTree();
+      const l = tree.find(x => x.id === r.locusId);
+      const t = l?.topics.find(x => x.id === r.topicId);
+      const parentLabel = `${l?.name || r.locusId} › ${t?.name || r.topicId}`;
+      return `<button class="qa-dest-recent-item" onclick="pickQADest('${escAttr(r.locusId)}','${escAttr(r.topicId)}','${escAttr(r.stName)}')">
+        <span class="qa-dest-recent-path">${escHtml(parentLabel)}</span>
+        <span class="qa-dest-recent-sub">${escHtml(r.stName)}</span>
+      </button>`;
     }).join('');
 }
 
