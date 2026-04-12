@@ -67,14 +67,29 @@
   #header-logo { width: 40px; height: 40px; flex-shrink: 0; clip-path: circle(49% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 9px rgba(200,134,10,.7)); }
   #header-title {
     font-family: 'Cinzel', serif;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
-    letter-spacing: .05em;
+    letter-spacing: .08em;
     color: var(--gold3);
     text-transform: none;
-    text-shadow: 0 0 10px rgba(224,123,0,.16), 0 0 24px rgba(212,160,23,.08);
+    text-shadow:
+      0 0 8px  rgba(240,192,64,.55),
+      0 0 18px rgba(224,123,0,.30),
+      0 0 36px rgba(212,160,23,.14),
+      0 1px 2px rgba(0,0,0,.7);
     white-space: nowrap;
     flex-shrink: 0;
+    position: relative;
+  }
+  #header-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold3), var(--amber), transparent);
+    opacity: .6;
   }
   #header-search-wrap { flex: 1; max-width: 420px; position: relative; margin: 0 auto; }
   #global-search {
@@ -241,9 +256,29 @@
     box-sizing: border-box; max-width: 100%;
   }
   #welcome-logo { width: 120px; height: 120px; clip-path: circle(49% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 28px rgba(200,134,10,.75)); flex-shrink: 0; }
-  #welcome h1 { font-family: 'Cinzel', serif; font-size: 26px; letter-spacing: .14em; color: var(--gold2); text-transform: uppercase; overflow-wrap: break-word; word-break: break-word; max-width: 100%; }
+  #welcome h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 30px;
+    letter-spacing: .16em;
+    background: linear-gradient(160deg, var(--gold3) 0%, var(--gold) 45%, var(--amber) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    filter: drop-shadow(0 0 12px rgba(212,160,23,.35));
+  }
   #welcome p { font-family: 'EB Garamond', serif; font-style: italic; font-size: 18px; color: var(--text2); max-width: 480px; line-height: 1.7; }
   #welcome-stats { display: flex; gap: 36px; flex-wrap: wrap; justify-content: center; }
+  .welcome-divider {
+    width: 160px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: .5;
+    flex-shrink: 0;
+  }
   .ws-stat { text-align: center; }
   .ws-num { font-family: 'Cinzel', serif; font-size: 32px; color: var(--gold); }
   .ws-label { font-family: 'Rajdhani', sans-serif; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text3); }
@@ -1023,7 +1058,7 @@
     .form-row { grid-template-columns: 1fr; }
     #welcome { padding: 28px 20px; gap: 18px; justify-content: flex-start; }
     #welcome-stats { flex-wrap: wrap; gap: 20px; justify-content: center; }
-    #welcome h1 { font-size: 20px; letter-spacing: .09em; }
+    #welcome h1 { font-size: 22px; letter-spacing: .09em; }
     #welcome p { font-size: 15px; }
     #welcome-logo { width: 86px; height: 86px; }
     .ws-num { font-size: 26px; }
@@ -1057,12 +1092,16 @@
       margin-left: 8px;
       margin-right: auto;
       font-family: 'Cinzel', serif;
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 700;
-      letter-spacing: .04em;
+      letter-spacing: .06em;
       text-transform: none;
       color: var(--gold3);
-      text-shadow: 0 0 12px rgba(224,123,0,.18), 0 0 30px rgba(212,160,23,.10);
+      text-shadow:
+        0 0 8px  rgba(240,192,64,.55),
+        0 0 18px rgba(224,123,0,.30),
+        0 0 36px rgba(212,160,23,.14),
+        0 1px 2px rgba(0,0,0,.7);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1099,7 +1138,7 @@
     #sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,.5); }
     /* Welcome */
     #welcome { gap: 14px; padding: 22px 16px 28px; justify-content: flex-start; }
-    #welcome h1 { font-size: 17px; letter-spacing: .06em; }
+    #welcome h1 { font-size: 18px; letter-spacing: .06em; }
     #welcome p { font-size: 14px; }
     #welcome-logo { width: 72px; height: 72px; }
     #welcome-stats { gap: 18px; }
@@ -1354,8 +1393,8 @@
 
   <!-- HEADER -->
   <header id="header">
-    <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
-    <img id="header-logo" src="logo.jpg" alt="5 Solas Archive">
+    <button id="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
+    <img id="header-logo" src="logo.jpg" alt="5 Solas Archive" onerror="this.style.display='none'">
     <span id="header-title">5 Solas Archive</span>
     <div id="header-search-wrap">
       <input type="text" id="global-search" placeholder="Search all references…" oninput="handleGlobalSearch(this.value)">
@@ -1402,9 +1441,10 @@
         <!-- PULL-TO-REFRESH INDICATOR -->
         <div id="ptr-indicator"><span id="ptr-icon">↓</span><span id="ptr-text">Pull to refresh</span></div>
         <div id="welcome" style="display:none">
-          <img id="welcome-logo" src="logo.jpg" alt="5 Solas Archive">
+          <img id="welcome-logo" src="logo.jpg" alt="5 Solas Archive" onerror="this.style.display='none'">
           <h1>5 Solas Archive</h1>
           <p>A Reformed reference tool for Scripture, confessions, quotes, books, and resources</p>
+          <div class="welcome-divider"></div>
           <div id="welcome-stats">
             <div class="ws-stat"><div class="ws-num" id="stat-loci">17</div><div class="ws-label">Loci</div></div>
             <div class="ws-stat"><div class="ws-num" id="stat-entries">0</div><div class="ws-label">Entries</div></div>
@@ -7026,7 +7066,6 @@ function toggleChromeMinimized() {
 normalizeExistingConfessionalEntries();
 seedDefaultConfessionalEntries();
 applyConfessionalCorrections();
-normalizeExistingConfessionalEntries();
 renderTree();
 updateStats();
 showLokiHome();
