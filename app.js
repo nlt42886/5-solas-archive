@@ -346,8 +346,9 @@ function renderSubtopicSectionSummary(stKey) {
 
 function switchTab(tab) {
   currentTab = tab;
-  ['loki','tags','resource'].forEach(t => {
-    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  ['loki','tags','resource','scripture'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if (el) el.classList.toggle('active', t === tab);
   });
   if (tab === 'loki') {
     if (currentSubtopicKey) {
@@ -359,12 +360,14 @@ function switchTab(tab) {
       openLocusPage(currentLocusViewId);
     } else {
       showLokiHome();
-setChromeMinimized(localStorage.getItem(CHROME_PREF_KEY) === '1');
+      setChromeMinimized(localStorage.getItem(CHROME_PREF_KEY) === '1');
     }
   } else if (tab === 'tags') {
     renderTagView();
   } else if (tab === 'resource') {
     renderResourceView();
+  } else if (tab === 'scripture') {
+    showScriptureIndex();
   }
 }
 
@@ -379,6 +382,7 @@ function showLokiHome() {
   const cards = getFullTree().map(locus => {
     const entryCount = countEntriesForLocus(locus.id);
     const populatedTopics = locus.topics.filter(t => countEntriesForTopic(locus.id, t.id) > 0).length;
+    const pct = locus.topics.length ? Math.round(populatedTopics / locus.topics.length * 100) : 0;
     return `<div class="locus-overview-card" onclick="openLocusPage('${escAttr(locus.id)}')">
       <div class="locus-overview-name">${escHtml(locus.name)}</div>
       <div class="locus-overview-meta">
@@ -386,6 +390,7 @@ function showLokiHome() {
         <span>${populatedTopics} populated</span>
         <span>${entryCount} entries</span>
       </div>
+      <div class="locus-progress-bar"><div class="locus-progress-fill" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
   el.innerHTML = `
@@ -532,8 +537,11 @@ function renderTree(filter = '') {
           const key = subtopicKey(locus.id, topic.id, st);
           const isActive = currentSubtopicKey === key;
           const stCount = countEntriesForSubtopicKey(key);
+          const studySt = getStudyStatus(key);
+          const studyDot = studySt ? `<span class="study-dot ${studySt}" title="${studySt}"></span>` : '';
           stHtml += `<div class="tree-subtopic ${stCount > 0 ? 'has-entries' : 'empty'}${isActive?' active':''}" onclick="selectSubtopic('${locus.id}','${topic.id}','${escAttr(st)}','${escAttr(locus.name)}','${escAttr(topic.name)}')">
             <span class="st-label">${escHtml(st)}</span>
+            ${studyDot}
             <span class="tree-subtopic-count ${stCount > 0 ? 'has-entries' : ''}">${stCount}</span>
           </div>`;
           anySt = true;
@@ -900,6 +908,17 @@ function renderSubtopicView() {
     sectionsHtml = `<div class="empty-state">No entries match the current filters. <button class="clear-filters-btn" style="margin-left:8px;" onclick="clearTopicFilters()">Clear filters</button></div>`;
   }
 
+  const studyStatus = getStudyStatus(key);
+  const studyLabels = { '': '☐ Study Queue', queued: '📌 Queued', studying: '📖 Studying', done: '✅ Done' };
+  const studyClass  = studyStatus ? `study-${studyStatus}` : '';
+  const toolbarHtml = `<div id="subtopic-toolbar">
+    <button class="toolbar-btn" onclick="window.print()" title="Print / Save as PDF">🖨 Print</button>
+    <button class="toolbar-btn" onclick="collapseAllSections()">⊟ Collapse All</button>
+    <button class="toolbar-btn" onclick="expandAllSections()">⊞ Expand All</button>
+    <span class="toolbar-spacer"></span>
+    <button class="toolbar-btn ${escAttr(studyClass)}" onclick="cycleStudyStatus('${escAttr(key)}');renderSubtopicView()" title="Toggle study queue status">${studyLabels[studyStatus]||studyLabels['']}</button>
+  </div>`;
+
   el.innerHTML = `
     <div id="subtopic-title">${escHtml(currentSubtopicLabel)}</div>
     <div id="subtopic-meta">
@@ -907,6 +926,7 @@ function renderSubtopicView() {
       <span class="subtopic-meta-sep">›</span>
       <span class="subtopic-meta-link" onclick="openTopicPage('${escAttr((currentTopicViewId&&currentTopicViewId.locusId)||'')}','${escAttr((currentTopicViewId&&currentTopicViewId.topicId)||'')}')">${escHtml(currentTopicName)}</span>
     </div>
+    ${toolbarHtml}
     ${controlsHtml}
     ${tagBarHtml}
     ${statsRowHtml}
@@ -1020,6 +1040,7 @@ function renderEntryCard(e, secId, key, showPath) {
     <div>${body}</div>
     ${updatedHtml}
     ${tagsHtml ? `<div class="entry-tags">${tagsHtml}</div>` : ''}
+    ${renderSeeAlsoChips(e.seeAlso)}
   </div>`;
 }
 
@@ -1066,6 +1087,7 @@ function openEntryDetail(secId, entryId, stKey) {
       ${body}
       ${updatedHtml || createdHtml}
       ${tagsHtml ? `<div class="entry-tags">${tagsHtml}</div>` : ''}
+      ${renderSeeAlsoChips(entry.seeAlso)}
     </div>`;
   document.getElementById('entry-detail-overlay').classList.add('open');
 }
@@ -1596,6 +1618,7 @@ function buildFormHtml(secId, existing) {
   else if (secId === 'arguments')    html = field('title','Title') + field('position','Position') + field('claim','Claim','textarea') + field('supportingScripture','Supporting Scripture') + field('objections','Objections','textarea') + field('responses','Responses','textarea') + field('tags','Tags','tags');
   else if (secId === 'notes')        html = field('title','Title') + field('content','Content','textarea') + field('tags','Tags','tags');
   else if (secId === 'media')        html = field('title','Title') + buildFileUploadHtml(ev) + field('fileRef','File Reference / URL (optional)') + field('description','Description','textarea') + field('tags','Tags','tags');
+  html += buildSeeAlsoWidget(ev);
   return html;
 }
 
@@ -1774,7 +1797,7 @@ function gatherFormData(secId) {
   } else {
     tags = get('tags').split(',').map(t=>t.trim()).filter(Boolean);
   }
-  const base = { title: get('title'), tags };
+  const base = { title: get('title'), tags, seeAlso: window._pendingSeeAlso || [] };
   if (secId === 'quotations')   return {...base, quote: get('quote'), author: get('author'), source: get('source'), page: get('page'), notes: get('notes') };
   if (secId === 'confessional') return {...base, text: get('text'), confession: get('confession'), chapter: get('chapter'), proofs: get('proofs'), notes: get('notes') };
   if (secId === 'books')        return {...base, author: get('author'), link: get('link'), notes: get('notes') };
@@ -1873,6 +1896,7 @@ function closeModal() {
   modalState = null;
   window._pendingFileDataURL = '';
   window._pendingFileName = '';
+  window._pendingSeeAlso = [];
 }
 function closeModalOnOverlay(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 
@@ -1919,16 +1943,33 @@ function handleGlobalSearch(q) {
 function performSearch(q) {
   hideAllViews();
   const ql = q.toLowerCase();
+  const seen = new Set();
   const results = [];
+  const addResult = (stKey, secId, entry) => {
+    const uid = `${stKey}::${secId}::${entry.id}`;
+    if (seen.has(uid)) return;
+    seen.add(uid);
+    const parts = stKey.split('__');
+    const locus = getFullTree().find(l => l.id === parts[0]);
+    const topic  = locus?.topics.find(t => t.id === parts[1]);
+    const stName = parts[2]?.replace(/_/g,' ');
+    results.push({ stKey, secId, entry, locusName: locus?.name||parts[0], topicName: topic?.name||parts[1], stName });
+  };
+  // Scripture reference pattern: optional leading digit, book word, optional period, space, chapter (e.g. "John 3", "1 Cor 13:4", "Rom. 5:1-11")
+  const scripturePattern = /^(\d\s+)?\w+\.?\s+\d+/i;
+  if (scripturePattern.test(q.trim())) {
+    const bookPart = q.trim().replace(/^(\d\s+)/,'').split(/\s+/)[0].replace('.','').toLowerCase();
+    allEntries().forEach(({stKey, secId, entry}) => {
+      if (secId === 'scripture' && entry.reference) {
+        const ref = entry.reference.toLowerCase();
+        if (ref.startsWith(bookPart) || ref.includes(ql)) addResult(stKey, secId, entry);
+      }
+    });
+  }
+  // Standard full-text search
   allEntries().forEach(({stKey, secId, entry}) => {
     const text = JSON.stringify(entry).toLowerCase();
-    if (text.includes(ql)) {
-      const parts = stKey.split('__');
-      const locus = getFullTree().find(l => l.id === parts[0]);
-      const topic  = locus?.topics.find(t => t.id === parts[1]);
-      const stName = parts[2]?.replace(/_/g,' ');
-      results.push({ stKey, secId, entry, locusName: locus?.name||parts[0], topicName: topic?.name||parts[1], stName });
-    }
+    if (text.includes(ql)) addResult(stKey, secId, entry);
   });
   const sec = document.getElementById('search-results');
   sec.style.display = 'block';
@@ -1960,7 +2001,7 @@ function goToEntry(stKey, locusName, topicName) {
    VIEWS
 ============================================================ */
 function hideAllViews() {
-  ['welcome','locus-view','topic-view','subtopic-view','search-results','recent-view','tag-view','resource-view','compare-view'].forEach(id => {
+  ['welcome','locus-view','topic-view','subtopic-view','search-results','recent-view','tag-view','resource-view','compare-view','study-queue-view','scripture-index-view'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -1975,19 +2016,48 @@ function showView(name) {
   if (name === 'recent') {
     const el = document.getElementById('recent-view');
     el.style.display = 'block';
-    const all = allEntries().sort((a,b) => (b.entry.created||0)-(a.entry.created||0)).slice(0,30);
+    const all = allEntries().sort((a,b) => (b.entry.created||0)-(a.entry.created||0)).slice(0,60);
     if (!all.length) { el.innerHTML = `<h2>Recently Added</h2><div class="empty-state">No entries yet.</div>`; return; }
-    el.innerHTML = `<h2>Recently Added</h2>` + all.map(({stKey, secId, entry}) => {
-      const parts = stKey.split('__');
-      const locus = getFullTree().find(l=>l.id===parts[0]);
-      const topic = locus?.topics.find(t=>t.id===parts[1]);
-      const stName = parts[2]?.replace(/_/g,' ');
-      return `<div class="search-result-item" onclick="goToEntry('${escAttr(stKey)}','${escAttr(locus?.name||'')}','${escAttr(topic?.name||'')}')">
-        <div class="sr-path">${escHtml(locus?.name||'')} › ${escHtml(topic?.name||'')} › ${escHtml(stName||'')} › ${escHtml(secId)}</div>
-        <div class="sr-title">${escHtml(entry.title||'(untitled)')}</div>
-        <div class="sr-snippet" style="font-size:11px;color:var(--text3);">${new Date(entry.created||0).toLocaleDateString()}</div>
-      </div>`;
-    }).join('');
+    // Group by date label
+    const now = new Date(); now.setHours(0,0,0,0);
+    const yd  = new Date(now); yd.setDate(yd.getDate()-1);
+    const wk  = new Date(now); wk.setDate(wk.getDate()-7);
+    const dateLabel = ts => {
+      const d = new Date(ts||0); d.setHours(0,0,0,0);
+      if (d >= now) return 'Today';
+      if (d >= yd)  return 'Yesterday';
+      if (d >= wk)  return 'This Week';
+      return d.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+    };
+    const groups = {};
+    const groupOrder = [];
+    all.forEach(item => {
+      const lbl = dateLabel(item.entry.created);
+      if (!groups[lbl]) { groups[lbl] = []; groupOrder.push(lbl); }
+      groups[lbl].push(item);
+    });
+    let html = `<h2>Recently Added</h2>`;
+    groupOrder.forEach(lbl => {
+      html += `<div class="timeline-date-group"><div class="timeline-date-header">${escHtml(lbl)}</div>`;
+      groups[lbl].forEach(({stKey, secId, entry}) => {
+        const parts = stKey.split('__');
+        const locus = getFullTree().find(l=>l.id===parts[0]);
+        const topic = locus?.topics.find(t=>t.id===parts[1]);
+        const stName = parts[2]?.replace(/_/g,' ');
+        html += `<div class="search-result-item" onclick="goToEntry('${escAttr(stKey)}','${escAttr(locus?.name||'')}','${escAttr(topic?.name||'')}')">
+          <div class="sr-path">${escHtml(locus?.name||'')} › ${escHtml(topic?.name||'')} › ${escHtml(stName||'')} › ${escHtml(secId)}</div>
+          <div class="sr-title">${escHtml(entry.title||'(untitled)')}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+    el.innerHTML = html;
+  }
+  if (name === 'study-queue') {
+    const el = document.getElementById('study-queue-view');
+    el.style.display = 'block';
+    renderStudyQueueView();
+    return;
   }
   if (name === 'compare') {
     const el = document.getElementById('compare-view');
@@ -5573,6 +5643,317 @@ function setChromeMinimized(minimized) {
 function toggleChromeMinimized() {
   setChromeMinimized(!document.body.classList.contains('chrome-minimized'));
 }
+
+/* ============================================================
+   COLLAPSE / EXPAND ALL SECTIONS
+============================================================ */
+function collapseAllSections() {
+  document.querySelectorAll('#subtopic-view .section-block').forEach(el => el.classList.add('collapsed'));
+}
+function expandAllSections() {
+  document.querySelectorAll('#subtopic-view .section-block').forEach(el => el.classList.remove('collapsed'));
+}
+
+/* ============================================================
+   STUDY QUEUE
+============================================================ */
+const STUDY_KEY = '5sa_study';
+function getStudyDB() {
+  try { return JSON.parse(localStorage.getItem(STUDY_KEY) || '{}'); } catch { return {}; }
+}
+function saveStudyDB(db) {
+  try { localStorage.setItem(STUDY_KEY, JSON.stringify(db)); } catch {}
+}
+function getStudyStatus(subtopicKey) {
+  return getStudyDB()[subtopicKey] || '';
+}
+function setStudyStatus(subtopicKey, status) {
+  const db = getStudyDB();
+  if (status) db[subtopicKey] = status; else delete db[subtopicKey];
+  saveStudyDB(db);
+}
+function cycleStudyStatus(subtopicKey) {
+  const cycle = { '': 'queued', queued: 'studying', studying: 'done', done: '' };
+  const next = cycle[getStudyStatus(subtopicKey)] ?? 'queued';
+  setStudyStatus(subtopicKey, next);
+  // Refresh sidebar dots
+  renderTree();
+}
+
+function renderStudyQueueView() {
+  const el = document.getElementById('study-queue-view');
+  if (!el) return;
+  const db = getStudyDB();
+  const grouped = { studying: [], queued: [], done: [] };
+  const tree = getFullTree();
+  Object.entries(db).forEach(([key, status]) => {
+    if (!grouped[status]) return;
+    const parts = key.split('__');
+    const locus = tree.find(l => l.id === parts[0]);
+    const topic = locus?.topics.find(t => t.id === parts[1]);
+    const stName = (parts[2] || '').replace(/_/g, ' ');
+    grouped[status].push({ key, stName, locusName: locus?.name || parts[0], topicName: topic?.name || parts[1] });
+  });
+  const groupLabels = { studying: '📖 Studying', queued: '📌 Queued', done: '✅ Done' };
+  let html = `<h2>Study Queue</h2>`;
+  let anyItems = false;
+  ['studying', 'queued', 'done'].forEach(status => {
+    const items = grouped[status];
+    if (!items.length) return;
+    anyItems = true;
+    html += `<div class="study-queue-group">
+      <div class="study-queue-group-title">${groupLabels[status]} (${items.length})</div>`;
+    items.forEach(({key, stName, locusName, topicName}) => {
+      const parts = key.split('__');
+      html += `<div class="study-queue-item" onclick="goToEntry('${escAttr(key)}','${escAttr(locusName)}','${escAttr(topicName)}')">
+        <span class="study-dot ${status}"></span>
+        <div class="study-queue-item-text">
+          <div class="study-queue-item-name">${escHtml(stName)}</div>
+          <div class="study-queue-item-path">${escHtml(locusName)} › ${escHtml(topicName)}</div>
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  if (!anyItems) html += `<div class="empty-state">No subtopics in your study queue yet.<br>Open any subtopic and use the toolbar to add it.</div>`;
+  el.innerHTML = html;
+}
+
+/* ============================================================
+   SEE ALSO WIDGET
+============================================================ */
+function buildSeeAlsoWidget(existing) {
+  const links = Array.isArray(existing?.seeAlso) ? existing.seeAlso : [];
+  window._pendingSeeAlso = links.slice();
+  const chipsHtml = links.map((sa, i) =>
+    `<span class="see-also-chip-edit">${escHtml(sa.title||'(untitled)')}
+      <button class="see-also-chip-remove" onclick="removeSeeAlsoLink(${i})">×</button>
+    </span>`
+  ).join('');
+  return `<div class="form-group see-also-widget">
+    <label class="form-label">See Also (Cross-References)</label>
+    <div class="see-also-search-wrap">
+      <input class="see-also-input" type="text" id="see-also-search" placeholder="Search entries to link…"
+        oninput="searchSeeAlso(this.value)" autocomplete="off">
+      <div class="see-also-results" id="see-also-results"></div>
+    </div>
+    <div class="see-also-chips-wrap" id="see-also-chips-wrap">${chipsHtml}</div>
+  </div>`;
+}
+
+function searchSeeAlso(q) {
+  const ql = q.toLowerCase().trim();
+  const dd = document.getElementById('see-also-results');
+  if (!dd) return;
+  if (!ql) { dd.style.display = 'none'; return; }
+  const results = [];
+  allEntries().forEach(({stKey, secId, entry}) => {
+    if (results.length >= 10) return;
+    if ((entry.title||'').toLowerCase().includes(ql)) {
+      results.push({ stKey, secId, entryId: entry.id, title: entry.title||'(untitled)' });
+    }
+  });
+  if (!results.length) { dd.style.display = 'none'; return; }
+  dd.innerHTML = results.map((r, i) =>
+    `<div class="see-also-result-item" onmousedown="addSeeAlsoLink(${JSON.stringify(escHtml(r.title))},${JSON.stringify(r.entryId)},${JSON.stringify(r.stKey)},${JSON.stringify(r.secId)})">${escHtml(r.title)}</div>`
+  ).join('');
+  dd.style.display = 'block';
+}
+
+function addSeeAlsoLink(title, entryId, stKey, secId) {
+  if (!window._pendingSeeAlso) window._pendingSeeAlso = [];
+  if (window._pendingSeeAlso.some(s => s.entryId === entryId)) return;
+  window._pendingSeeAlso.push({ entryId, stKey, secId, title });
+  const wrap = document.getElementById('see-also-chips-wrap');
+  if (wrap) {
+    const idx = window._pendingSeeAlso.length - 1;
+    const chip = document.createElement('span');
+    chip.className = 'see-also-chip-edit';
+    chip.innerHTML = `${escHtml(title)}<button class="see-also-chip-remove" onclick="removeSeeAlsoLink(${idx})">×</button>`;
+    wrap.appendChild(chip);
+  }
+  const inp = document.getElementById('see-also-search');
+  if (inp) inp.value = '';
+  const dd = document.getElementById('see-also-results');
+  if (dd) dd.style.display = 'none';
+}
+
+function removeSeeAlsoLink(idx) {
+  if (!window._pendingSeeAlso) return;
+  window._pendingSeeAlso.splice(idx, 1);
+  // Rebuild chips
+  const wrap = document.getElementById('see-also-chips-wrap');
+  if (wrap) {
+    wrap.innerHTML = window._pendingSeeAlso.map((sa, i) =>
+      `<span class="see-also-chip-edit">${escHtml(sa.title||'(untitled)')}
+        <button class="see-also-chip-remove" onclick="removeSeeAlsoLink(${i})">×</button>
+      </span>`
+    ).join('');
+  }
+}
+
+function renderSeeAlsoChips(seeAlso) {
+  if (!Array.isArray(seeAlso) || !seeAlso.length) return '';
+  const chips = seeAlso.map(sa =>
+    `<span class="see-also-chip" onclick="event.stopPropagation();navigateToSeeAlso('${escAttr(sa.stKey)}','${escAttr(sa.secId)}','${escAttr(sa.entryId)}')" title="${escAttr(sa.title||'')}">${escHtml(sa.title||'(untitled)')}</span>`
+  ).join('');
+  return `<div class="see-also-row"><span class="see-also-label">See Also:</span>${chips}</div>`;
+}
+
+function navigateToSeeAlso(stKey, secId, entryId) {
+  closeEntryDetail();
+  const parts = stKey.split('__');
+  const locus = getFullTree().find(l => l.id === parts[0]);
+  const topic  = locus?.topics.find(t => t.id === parts[1]);
+  const stName = (parts[2] || '').replace(/_/g, ' ');
+  selectSubtopic(parts[0], parts[1], stName, locus?.name || '', topic?.name || '');
+  // Small delay to let view render then open the detail
+  setTimeout(() => openEntryDetail(secId, entryId, stKey), 80);
+}
+
+/* ============================================================
+   CANONICAL SCRIPTURE INDEX
+============================================================ */
+const BIBLE_BOOKS_ORDER = [
+  'Genesis','Exodus','Leviticus','Numbers','Deuteronomy','Joshua','Judges','Ruth',
+  '1 Samuel','2 Samuel','1 Kings','2 Kings','1 Chronicles','2 Chronicles',
+  'Ezra','Nehemiah','Esther','Job','Psalms','Proverbs','Ecclesiastes',
+  'Song of Solomon','Isaiah','Jeremiah','Lamentations','Ezekiel','Daniel',
+  'Hosea','Joel','Amos','Obadiah','Jonah','Micah','Nahum','Habakkuk',
+  'Zephaniah','Haggai','Zechariah','Malachi',
+  'Matthew','Mark','Luke','John','Acts','Romans',
+  '1 Corinthians','2 Corinthians','Galatians','Ephesians','Philippians',
+  'Colossians','1 Thessalonians','2 Thessalonians','1 Timothy','2 Timothy',
+  'Titus','Philemon','Hebrews','James','1 Peter','2 Peter',
+  '1 John','2 John','3 John','Jude','Revelation'
+];
+
+const BIBLE_BOOK_ALIASES = {
+  'gen':'Genesis','exo':'Exodus','lev':'Leviticus','num':'Numbers','deut':'Deuteronomy',
+  'deu':'Deuteronomy','josh':'Joshua','jdg':'Judges','judg':'Judges','rut':'Ruth',
+  '1sam':'1 Samuel','2sam':'2 Samuel','1kgs':'1 Kings','2kgs':'2 Kings',
+  '1chr':'1 Chronicles','2chr':'2 Chronicles','ezr':'Ezra','neh':'Nehemiah',
+  'est':'Esther','job':'Job','ps':'Psalms','psa':'Psalms','prov':'Proverbs',
+  'pro':'Proverbs','eccl':'Ecclesiastes','ecc':'Ecclesiastes','sos':'Song of Solomon',
+  'song':'Song of Solomon','isa':'Isaiah','jer':'Jeremiah','lam':'Lamentations',
+  'ezek':'Ezekiel','eze':'Ezekiel','dan':'Daniel','hos':'Hosea','joel':'Joel',
+  'amos':'Amos','oba':'Obadiah','obad':'Obadiah','jon':'Jonah','mic':'Micah',
+  'nah':'Nahum','hab':'Habakkuk','zeph':'Zephaniah','hag':'Haggai','zech':'Zechariah',
+  'mal':'Malachi','matt':'Matthew','mat':'Matthew','mrk':'Mark','luk':'Luke',
+  'jn':'John','act':'Acts','rom':'Romans','1cor':'1 Corinthians','2cor':'2 Corinthians',
+  'gal':'Galatians','eph':'Ephesians','phil':'Philippians','col':'Colossians',
+  '1thess':'1 Thessalonians','2thess':'2 Thessalonians','1tim':'1 Timothy',
+  '2tim':'2 Timothy','tit':'Titus','phlm':'Philemon','heb':'Hebrews','jas':'James',
+  '1pet':'1 Peter','2pet':'2 Peter','1jn':'1 John','2jn':'2 John','3jn':'3 John',
+  'jude':'Jude','rev':'Revelation'
+};
+
+function resolveBookName(ref) {
+  if (!ref) return null;
+  const clean = ref.trim().toLowerCase().replace(/\./g,'').replace(/\s+/g,' ');
+  // Try prefix match against full book names first
+  for (const book of BIBLE_BOOKS_ORDER) {
+    if (clean.startsWith(book.toLowerCase())) return book;
+  }
+  // Try alias table (abbreviations)
+  const abbrev = clean.split(/\s+\d/)[0].replace(/\s/g,'');
+  if (BIBLE_BOOK_ALIASES[abbrev]) return BIBLE_BOOK_ALIASES[abbrev];
+  // Try prefix match on abbreviated reference (e.g. "1 Co" → 1 Corinthians)
+  for (const [alias, full] of Object.entries(BIBLE_BOOK_ALIASES)) {
+    if (abbrev.startsWith(alias)) return full;
+  }
+  return null;
+}
+
+function showScriptureIndex() {
+  hideAllViews();
+  const el = document.getElementById('scripture-index-view');
+  if (!el) return;
+  el.style.display = 'block';
+  document.getElementById('breadcrumb').innerHTML = `<span class="bc-item current">📖 Scripture Index</span>`;
+
+  // Collect all scripture entries
+  const bookMap = {}; // bookName → [{entry, stKey}]
+  allEntries().forEach(({stKey, secId, entry}) => {
+    if (secId !== 'scripture') return;
+    const book = resolveBookName(entry.reference);
+    const key = book || '(Other)';
+    if (!bookMap[key]) bookMap[key] = [];
+    bookMap[key].push({ entry, stKey });
+  });
+
+  if (!Object.keys(bookMap).length) {
+    el.innerHTML = `<h2>📖 Scripture Index</h2><div class="empty-state">No scripture entries yet. Add scripture references to any subtopic to see them here.</div>`;
+    return;
+  }
+
+  // Sort books canonically
+  const orderedBooks = [...BIBLE_BOOKS_ORDER.filter(b => bookMap[b]), ...Object.keys(bookMap).filter(b => !BIBLE_BOOKS_ORDER.includes(b))];
+
+  let html = `<h2>📖 Scripture Index</h2>`;
+  orderedBooks.forEach(book => {
+    const entries = bookMap[book] || [];
+    html += `<div class="scripture-index-book">
+      <div class="scripture-book-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'flex':'none'">
+        ${escHtml(book)}
+        <span class="sb-count">${entries.length}</span>
+      </div>
+      <div class="scripture-book-entries">
+        ${entries.map(({entry, stKey}) => {
+          const parts = stKey.split('__');
+          const locus = getFullTree().find(l => l.id === parts[0]);
+          const topic = locus?.topics.find(t => t.id === parts[1]);
+          return `<div class="scripture-ref-chip" onclick="openEntryDetail('scripture','${escAttr(entry.id)}','${escAttr(stKey)}')" title="${escAttr(locus?.name||'')} › ${escAttr(topic?.name||'')}">
+            <span class="scripture-ref-ref">${escHtml(entry.reference||'')}</span>
+            ${entry.title ? `<span class="scripture-ref-title">${escHtml(entry.title)}</span>` : ''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+============================================================ */
+function toggleShortcutsOverlay() {
+  const ov = document.getElementById('shortcuts-overlay');
+  if (!ov) return;
+  ov.classList.toggle('visible');
+}
+
+document.addEventListener('keydown', e => {
+  // Skip when typing in inputs
+  const tag = document.activeElement?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+    if (e.key === 'Escape') {
+      document.activeElement.blur();
+      // Also close modal/overlay if open
+      const modal = document.getElementById('modal-overlay');
+      if (modal && modal.classList.contains('open')) { closeModal(); return; }
+    }
+    return;
+  }
+  if (e.key === '/') {
+    e.preventDefault();
+    document.getElementById('global-search')?.focus();
+  } else if (e.key === 'n' || e.key === 'N') {
+    if (!e.ctrlKey && !e.metaKey) openQuickAddModal();
+  } else if (e.key === 'h' || e.key === 'H') {
+    showLokiHome();
+  } else if (e.key === '?') {
+    toggleShortcutsOverlay();
+  } else if (e.key === 'Escape') {
+    // Close shortcuts overlay first, then modal, then entry detail
+    const ov = document.getElementById('shortcuts-overlay');
+    if (ov?.classList.contains('visible')) { ov.classList.remove('visible'); return; }
+    const modal = document.getElementById('modal-overlay');
+    if (modal?.classList.contains('open')) { closeModal(); return; }
+    const detail = document.getElementById('entry-detail-overlay');
+    if (detail?.classList.contains('open')) { closeEntryDetail(); return; }
+  }
+});
 
 normalizeExistingConfessionalEntries();
 seedDefaultConfessionalEntries();
