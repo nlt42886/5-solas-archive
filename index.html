@@ -1463,8 +1463,10 @@ function renderEntryCard(e, secId, key, showPath) {
     </div>`;
   } else if (secId === 'books') {
     body = `<div class="entry-meta">
-      ${e.author ? `<span>✍ ${escHtml(e.author)}</span>` : ''}
-      ${e.link   ? `<span><a href="${escAttr(e.link)}" target="_blank">🔗 Link</a></span>` : ''}
+      ${e.author  ? `<span>✍ ${escHtml(e.author)}</span>` : ''}
+      ${e.chapter ? `<span>§ ${escHtml(e.chapter)}</span>` : ''}
+      ${e.pages   ? `<span>p. ${escHtml(e.pages)}</span>` : ''}
+      ${e.link    ? `<span><a href="${escAttr(e.link)}" target="_blank">🔗 Link</a></span>` : ''}
     </div>
     ${e.notes ? `<div class="entry-card-body" style="margin-top:6px;">${escHtml(e.notes)}</div>` : ''}`;
   } else if (secId === 'websites') {
@@ -2017,7 +2019,7 @@ function buildFormHtml(secId, existing) {
   let html = '';
   if (secId === 'quotations')   html = field('title','Title') + field('quote','Quote Text','textarea') + `<div class="form-row">` + field('author','Author') + field('source','Source (Book)') + `</div>` + field('page','Page Number') + field('tags','Tags','tags') + field('notes','Notes','textarea');
   else if (secId === 'confessional') html = field('title','Title') + field('text','Text','textarea') + `<div class="form-row">` + field('confession','Confession Name') + field('chapter','Chapter / Section') + `</div>` + field('tags','Tags','tags') + field('notes','Notes','textarea');
-  else if (secId === 'books')        html = field('title','Title') + field('author','Author') + field('link','URL / Link') + field('tags','Tags','tags') + field('notes','Notes','textarea');
+  else if (secId === 'books')        html = field('title','Title') + field('author','Author') + `<div class="form-row">` + field('chapter','Chapter / Section') + field('pages','Pages') + `</div>` + field('link','URL / Link') + field('tags','Tags','tags') + field('notes','Notes','textarea');
   else if (secId === 'websites')     html = field('title','Title') + field('url','URL') + field('description','Description','textarea') + field('tags','Tags','tags');
   else if (secId === 'scripture')    html = field('title','Label / Title') + `<div class="form-row">` + field('reference','Reference (e.g. Rom 5:1)') + field('verseType','Type','select',['proof','typological','disputed']) + `</div>` + field('verseText','Verse Text','textarea') + field('tags','Tags','tags') + field('notes','Notes','textarea');
   else if (secId === 'arguments')    html = field('title','Title') + field('position','Position') + field('claim','Claim','textarea') + field('supportingScripture','Supporting Scripture') + field('objections','Objections','textarea') + field('responses','Responses','textarea') + field('tags','Tags','tags');
@@ -2204,7 +2206,7 @@ function gatherFormData(secId) {
   const base = { title: get('title'), tags };
   if (secId === 'quotations')   return {...base, quote: get('quote'), author: get('author'), source: get('source'), page: get('page'), notes: get('notes') };
   if (secId === 'confessional') return {...base, text: get('text'), confession: get('confession'), chapter: get('chapter'), notes: get('notes') };
-  if (secId === 'books')        return {...base, author: get('author'), link: get('link'), notes: get('notes') };
+  if (secId === 'books')        return {...base, author: get('author'), chapter: get('chapter'), pages: get('pages'), link: get('link'), notes: get('notes') };
   if (secId === 'websites')     return {...base, url: get('url'), description: get('description') };
   if (secId === 'scripture')    return {...base, reference: get('reference'), verseText: get('verseText'), verseType: get('verseType'), notes: get('notes') };
   if (secId === 'arguments')    return {...base, position: get('position'), claim: get('claim'), supportingScripture: get('supportingScripture'), objections: get('objections'), responses: get('responses') };
