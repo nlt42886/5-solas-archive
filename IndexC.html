@@ -64,7 +64,16 @@
     background: linear-gradient(90deg, transparent, var(--amber), var(--gold), var(--amber), transparent);
     pointer-events: none;
   }
-  #header-logo { width: 40px; height: 40px; flex-shrink: 0; clip-path: circle(49% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 9px rgba(200,134,10,.7)); }
+  #header-logo-wrap {
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: rgba(212,160,23,.08);
+    overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 8px rgba(200,134,10,.18);
+  }
+  #header-logo { width: 40px; height: 40px; clip-path: circle(49% at center); mix-blend-mode: screen; filter: contrast(2.5) drop-shadow(0 0 9px rgba(200,134,10,.7)); }
   #header-title {
     font-family: 'Cinzel', serif;
     font-size: 18px;
@@ -1394,7 +1403,7 @@
   <!-- HEADER -->
   <header id="header">
     <button id="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">☰</button>
-    <img id="header-logo" src="logo.jpg" alt="5 Solas Archive" onerror="this.style.display='none'">
+    <span id="header-logo-wrap"><img id="header-logo" src="logo.jpg" alt="5 Solas Archive" onerror="this.style.visibility='hidden'"></span>
     <span id="header-title">5 Solas Archive</span>
     <div id="header-search-wrap">
       <input type="text" id="global-search" placeholder="Search all references…" oninput="handleGlobalSearch(this.value)">
