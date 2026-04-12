@@ -206,8 +206,21 @@
   .view-tab:hover { color: var(--text2); }
   .view-tab.active { color: var(--gold2); border-bottom-color: var(--gold); }
 
+  /* Sidebar overlay (mobile tap-outside-to-close) */
+  #sidebar-overlay { display: none; position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.45); }
+  #sidebar-overlay.visible { display: block; }
+
+  /* Pull-to-refresh indicator */
+  #ptr-indicator {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    height: 0; overflow: hidden; flex-shrink: 0;
+    color: var(--gold2); font-family: 'Rajdhani', sans-serif; font-size: 13px;
+    letter-spacing: .05em; background: var(--bg2);
+  }
+  #ptr-icon { font-size: 18px; display: inline-block; transition: transform .2s; }
+
   /* Content area */
-  #content-area { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0; }
+  #content-area { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0; overscroll-behavior-y: contain; }
   #subtopic-view { padding: 20px 20px 60px 20px; }
   #recent-view   { padding: 20px 20px 60px 20px; }
   #search-results { padding: 20px 20px 60px 20px; }
@@ -677,6 +690,9 @@
       <div id="sidebar-tree"></div>
     </nav>
 
+    <!-- SIDEBAR OVERLAY (mobile tap-outside-to-close) -->
+    <div id="sidebar-overlay" onclick="closeSidebarMobile()"></div>
+
     <!-- MAIN -->
     <div id="main">
       <div id="breadcrumb"><span class="bc-item">Select a subtopic</span></div>
@@ -689,6 +705,8 @@
       </div>
 
       <div id="content-area">
+        <!-- PULL-TO-REFRESH INDICATOR -->
+        <div id="ptr-indicator"><span id="ptr-icon">↓</span><span id="ptr-text">Pull to refresh</span></div>
         <div id="welcome">
           <img id="welcome-logo" src="logo.jpg" alt="5 Solas Archive">
           <h1>5 Solas Archive</h1>
@@ -2433,8 +2451,18 @@ function importData(input) {
 /* ============================================================
    MOBILE
 ============================================================ */
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-function closeSidebarMobile() { if (window.innerWidth <= 520) document.getElementById('sidebar').classList.remove('open'); }
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('visible', sb.classList.contains('open'));
+}
+function closeSidebarMobile() {
+  if (window.innerWidth <= 520) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('visible');
+  }
+}
 
 /* ============================================================
    UTILITIES
@@ -2452,6 +2480,52 @@ function timeAgo(ts) {
   if (months < 12) return months + ' months ago';
   return Math.floor(months / 12) + ' year' + (Math.floor(months/12) > 1 ? 's' : '') + ' ago';
 }
+
+/* ============================================================
+   PULL-TO-REFRESH (mobile)
+============================================================ */
+(function() {
+  var startY = 0, currentDist = 0, active = false;
+  var threshold = 70;
+
+  function ca()   { return document.getElementById('content-area'); }
+  function ind()  { return document.getElementById('ptr-indicator'); }
+  function icon() { return document.getElementById('ptr-icon'); }
+  function txt()  { return document.getElementById('ptr-text'); }
+
+  document.addEventListener('touchstart', function(e) {
+    var el = ca();
+    if (el && el.scrollTop === 0 && el.contains(e.target)) {
+      startY = e.touches[0].clientY;
+      active = true;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e) {
+    if (!active) return;
+    var el = ca();
+    if (!el || el.scrollTop > 0) { active = false; return; }
+    var dist = e.touches[0].clientY - startY;
+    if (dist <= 0) return;
+    currentDist = dist;
+    var h = Math.min(dist * 0.6, 56);
+    ind().style.height = h + 'px';
+    var ready = dist >= threshold;
+    icon().style.transform = ready ? 'rotate(180deg)' : 'rotate(0deg)';
+    txt().textContent = ready ? 'Release to refresh' : 'Pull to refresh';
+  }, { passive: true });
+
+  document.addEventListener('touchend', function() {
+    if (!active) return;
+    active = false;
+    var wasReady = currentDist >= threshold;
+    currentDist = 0;
+    ind().style.height = '0';
+    icon().style.transform = 'rotate(0deg)';
+    txt().textContent = 'Pull to refresh';
+    if (wasReady) window.location.reload();
+  }, { passive: true });
+})();
 
 /* ============================================================
    INIT
