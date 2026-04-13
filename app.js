@@ -6044,17 +6044,16 @@ document.addEventListener('keydown', e => {
    REFORMED WEBSITES SEED
 ============================================================ */
 function seedReformedWebsites() {
-  const SEED_KEY = '5sa_websites_seed_v2';
+  const SEED_KEY = '5sa_websites_seed_v3';
   if (localStorage.getItem(SEED_KEY) === '1') return;
-  // Prevent v1 from running if it hasn't already
   localStorage.setItem('5sa_websites_seed_v1', '1');
+  localStorage.setItem('5sa_websites_seed_v2', '1');
 
   // ── Remove the 25 generic v1 homepage entries ─────────────
   function rmByTitle(lId, tId, stName, secId, title) {
     const key = subtopicKey(lId, tId, stName);
     setEntries(key, secId, getEntries(key, secId).filter(e => e.title !== title));
   }
-  // Prolegomena
   rmByTitle('l1','t1a','Definition & Object',      'websites','Monergism');
   rmByTitle('l1','t1a','Definition & Object',      'websites','Theopedia');
   rmByTitle('l1','t1a','Definition & Object',      'websites','Christian Classics Ethereal Library (CCEL)');
@@ -6062,32 +6061,58 @@ function seedReformedWebsites() {
   rmByTitle('l1','t1a','Theology as Science',      'websites','Reformed Theological Seminary (RTS)');
   rmByTitle('l1','t1b','Authority & Autopistia',   'websites','Westminster Theological Seminary');
   rmByTitle('l1','t1d','Grammatical-Historical Method','websites','Reformation21');
-  // Theology Proper
   rmByTitle('l2','t2b','Divine Simplicity',        'websites','Ligonier Ministries');
   rmByTitle('l2','t2b','Divine Simplicity',        'websites','Tabletalk Magazine');
-  // Divine Decrees
   rmByTitle('l4','t4c','Unconditional Election',   'websites','Desiring God');
   rmByTitle('l4','t4c','Unconditional Election',   'websites','Grace Online Library');
-  // Covenant Theology
   rmByTitle('l8','t8c','One Covenant of Grace',    'websites','Heidelblog');
   rmByTitle('l8','t8c','One Covenant of Grace',    'websites','1689 Federalism');
-  // Soteriology
   rmByTitle('l10','t10f','Faith Alone / Sola Fide','websites','Grace to You');
   rmByTitle('l10','t10h','Progressive Sanctification','websites','Crossway');
-  // Ecclesiology
   rmByTitle('l11','t11a','Marks of the True Church','websites','The Gospel Coalition');
   rmByTitle('l11','t11a','Marks of the True Church','websites','Founders Ministries');
   rmByTitle('l11','t11b','Presbyterianism',        'websites','Orthodox Presbyterian Church');
   rmByTitle('l11','t11b','Presbyterianism',        'websites','Presbyterian Church in America');
   rmByTitle('l11','t11b','Presbyterianism',        'websites','Covenant Theological Seminary');
-  // Sacraments
   rmByTitle('l12','t12b',"Believer's Baptism (Credobaptism)",'websites','Credo Magazine');
-  // Polemics
   rmByTitle('l15','t15b','Five Arminian Articles', 'websites','Monergism \u2014 TULIP Resources');
-  // Confessional Standards
   rmByTitle('l17','t17a','Westminster Confession of Faith','websites','Banner of Truth');
   rmByTitle('l17','t17a','Westminster Confession of Faith','websites',"A Puritan's Mind");
   rmByTitle('l17','t17a','Westminster Confession of Faith','websites','The Puritan Board');
+
+  // ── Remove SEP entries added in v2 ────────────────────────
+  function rmByUrl(lId, tId, stName, url) {
+    const key = subtopicKey(lId, tId, stName);
+    setEntries(key, 'websites', getEntries(key, 'websites').filter(e => e.url !== url));
+  }
+  rmByUrl('l2','t2a','Cosmological Argument',    'https://plato.stanford.edu/entries/cosmological-argument/');
+  rmByUrl('l2','t2a','Ontological Argument',     'https://plato.stanford.edu/entries/ontological-arguments/');
+  rmByUrl('l2','t2a','Teleological Argument',    'https://plato.stanford.edu/entries/teleological-arguments/');
+  rmByUrl('l2','t2b','Divine Simplicity',        'https://plato.stanford.edu/entries/divine-simplicity/');
+  rmByUrl('l3','t3a','One Essence Three Persons','https://plato.stanford.edu/entries/trinity/');
+  rmByUrl('l4','t4b','Double Predestination',    'https://plato.stanford.edu/entries/predestination/');
+  rmByUrl('l4','t4e','Middle Knowledge / Molinism','https://plato.stanford.edu/entries/free-will-foreknowledge/');
+
+  // ── Update book links for users who have v2 data ──────────
+  function setBookLink(lId, tId, stName, title, link) {
+    const key = subtopicKey(lId, tId, stName);
+    const arr = getEntries(key, 'books');
+    const idx = arr.findIndex(e => e.title === title);
+    if (idx !== -1 && !arr[idx].link) { arr[idx].link = link; setEntries(key, 'books', arr); }
+  }
+  setBookLink('l1','t1a','Definition & Object',    'Institutes of the Christian Religion',          'https://www.ccel.org/ccel/calvin/institutes.html');
+  setBookLink('l1','t1a','Definition & Object',    'Reformed Dogmatics (4 vols.)',                  'https://www.heritagebooks.org');
+  setBookLink('l1','t1a','Theology as Science',    'Institutes of Elenctic Theology (3 vols.)',     'https://www.prpbooks.com');
+  setBookLink('l1','t1a','Theology as Science',    'Theoretical-Practical Theology (7 vols.)',      'https://www.heritagebooks.org');
+  setBookLink('l1','t1a','Theology as Science',    'Systematic Theology',                           'https://www.heritagebooks.org');
+  setBookLink('l1','t1b','Inspiration & Theopneustia','The Inspiration and Authority of the Bible', 'https://www.prpbooks.com');
+  setBookLink('l8','t8c','One Covenant of Grace',  'The Economy of the Covenants Between God and Man (2 vols.)','https://www.heritagebooks.org');
+  setBookLink('l10','t10b','Overview & Order',     "The Christian's Reasonable Service (4 vols.)",  'https://www.heritagebooks.org');
+  setBookLink('l10','t10a','Definite / Limited Atonement','The Death of Death in the Death of Christ','https://banneroftruth.org');
+  setBookLink('l10','t10a','Penal Substitution',   'Redemption Accomplished and Applied',           'https://www.eerdmans.com');
+  setBookLink('l10','t10f','Forensic Justification','The Doctrine of Justification by Faith',       'https://banneroftruth.org');
+  setBookLink('l10','t10h','Progressive Sanctification','The Mortification of Sin',                 'https://banneroftruth.org');
+  setBookLink('l16','t16a','Geerhardus Vos & BT',  'Biblical Theology: Old and New Testaments',     'https://www.heritagebooks.org');
 
   // ── Helpers ───────────────────────────────────────────────
   const bookExists = (key, title) => getEntries(key,'books').some(e => e.title === title);
@@ -6104,9 +6129,8 @@ function seedReformedWebsites() {
       addEntry(key, 'websites', { seeAlso: [], pinned: false, ...entry });
   }
 
-  // ── Primary Source Books ──────────────────────────────────
+  // ── Primary Source Books (with links) ────────────────────
 
-  // Prolegomena — Nature of Theology
   addBook('l1','t1a','Definition & Object', {
     title:  'Institutes of the Christian Religion',
     author: 'John Calvin',
@@ -6117,199 +6141,185 @@ function seedReformedWebsites() {
   addBook('l1','t1a','Definition & Object', {
     title:  'Reformed Dogmatics (4 vols.)',
     author: 'Herman Bavinck',
-    link:   '',
-    notes:  'The most comprehensive modern Reformed dogmatic. Vol. 1: Prolegomena (Scripture, revelation, theology as science). Vol. 2: God and Creation (attributes, Trinity, creation, providence). Vol. 3: Sin and Salvation (anthropology, Christ, soteriology). Vol. 4: Holy Spirit, Church, and New Creation. English translation by John Vriend (Baker Academic).',
+    link:   'https://www.heritagebooks.org',
+    notes:  'The most comprehensive modern Reformed dogmatic. Vol. 1: Prolegomena. Vol. 2: God and Creation. Vol. 3: Sin and Salvation. Vol. 4: Holy Spirit, Church, and New Creation. English translation by John Vriend (Baker Academic / Reformation Heritage Books).',
     tags:   ['Systematic Theology','Reformed','Prolegomena','Theology Proper','Soteriology','Ecclesiology']
   });
   addBook('l1','t1a','Theology as Science', {
     title:  'Institutes of Elenctic Theology (3 vols.)',
     author: 'Francis Turretin',
-    link:   '',
+    link:   'https://www.prpbooks.com',
     notes:  'The most rigorous scholastic treatment of Reformed theology. Vol. 1: Prolegomena, Scripture, God, Trinity, Divine Decrees. Vol. 2: Creation, Providence, Covenant, Christology. Vol. 3: Soteriology, Ecclesiology, Sacraments, Eschatology. Translated by George Musgrave Giger; edited by James T. Dennison Jr. (P&R Publishing).',
     tags:   ['Systematic Theology','Reformed','Scholasticism','Prolegomena','Confessional Standards']
   });
   addBook('l1','t1a','Theology as Science', {
     title:  'Theoretical-Practical Theology (7 vols.)',
     author: 'Peter van Mastricht',
-    link:   '',
-    notes:  'Each locus follows a fourfold method: exegetical, doctrinal, elenctic (polemical), and practical. Jonathan Edwards called it "much better than Turretin." English translation by Todd Rester (Reformation Heritage Books, 2018–). Essential for understanding high Reformed orthodoxy.',
+    link:   'https://www.heritagebooks.org',
+    notes:  'Each locus follows a fourfold method: exegetical, doctrinal, elenctic (polemical), and practical. Jonathan Edwards called it "much better than Turretin." English translation by Todd Rester (Reformation Heritage Books, 2018–).',
     tags:   ['Systematic Theology','Reformed','Scholasticism','Prolegomena']
   });
   addBook('l1','t1a','Theology as Science', {
     title:  'Systematic Theology',
     author: 'Louis Berkhof',
-    link:   '',
-    notes:  'Standard introductory text in confessional Reformed seminaries. Covers Prolegomena, Theology Proper, Anthropology, Soteriology, Ecclesiology, and Eschatology with clarity and precision. English translation widely used.',
+    link:   'https://www.heritagebooks.org',
+    notes:  'Standard introductory text in confessional Reformed seminaries. Covers Prolegomena, Theology Proper, Anthropology, Soteriology, Ecclesiology, and Eschatology with clarity and precision (Reformation Heritage Books).',
     tags:   ['Systematic Theology','Reformed','Prolegomena']
   });
-
-  // Prolegomena — Holy Scripture
   addBook('l1','t1b','Inspiration & Theopneustia', {
     title:  'The Inspiration and Authority of the Bible',
     author: 'B. B. Warfield',
-    link:   '',
-    notes:  'The Reformed locus classicus for the doctrine of inerrancy. Includes "Inspiration" (1881, co-authored with A. A. Hodge), "The Biblical Idea of Inspiration," and "The Church Doctrine of Inspiration." Defines verbal plenary inspiration and defends it exegetically and historically against liberal criticism.',
+    link:   'https://www.prpbooks.com',
+    notes:  'The Reformed locus classicus for the doctrine of inerrancy. Includes "Inspiration" (1881, co-authored with A. A. Hodge), "The Biblical Idea of Inspiration," and "The Church Doctrine of Inspiration." Defines verbal plenary inspiration and defends it historically against liberal criticism (P&R Publishing).',
     tags:   ['Inspiration','Inerrancy','Infallibility','Sola Scriptura','Canon of Scripture']
   });
-
-  // Covenant Theology
   addBook('l8','t8c','One Covenant of Grace', {
     title:  'The Economy of the Covenants Between God and Man (2 vols.)',
     author: 'Herman Witsius',
-    link:   '',
-    notes:  'Classic federal theology integrating exegesis and scholastic precision. Bk I: The Covenant of Works — condition, promise, penalty, and federal headship of Adam. Bk II: The Covenant of Grace — its nature, parties, conditions, and successive dispensations from Adam through the New Covenant. English translation by William Crookshank (1990 reprint, den Dulk Foundation).',
+    link:   'https://www.heritagebooks.org',
+    notes:  'Classic federal theology. Bk I: The Covenant of Works — condition, promise, penalty, and federal headship of Adam. Bk II: The Covenant of Grace — its nature, parties, conditions, and successive dispensations from Adam through the New Covenant. English translation by William Crookshank (Reformation Heritage Books reprint).',
     tags:   ['Covenant Theology','Covenant of Grace','Covenant of Works','Federal Headship','Pactum Salutis']
   });
-
-  // Soteriology — Ordo Salutis
   addBook('l10','t10b','Overview & Order', {
     title:  "The Christian's Reasonable Service (4 vols.)",
     author: 'Wilhelmus \u00e0 Brakel',
-    link:   '',
-    notes:  'Dutch Further Reformation systematic theology organized around the ordo salutis. Vol. 1: Theology Proper, Anthropology, Christology. Vol. 2: Soteriology — effectual calling through glorification. Vol. 3–4: Practical and ethical theology. Translated by Bartel Elshout (Reformation Heritage Books).',
+    link:   'https://www.heritagebooks.org',
+    notes:  'Dutch Further Reformation systematic theology organized around the ordo salutis. Vol. 1: Theology Proper, Anthropology, Christology. Vol. 2: Soteriology. Vol. 3–4: Practical and ethical theology. Translated by Bartel Elshout (Reformation Heritage Books).',
     tags:   ['Ordo Salutis','Soteriology','Systematic Theology','Reformed','Sanctification']
   });
-
-  // Soteriology — Atonement
   addBook('l10','t10a','Definite / Limited Atonement', {
     title:  'The Death of Death in the Death of Christ',
     author: 'John Owen',
-    link:   '',
-    notes:  'The most thorough defense of particular (definite) atonement in the English language. Pt. 1: Establishes the nature, design, and end of Christ\'s death from Scripture. Pts. 2–4: Refutes universal atonement through Scripture, patristics, and logic. J. I. Packer\'s introduction in Banner of Truth edition is the best entry point.',
+    link:   'https://banneroftruth.org',
+    notes:  'The most thorough defense of particular (definite) atonement in the English language. Pt. 1: Establishes the nature, design, and end of Christ\'s death from Scripture. Pts. 2–4: Refutes universal atonement. J. I. Packer\'s introduction in the Banner of Truth edition is the best entry point.',
     tags:   ['Definite Atonement','Limited Atonement','Particular Redemption','TULIP','Penal Substitution','Soteriology']
   });
   addBook('l10','t10a','Penal Substitution', {
     title:  'Redemption Accomplished and Applied',
     author: 'John Murray',
-    link:   '',
-    notes:  'Concise and definitive Reformed treatment. Pt. 1 (Accomplished): necessity, nature, perfection, and extent of atonement — defends penal substitution and definite atonement. Pt. 2 (Applied): the ordo salutis from effectual calling through glorification. Essential introductory text (Eerdmans).',
+    link:   'https://www.eerdmans.com',
+    notes:  'Concise and definitive Reformed treatment. Pt. 1 (Accomplished): necessity, nature, perfection, and extent of atonement. Pt. 2 (Applied): the ordo salutis from effectual calling through glorification (Eerdmans).',
     tags:   ['Atonement','Penal Substitution','Definite Atonement','Ordo Salutis','Soteriology','TULIP']
   });
-
-  // Soteriology — Justification
   addBook('l10','t10f','Forensic Justification', {
     title:  'The Doctrine of Justification by Faith',
     author: 'John Owen',
-    link:   '',
-    notes:  'Owen\'s most comprehensive treatment of forensic justification. Defends the imputation of Christ\'s active and passive obedience as the formal ground of justification. Refutes Roman Catholic, Arminian, and Socinian errors. Essential for understanding Reformation-era debates on Sola Fide (Works, vol. 5, Banner of Truth).',
+    link:   'https://banneroftruth.org',
+    notes:  'Owen\'s most comprehensive treatment of forensic justification. Defends the imputation of Christ\'s active and passive obedience as the formal ground of justification. Refutes Roman Catholic, Arminian, and Socinian errors (Works, vol. 5, Banner of Truth).',
     tags:   ['Justification','Forensic Justification','Imputation','Sola Fide','Active Obedience','Soteriology']
   });
-
-  // Soteriology — Sanctification
   addBook('l10','t10h','Progressive Sanctification', {
     title:  'The Mortification of Sin',
     author: 'John Owen',
-    link:   '',
-    notes:  'Classic Puritan treatment of progressive sanctification. Central thesis: only the regenerate can truly mortify sin, and all sin-killing power flows from the Holy Spirit through union with Christ. Key chapters address the danger of unmortified sin and practical means of mortification (Works, vol. 6, Banner of Truth).',
+    link:   'https://banneroftruth.org',
+    notes:  'Classic Puritan treatment of progressive sanctification. Central thesis: only the regenerate can truly mortify sin, and all sin-killing power flows from the Holy Spirit through union with Christ (Works, vol. 6, Banner of Truth).',
     tags:   ['Sanctification','Progressive Sanctification','Mortification','Union with Christ','Holy Spirit']
   });
-
-  // Biblical Theology
   addBook('l16','t16a','Geerhardus Vos & BT', {
     title:  'Biblical Theology: Old and New Testaments',
     author: 'Geerhardus Vos',
-    link:   '',
-    notes:  'The foundational text of Reformed biblical theology. Traces the progressive history of special revelation through the Mosaic epoch (Pentateuch), the prophets, and the NT (the Gospels, Paul, the Epistle to the Hebrews). Distinguishes biblical theology from systematic theology as a discipline while showing their complementarity (Eerdmans / Banner of Truth).',
+    link:   'https://www.heritagebooks.org',
+    notes:  'The foundational text of Reformed biblical theology. Traces progressive revelation through the Mosaic epoch, the prophets, the Gospels, Paul, and Hebrews. Essential for integrating biblical and systematic theology (Eerdmans / Reformation Heritage Books).',
     tags:   ['Biblical Theology','Redemptive History','Typology','Covenant Theology','Special Revelation']
   });
 
-  // ── Specific Online Texts — Confessional Standards ────────
+  // ── Confessional Texts Online ─────────────────────────────
 
   addWeb('l17','t17a','Westminster Confession of Faith', {
     title:       'Westminster Confession of Faith — Full Text (OPC)',
     url:         'https://www.opc.org/wcf.html',
-    description: 'The complete text of the Westminster Confession of Faith (1646), presented chapter by chapter with Scripture proof texts. The doctrinal standard of confessional Presbyterian churches worldwide. Hosted by the Orthodox Presbyterian Church.',
+    description: 'The complete text of the Westminster Confession of Faith (1646), chapter by chapter with Scripture proof texts. The doctrinal standard of confessional Presbyterian churches worldwide.',
     tags:        ['Westminster Confession','Confessional Standards','Reformed','Presbyterian','Systematic Theology']
   });
   addWeb('l17','t17a','Westminster Larger Catechism', {
     title:       'Westminster Larger Catechism — Full Text (OPC)',
     url:         'https://www.opc.org/lc.html',
-    description: 'The complete text of the Westminster Larger Catechism (1647), 196 questions and answers. Designed for public catechesis and a more thorough doctrinal exposition than the Shorter Catechism. Includes Scripture proof texts for each answer.',
+    description: 'The complete Westminster Larger Catechism (1647), 196 questions and answers with Scripture proofs. Designed for public catechesis and thorough doctrinal instruction.',
     tags:        ['Westminster Larger Catechism','Westminster Confession','Confessional Standards','Reformed','Presbyterian']
   });
   addWeb('l17','t17a','Westminster Shorter Catechism', {
     title:       'Westminster Shorter Catechism — Full Text (OPC)',
     url:         'https://www.opc.org/sc.html',
-    description: 'The complete text of the Westminster Shorter Catechism (1647), 107 questions and answers. The primary catechism used for children\'s instruction in Presbyterian churches. Begins with the famous summary of man\'s chief end: "to glorify God and to enjoy him forever."',
+    description: 'The complete Westminster Shorter Catechism (1647), 107 questions and answers. Opens: "Man\'s chief end is to glorify God, and to enjoy him forever." Primary catechism for children\'s instruction in Presbyterian churches.',
     tags:        ['Westminster Shorter Catechism','Westminster Confession','Confessional Standards','Reformed','Presbyterian']
   });
   addWeb('l17','t17b','Heidelberg Catechism', {
     title:       'Heidelberg Catechism — Full Text (CRCNA)',
     url:         'https://www.crcna.org/welcome/beliefs/confessions/heidelberg-catechism',
-    description: 'The complete text of the Heidelberg Catechism (1563), 129 questions organized around the three parts of human misery, redemption in Christ, and gratitude. One of the Three Forms of Unity; the most warmly devotional of the Reformed confessions.',
+    description: 'The complete Heidelberg Catechism (1563), 129 questions organized around misery, redemption, and gratitude. One of the Three Forms of Unity; the most warmly devotional of the Reformed confessions.',
     tags:        ['Heidelberg Catechism','Confessional Standards','Reformed','Three Forms of Unity','Soteriology']
   });
   addWeb('l17','t17b','Belgic Confession', {
     title:       'Belgic Confession — Full Text (CRCNA)',
     url:         'https://www.crcna.org/welcome/beliefs/confessions/belgic-confession',
-    description: 'The complete text of the Belgic Confession (1561), authored by Guido de Brès. 37 articles covering Scripture, the Trinity, Creation, soteriology, the church, and sacraments. One of the Three Forms of Unity, used in Continental Reformed churches.',
+    description: 'The complete Belgic Confession (1561) by Guido de Brès. 37 articles covering Scripture, the Trinity, Creation, soteriology, church, and sacraments. One of the Three Forms of Unity.',
     tags:        ['Belgic Confession','Confessional Standards','Reformed','Three Forms of Unity','Ecclesiology']
   });
   addWeb('l17','t17b','Canons of Dort', {
     title:       'Canons of Dort — Full Text (CRCNA)',
     url:         'https://www.crcna.org/welcome/beliefs/confessions/canons-dort',
-    description: 'The complete text of the Canons of the Synod of Dort (1618–19). Five heads of doctrine responding to the Arminian Remonstrance: Total Depravity, Unconditional Election, Definite Atonement, Irresistible Grace, Perseverance of the Saints (TULIP). One of the Three Forms of Unity.',
+    description: 'The complete Canons of Dort (1618–19). Five heads of doctrine responding to the Arminian Remonstrance — Total Depravity, Unconditional Election, Definite Atonement, Irresistible Grace, Perseverance of the Saints. One of the Three Forms of Unity.',
     tags:        ['Canons of Dort','TULIP','Confessional Standards','Arminianism','Reformed','Three Forms of Unity']
   });
   addWeb('l17','t17c','London Baptist Confession 1689', {
     title:       'Second London Baptist Confession of Faith (1689) — Full Text',
     url:         'https://founders.org/1689-confession/',
-    description: 'The complete text of the Second London Baptist Confession of Faith (1689), the definitive doctrinal standard of Particular (Calvinist) Baptists. Closely follows the Westminster Confession in structure and doctrine, with modifications on baptism (believer\'s only), the church, and the Lord\'s Supper.',
+    description: 'The complete 1689 LBC, the definitive standard of Particular (Calvinist) Baptists. Follows the Westminster Confession closely, with modifications on baptism (believer\'s only), church, and the Lord\'s Supper.',
     tags:        ['London Baptist Confession 1689','Confessional Standards','Credobaptism','Reformed','Covenant Theology']
   });
 
-  // ── Specific Online Texts — CCEL Primary Source ───────────
+  // ── Calvin\'s Institutes — Free Full Text ─────────────────
 
   addWeb('l1','t1a','Definition & Object', {
-    title:       "Calvin's Institutes of the Christian Religion — Full Text (CCEL)",
+    title:       "Calvin's Institutes of the Christian Religion — Free Full Text (CCEL)",
     url:         'https://www.ccel.org/ccel/calvin/institutes.html',
-    description: 'The complete text of the 1559 edition of Calvin\'s Institutes in the Henry Beveridge English translation, freely readable online. Organized by book and chapter; includes full Scripture index. The foundational text of Reformed systematic theology.',
+    description: 'The complete 1559 Institutes in Henry Beveridge\'s English translation, freely readable online at CCEL. Organized by book and chapter with full Scripture index. The foundational text of Reformed systematic theology.',
     tags:        ['Systematic Theology','Reformed','Sola Scriptura','Theology Proper','Soteriology','Calvin']
   });
 
-  // ── Stanford Encyclopedia of Philosophy — Philosophical Theology ──
+  // ── Reformed Article Links (Monergism topic pages) ────────
 
-  addWeb('l2','t2a','Cosmological Argument', {
-    title:       'SEP: Cosmological Argument',
-    url:         'https://plato.stanford.edu/entries/cosmological-argument/',
-    description: 'Stanford Encyclopedia of Philosophy scholarly article surveying kalam, Leibnizian, and Thomistic forms of the cosmological argument. Covers the argument\'s history, logical structure, objections, and contemporary defenses. Essential reference for understanding the philosophical case for God\'s existence from causation and contingency.',
-    tags:        ['Apologetics','Natural Theology','Cosmological Argument','Classic Theism','Theology Proper']
+  addWeb('l4','t4b','Double Predestination', {
+    title:       'Monergism: Predestination & Election — Reformed Articles',
+    url:         'https://www.monergism.com/topics/predestination-election',
+    description: 'Monergism\'s curated collection of Reformed articles, sermons, and essays on predestination and election by Calvin, Owen, Spurgeon, Warfield, Berkhof, Boettner, and others. Covers double predestination, unconditional election, and reprobation from Scripture and the Reformed confessions.',
+    tags:        ['Predestination','Election','Double Predestination','TULIP','Reformed','Divine Decree']
   });
-  addWeb('l2','t2a','Ontological Argument', {
-    title:       'SEP: Ontological Arguments for God\'s Existence',
-    url:         'https://plato.stanford.edu/entries/ontological-arguments/',
-    description: 'Stanford Encyclopedia of Philosophy scholarly article covering Anselm\'s original argument, Descartes\' version, modal ontological arguments (Plantinga), and the main objections (Kant, Gaunilo). Comprehensive survey of the argument from perfect-being theology.',
-    tags:        ['Apologetics','Natural Theology','Ontological Argument','Classic Theism','Theology Proper']
+  addWeb('l10','t10a','Definite / Limited Atonement', {
+    title:       'Monergism: Limited Atonement — Reformed Articles',
+    url:         'https://www.monergism.com/topics/limited-atonement',
+    description: 'Monergism\'s curated collection of Reformed articles and essays defending particular (definite) atonement. Includes works by Owen, Murray, Packer, Helm, and others arguing from Scripture that Christ\'s death secured the salvation of the elect specifically.',
+    tags:        ['Definite Atonement','Limited Atonement','Particular Redemption','TULIP','Soteriology']
   });
-  addWeb('l2','t2a','Teleological Argument', {
-    title:       'SEP: Teleological Arguments for God\'s Existence',
-    url:         'https://plato.stanford.edu/entries/teleological-arguments/',
-    description: 'Stanford Encyclopedia of Philosophy scholarly article on design arguments, including Paley\'s watchmaker argument, the fine-tuning argument (Collins, Swinburne), and evolutionary objections. Covers the argument\'s history from Aquinas through contemporary analytic philosophy of religion.',
-    tags:        ['Apologetics','Natural Theology','Teleological Argument','Classic Theism','Theology Proper']
+  addWeb('l10','t10f','Forensic Justification', {
+    title:       'Monergism: Justification by Faith — Reformed Articles',
+    url:         'https://www.monergism.com/topics/justification',
+    description: 'Monergism\'s curated collection of Reformed articles on forensic justification: imputation of Christ\'s righteousness, Sola Fide, and refutation of Roman Catholic and Federal Vision errors. Covers Calvin, Owen, Hodge, Machen, and contemporary Reformed theologians.',
+    tags:        ['Justification','Forensic Justification','Sola Fide','Imputation','Active Obedience','Reformed']
   });
-  addWeb('l2','t2b','Divine Simplicity', {
-    title:       'SEP: Divine Simplicity',
-    url:         'https://plato.stanford.edu/entries/divine-simplicity/',
-    description: 'Stanford Encyclopedia of Philosophy scholarly article on the doctrine that God has no parts — no real distinction between essence and existence, attributes and essence, or persons and essence. Covers Aquinas, the Reformed scholastics, and contemporary debates between classical theists and critics (Plantinga, Dolezal).',
-    tags:        ['Divine Simplicity','Classic Theism','Theology Proper','Aseity','God\'s Attributes']
+  addWeb('l1','t1b','Authority & Autopistia', {
+    title:       'Monergism: Sola Scriptura — Reformed Articles',
+    url:         'https://www.monergism.com/topics/sola-scriptura',
+    description: 'Monergism\'s curated collection of Reformed articles on Scripture\'s authority, sufficiency, and self-attestation (autopistia). Covers the Reformation battle against Rome\'s tradition, inerrancy debates, and the Reformed doctrine of Scripture from Calvin through Warfield.',
+    tags:        ['Sola Scriptura','Inerrancy','Infallibility','Authority','Sufficiency','Reformed']
+  });
+  addWeb('l8','t8c','One Covenant of Grace', {
+    title:       'Monergism: Covenant Theology — Reformed Articles',
+    url:         'https://www.monergism.com/topics/covenant-theology',
+    description: 'Monergism\'s curated collection of Reformed articles on covenant theology: the Covenant of Redemption, Covenant of Works, and Covenant of Grace, with its unified administration across the biblical covenants. Covers Witsius, Owen, Murray, Horton, and others.',
+    tags:        ['Covenant Theology','Covenant of Grace','Covenant of Works','Pactum Salutis','Reformed']
+  });
+  addWeb('l10','t10h','Progressive Sanctification', {
+    title:       'Monergism: Sanctification — Reformed Articles',
+    url:         'https://www.monergism.com/topics/sanctification',
+    description: 'Monergism\'s curated collection of Reformed articles on sanctification: definitive, progressive, and final sanctification; the role of the law; union with Christ; and refutation of perfectionism. Includes Owen, Ryle, Murray, and contemporary Reformed authors.',
+    tags:        ['Sanctification','Progressive Sanctification','Mortification','Union with Christ','Reformed']
   });
   addWeb('l3','t3a','One Essence Three Persons', {
-    title:       'SEP: The Trinity',
-    url:         'https://plato.stanford.edu/entries/trinity/',
-    description: 'Stanford Encyclopedia of Philosophy scholarly article on the doctrine of the Trinity. Covers the biblical and patristic development, the Nicene settlement, and contemporary analytic models (Social Trinitarianism, Relative Identity, Reduplication). Engages the logical consistency objections and defenses from Plantinga, Leftow, and others.',
-    tags:        ['Trinity','Theology Proper','Nicene Creed','Trinitarian Ontology','Eternal Generation']
-  });
-  addWeb('l4','t4b','Double Predestination', {
-    title:       'SEP: Predestination',
-    url:         'https://plato.stanford.edu/entries/predestination/',
-    description: 'Stanford Encyclopedia of Philosophy scholarly article on divine predestination and election. Covers Augustinian, Calvinist, Arminian, and Molinist positions; the compatibility of predestination with free will; and responses to the problem of evil from election. Essential philosophical-theological reference.',
-    tags:        ['Predestination','Election','Double Predestination','Divine Decree','Reprobation','Arminianism']
-  });
-  addWeb('l4','t4e','Middle Knowledge / Molinism', {
-    title:       'SEP: Foreknowledge and Free Will',
-    url:         'https://plato.stanford.edu/entries/free-will-foreknowledge/',
-    description: 'Stanford Encyclopedia of Philosophy scholarly article on the compatibility of divine foreknowledge with human free will. Covers the Boethian (timelessness), Molinist (middle knowledge), open theist, and compatibilist responses. The central issue for evaluating Arminian and Calvinist accounts of election and sovereignty.',
-    tags:        ['Foreknowledge','Free Will','Middle Knowledge','Molinism','Open Theism','Divine Decree']
+    title:       'Monergism: The Trinity — Reformed Articles',
+    url:         'https://www.monergism.com/topics/trinity',
+    description: 'Monergism\'s curated collection of Reformed articles on the doctrine of the Trinity: one essence, three persons; eternal generation and procession; inseparable operations; economic vs. immanent Trinity. Covers the Nicene settlement and its Reformed development in Turretin, Bavinck, and others.',
+    tags:        ['Trinity','Theology Proper','Nicene Creed','Eternal Generation','Trinitarian Ontology']
   });
 
   localStorage.setItem(SEED_KEY, '1');
