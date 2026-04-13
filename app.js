@@ -250,7 +250,16 @@ function deleteEntry(subtopicKey, sectionId, id) {
 function togglePin(subtopicKey, sectionId, id) {
   const arr = getEntries(subtopicKey, sectionId);
   const idx = arr.findIndex(e => e.id === id);
-  if (idx !== -1) { arr[idx].pinned = !arr[idx].pinned; setEntries(subtopicKey, sectionId, arr); }
+  if (idx !== -1) {
+    const wasBookmarked = arr[idx].pinned;
+    arr[idx].pinned = !arr[idx].pinned;
+    setEntries(subtopicKey, sectionId, arr);
+    if (wasBookmarked) {
+      lastUnbookmark = { stKey: subtopicKey, secId: sectionId, entryId: id, title: arr[idx].title || '(untitled)' };
+    } else {
+      lastUnbookmark = null;
+    }
+  }
 }
 function allEntries() {
   const result = [];
@@ -291,6 +300,9 @@ let activeTagFilter = null;
 let activeResFilters = new Set(['quotations','confessional','books','websites','scripture','arguments','notes','media']);
 let resSearchQuery = '';
 let resSortBy = 'created';
+
+// Bookmarks undo state
+let lastUnbookmark = null; // { stKey, secId, entryId, title }
 
 // In-topic filter state (reset on every subtopic navigation)
 let topicTypeFilters = new Set(); // empty = "All"
@@ -1911,6 +1923,18 @@ function togglePinEntry(secId, entryId, stKey) {
   if (currentTab === 'resource') _buildResourceView();
   const bmEl = document.getElementById('bookmarks-view');
   if (bmEl && bmEl.style.display !== 'none') renderBookmarksView();
+}
+
+function undoLastUnbookmark() {
+  if (!lastUnbookmark) return;
+  const { stKey, secId, entryId } = lastUnbookmark;
+  lastUnbookmark = null;
+  togglePin(stKey, secId, entryId);
+  const bmEl = document.getElementById('bookmarks-view');
+  if (bmEl && bmEl.style.display !== 'none') renderBookmarksView();
+  if (currentSubtopicKey === stKey) renderSubtopicView();
+  if (currentTab === 'tags') _buildTagView();
+  if (currentTab === 'resource') _buildResourceView();
 }
 
 /* ============================================================
@@ -5750,10 +5774,18 @@ function renderBookmarksView() {
     ? bookmarks.map(({stKey, secId, entry}) => renderEntryCard(entry, secId, stKey, true)).join('')
     : `<div class="empty-state">${filtersActive ? 'No bookmarks match these filters. <button class="clear-filters-btn" style="margin-left:8px;" onclick="clearBmFilters()">Clear filters</button>' : 'No bookmarks yet.<br>Open any entry and click 🔖 to bookmark it.'}</div>`;
 
+  const undoBarHtml = lastUnbookmark
+    ? `<div class="bm-undo-bar">
+        <span>🔖 Removed <strong>${escHtml(lastUnbookmark.title)}</strong></span>
+        <button class="bm-undo-btn" onclick="undoLastUnbookmark()">↩ Undo</button>
+      </div>`
+    : '';
+
   el.innerHTML = `
     <div class="bm-header">
       <h2>🔖 Bookmarks</h2>
     </div>
+    ${undoBarHtml}
     <div class="bm-controls">
       <div class="bm-search-wrap">
         <input class="bm-search-input" id="bm-search-input" type="text" placeholder="Search bookmarks…"
@@ -6008,9 +6040,190 @@ document.addEventListener('keydown', e => {
   }
 });
 
+/* ============================================================
+   REFORMED WEBSITES SEED
+============================================================ */
+function seedReformedWebsites() {
+  const SEED_KEY = '5sa_websites_seed_v1';
+  if (localStorage.getItem(SEED_KEY) === '1') return;
+
+  const sites = [
+    // ── Prolegomena ──────────────────────────────────────────
+    { locusId:'l1', topicId:'t1a', subtopicName:'Definition & Object', entry:{
+      title:'Monergism',
+      url:'https://www.monergism.com',
+      description:'The largest online index of Reformed and Calvinist theological resources — sermons, articles, books, and MP3s organized by doctrine. A first-stop reference for 5 Solas theology.',
+      tags:['Systematic Theology','Reformed','Sola Scriptura','TULIP','Monergism']
+    }},
+    { locusId:'l1', topicId:'t1a', subtopicName:'Definition & Object', entry:{
+      title:'Theopedia',
+      url:'https://www.theopedia.com',
+      description:'An online encyclopedia of biblical and Reformed Christianity. Comprehensive theological articles covering Reformed doctrine, church history, and key theologians.',
+      tags:['Systematic Theology','Reformed','Apologetics']
+    }},
+    { locusId:'l1', topicId:'t1a', subtopicName:'Definition & Object', entry:{
+      title:'Christian Classics Ethereal Library (CCEL)',
+      url:'https://www.ccel.org',
+      description:'Free online library of classic Christian texts including Calvin\'s Institutes, Owen\'s Works, Turretin\'s Institutes, Augustine, and thousands of Reformed and Puritan writings.',
+      tags:['Church History','Systematic Theology','Reformed','Puritanism']
+    }},
+    { locusId:'l1', topicId:'t1a', subtopicName:'Definition & Object', entry:{
+      title:'Reformed Forum',
+      url:'https://reformedforum.org',
+      description:'Home of the Christ the Center podcast. Confessional Reformed theology, Van Tillian apologetics, and biblical theology discussed by seminary professors and pastors.',
+      tags:['Systematic Theology','Reformed','Westminster Confession','Apologetics','Biblical Theology']
+    }},
+    { locusId:'l1', topicId:'t1a', subtopicName:'Theology as Science', entry:{
+      title:'Reformed Theological Seminary (RTS)',
+      url:'https://rts.edu',
+      description:'Confessional Reformed seminary with free OpenCourseWare covering systematic theology, church history, biblical studies, and hermeneutics. Multiple campuses across the US.',
+      tags:['Systematic Theology','Reformed','Westminster Confession','Hermeneutics']
+    }},
+    { locusId:'l1', topicId:'t1b', subtopicName:'Authority & Autopistia', entry:{
+      title:'Westminster Theological Seminary',
+      url:'https://www.wts.edu',
+      description:'Founded by J. Gresham Machen in 1929. Repository of presuppositional apologetics, biblical theology (Geerhardus Vos, Vern Poythress), and confessional Reformed theology. Extensive free resources.',
+      tags:['Sola Scriptura','Westminster Confession','Apologetics','Biblical Theology','Inerrancy']
+    }},
+    { locusId:'l1', topicId:'t1d', subtopicName:'Grammatical-Historical Method', entry:{
+      title:'Reformation21',
+      url:'https://www.reformation21.org',
+      description:'Online magazine of the Alliance of Confessing Evangelicals. Promotes confessional Reformed theology through rigorous articles on Scripture, doctrine, church, and culture.',
+      tags:['Confessional Standards','Westminster Confession','Reformed','Hermeneutics']
+    }},
+    // ── Theology Proper ──────────────────────────────────────
+    { locusId:'l2', topicId:'t2b', subtopicName:'Divine Simplicity', entry:{
+      title:'Ligonier Ministries',
+      url:'https://www.ligonier.org',
+      description:'R.C. Sproul\'s ministry. Extensive collection defending the classical theistic attributes of God, Reformed soteriology, biblical inerrancy, and confessional Presbyterianism.',
+      tags:['Classic Theism','Divine Simplicity','Reformed','Theology Proper','Systematic Theology']
+    }},
+    { locusId:'l2', topicId:'t2b', subtopicName:'Divine Simplicity', entry:{
+      title:'Tabletalk Magazine',
+      url:'https://tabletalkmagazine.com',
+      description:'Ligonier Ministries\' devotional magazine covering the whole of Reformed doctrine through daily Bible readings, theological articles, and pastoral guidance. Archives freely available online.',
+      tags:['Reformed','Systematic Theology','Sola Scriptura','Sanctification']
+    }},
+    // ── Divine Decrees ───────────────────────────────────────
+    { locusId:'l4', topicId:'t4c', subtopicName:'Unconditional Election', entry:{
+      title:'Desiring God',
+      url:'https://www.desiringgod.org',
+      description:'John Piper\'s ministry. Extensive biblical and theological resources defending TULIP, the doctrines of grace, and Christian Hedonism from a Reformed Baptist perspective.',
+      tags:['Election','Predestination','TULIP','Sola Gratia','Calvinism','Reformed']
+    }},
+    { locusId:'l4', topicId:'t4c', subtopicName:'Unconditional Election', entry:{
+      title:'Grace Online Library',
+      url:'https://www.graceonlinelibrary.org',
+      description:'Free Reformed theological articles and resources focused on the doctrines of grace, TULIP, monergism, and the Reformed confessions.',
+      tags:['TULIP','Monergism','Irresistible Grace','Unconditional Election','Reformed']
+    }},
+    // ── Covenant Theology ────────────────────────────────────
+    { locusId:'l8', topicId:'t8c', subtopicName:'One Covenant of Grace', entry:{
+      title:'Heidelblog',
+      url:'https://heidelblog.net',
+      description:'R. Scott Clark\'s blog from Westminster Seminary California. Rigorous defense of confessional Reformed covenant theology, law-gospel distinction, and the Two Kingdoms doctrine.',
+      tags:['Covenant Theology','Covenant of Grace','Westminster Confession','Reformed','Law and Gospel']
+    }},
+    { locusId:'l8', topicId:'t8c', subtopicName:'One Covenant of Grace', entry:{
+      title:'1689 Federalism',
+      url:'https://www.1689federalism.com',
+      description:'Dedicated to Particular Baptist covenant theology as expressed in the Second London Baptist Confession of 1689. Defends a distinct covenantal framework from a credobaptist perspective.',
+      tags:['Covenant Theology','London Baptist Confession 1689','Covenant of Grace','Credobaptism','New Covenant']
+    }},
+    // ── Soteriology ──────────────────────────────────────────
+    { locusId:'l10', topicId:'t10f', subtopicName:'Faith Alone / Sola Fide', entry:{
+      title:'Grace to You',
+      url:'https://www.gty.org',
+      description:'John MacArthur\'s ministry. Thousands of free expository sermons and articles defending the Reformed understanding of justification by faith alone, Scripture\'s authority, and the doctrines of grace.',
+      tags:['Sola Fide','Justification','Forensic Justification','Reformed','Sola Scriptura']
+    }},
+    { locusId:'l10', topicId:'t10h', subtopicName:'Progressive Sanctification', entry:{
+      title:'Crossway',
+      url:'https://www.crossway.org',
+      description:'Publisher of the ESV Bible and Reformed theological works. Free online articles on sanctification, the Christian life, and Reformed theology by leading evangelical scholars.',
+      tags:['Sanctification','Reformed','Sola Scriptura','Systematic Theology']
+    }},
+    // ── Ecclesiology ─────────────────────────────────────────
+    { locusId:'l11', topicId:'t11a', subtopicName:'Marks of the True Church', entry:{
+      title:'The Gospel Coalition',
+      url:'https://www.thegospelcoalition.org',
+      description:'A Reformed evangelical network of churches and ministers featuring theological articles, book reviews, and church resources across a broad confessional Reformed spectrum.',
+      tags:['Ecclesiology','Reformed','Gospel','Systematic Theology','Church Government']
+    }},
+    { locusId:'l11', topicId:'t11a', subtopicName:'Marks of the True Church', entry:{
+      title:'Founders Ministries',
+      url:'https://founders.org',
+      description:'Promoting the doctrines of grace within the Southern Baptist Convention. Resources on Calvinistic soteriology, church reform, and historic Baptist confessionalism.',
+      tags:['Credobaptism','Reformed','TULIP','London Baptist Confession 1689','Monergism']
+    }},
+    { locusId:'l11', topicId:'t11b', subtopicName:'Presbyterianism', entry:{
+      title:'Orthodox Presbyterian Church',
+      url:'https://www.opc.org',
+      description:'Official website of the OPC — a confessional Presbyterian denomination founded by J. Gresham Machen in 1936. Includes the Westminster Standards, committee reports, and church-finding resources.',
+      tags:['Presbyterianism','Westminster Confession','Church Government','Presbyterian']
+    }},
+    { locusId:'l11', topicId:'t11b', subtopicName:'Presbyterianism', entry:{
+      title:'Presbyterian Church in America',
+      url:'https://www.pcanet.org',
+      description:'Official website of the PCA — a large conservative Presbyterian denomination committed to the Westminster Standards. Includes denominational resources, committee reports, and church search.',
+      tags:['Presbyterianism','Westminster Confession','Church Government','Presbyterian']
+    }},
+    { locusId:'l11', topicId:'t11b', subtopicName:'Presbyterianism', entry:{
+      title:'Covenant Theological Seminary',
+      url:'https://www.covenantseminary.edu',
+      description:'The PCA\'s denominational seminary. Free online courses covering Reformed systematic theology, church history, biblical studies, and pastoral ministry.',
+      tags:['Presbyterian','Westminster Confession','Reformed','Church Government','Systematic Theology']
+    }},
+    // ── Sacraments / Baptism ─────────────────────────────────
+    { locusId:'l12', topicId:'t12b', subtopicName:"Believer's Baptism (Credobaptism)", entry:{
+      title:'Credo Magazine',
+      url:'https://credomag.com',
+      description:'A confessional Reformed Baptist magazine covering systematic theology, church history, and Reformed Baptist confessionalism. Defends believer\'s baptism within a Calvinist soteriology.',
+      tags:['Credobaptism','London Baptist Confession 1689','Reformed','Confessional Standards','Systematic Theology']
+    }},
+    // ── Polemics ─────────────────────────────────────────────
+    { locusId:'l15', topicId:'t15b', subtopicName:'Five Arminian Articles', entry:{
+      title:'Monergism — TULIP Resources',
+      url:'https://www.monergism.com/topics/predestination-election/calvinism-vs-arminianism',
+      description:'Monergism\'s dedicated collection of articles, sermons, and books comparing Calvinism and Arminianism. Covers all five points of Calvinism against the Remonstrant articles.',
+      tags:['TULIP','Arminianism','Calvinism','Predestination','Irresistible Grace','Monergism']
+    }},
+    // ── Confessional Standards ───────────────────────────────
+    { locusId:'l17', topicId:'t17a', subtopicName:'Westminster Confession of Faith', entry:{
+      title:'Banner of Truth',
+      url:'https://banneroftruth.org',
+      description:'Publisher and online resource for Puritan and Reformed books, sermons, and articles. Dedicated to recovering the Reformed faith through the writings of Puritan and post-Reformation divines.',
+      tags:['Puritanism','Westminster Confession','Reformed','Church History','Systematic Theology']
+    }},
+    { locusId:'l17', topicId:'t17a', subtopicName:'Westminster Confession of Faith', entry:{
+      title:'A Puritan\'s Mind',
+      url:'https://www.apuritansmind.com',
+      description:'Extensive online library of Puritan and Reformed writings. Includes works by Thomas Watson, John Owen, William Perkins, Francis Turretin, and many other Puritan and Scholastic divines.',
+      tags:['Puritanism','Westminster Confession','Reformed','Systematic Theology','Church History']
+    }},
+    { locusId:'l17', topicId:'t17a', subtopicName:'Westminster Confession of Faith', entry:{
+      title:'The Puritan Board',
+      url:'https://www.puritanboard.com',
+      description:'The largest online forum for confessional Reformed Christians. Discusses theology, church life, and Reformed doctrine from a Westminster Standards perspective. Extensive historical archives.',
+      tags:['Westminster Confession','Reformed','Puritanism','Confessional Standards','Systematic Theology']
+    }},
+  ];
+
+  sites.forEach(({locusId, topicId, subtopicName, entry}) => {
+    const key = subtopicKey(locusId, topicId, subtopicName);
+    const arr = getEntries(key, 'websites');
+    const domain = (entry.url || '').replace(/^https?:\/\/(www\.)?/,'').split('/')[0];
+    const exists = arr.some(e => (e.url||'').replace(/^https?:\/\/(www\.)?/,'').startsWith(domain));
+    if (!exists) addEntry(key, 'websites', { ...entry, seeAlso: [], pinned: false });
+  });
+
+  localStorage.setItem(SEED_KEY, '1');
+}
+
 normalizeExistingConfessionalEntries();
 seedDefaultConfessionalEntries();
 applyConfessionalCorrections();
+seedReformedWebsites();
 renderTree();
 updateStats();
 showLokiHome();

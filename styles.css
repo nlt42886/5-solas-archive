@@ -1684,6 +1684,35 @@ kbd {
 .bm-entries-list {
   display: flex; flex-direction: column; gap: 8px;
 }
+.bm-undo-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(212,160,23,.1);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 9px 14px;
+  margin-bottom: 12px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  color: var(--text2);
+  gap: 12px;
+  letter-spacing: .03em;
+}
+.bm-undo-btn {
+  background: var(--gold);
+  color: #111;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 14px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.bm-undo-btn:hover { background: #e8b820; }
 
 /* ============================================================
    SCRIPTURE INDEX
