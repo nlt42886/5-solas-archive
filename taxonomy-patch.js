@@ -1,5 +1,5 @@
 (function () {
-  const PATCH_VERSION = '2026-04-13-granular-taxonomy-v1';
+  const PATCH_VERSION = '2026-04-13-granular-taxonomy-v2';
   const PATCH_KEY = '5sa_taxonomy_patch_' + PATCH_VERSION;
 
   function uniquePush(arr, value) {
@@ -50,100 +50,190 @@
 
     ensureSubtopics(tree, 'l3', 't3a', 'Doctrine of the Trinity', [
       'Unity of Essence',
+      'One Essence Three Persons',
+      'Nicene Consubstantiality',
       'Personal Properties',
+      'Relations of Origin',
       'Ad Intra / Ad Extra',
       'Opera ad Extra',
+      'Appropriation',
       'Inseparable Operations',
+      'Perichoresis',
       'Processions and Missions',
       'Taxis',
-      'Nicene Consubstantiality',
-      'Divine Simplicity and Trinity',
-      'Social Trinitarianism Critique',
-      'Eternal Functional Subordination Critique'
+      'Economic vs Immanent Trinity',
+      'Divine Simplicity and Trinity'
+    ]);
+    ensureSubtopics(tree, 'l3', 't3b', 'The Father', [
+      'Paternity & Unbegottenness',
+      'Monarchy of the Father',
+      'Father as Principium'
     ]);
     ensureSubtopics(tree, 'l3', 't3c', 'The Son', [
       'Eternal Sonship',
-      'Begotten, Not Made'
+      'Begotten, Not Made',
+      'Autotheos',
+      'Son as Image and Wisdom',
+      'Mission of the Son'
     ]);
     ensureSubtopics(tree, 'l3', 't3d', 'The Holy Spirit', [
       'Spirit as Third Person',
-      'Mission of the Spirit'
+      'Mission of the Spirit',
+      'Spirit of the Father and the Son'
+    ]);
+    ensureSubtopics(tree, 'l3', 't3e', 'Trinitarian Heresies', [
+      'Pneumatomachianism',
+      'Socinianism'
+    ]);
+    ensureSubtopics(tree, 'l3', 't3f', 'Modern Trinitarian Debates', [
+      'Eternal Functional Subordination Critique',
+      'Social Trinitarianism Critique',
+      'Relations of Origin',
+      'Classical Trinitarianism'
     ]);
 
     ensureSubtopics(tree, 'l9', 't9a', 'Person of Christ', [
       'Anhypostasia / Enhypostasia',
       'Extra Calvinisticum',
-      'Dyothelitism',
+      'Person and Nature Distinction',
       "Christ's Human Knowledge",
       'Beatific Vision Question',
-      'Impeccability'
+      'Impeccability',
+      'Theandric Actions'
     ]);
     ensureSubtopics(tree, 'l9', 't9b', 'Two Natures', [
-      'Reformed vs Lutheran Christology'
+      'Rational Human Soul',
+      'Consubstantial with the Father',
+      'Consubstantial with Us',
+      'Dyothelitism',
+      'Dyenergism',
+      'Reformed vs Lutheran Christology',
+      'Genus Majestaticum Critique'
     ]);
     ensureSubtopics(tree, 'l9', 't9c', 'Christological Heresies', [
       'Monothelitism',
-      'Modern Kenoticism'
+      'Modern Kenoticism',
+      'Adoptionism',
+      'Docetism'
+    ]);
+    ensureSubtopics(tree, 'l9', 't9d', 'Threefold Office', [
+      'Mediator and Surety',
+      'Suretyship'
+    ]);
+    ensureSubtopics(tree, 'l9', 't9e', 'States of Christ', [
+      'State of Humiliation',
+      'State of Exaltation',
+      'Descent into Hell'
     ]);
 
+    ensureSubtopics(tree, 'l8', 't8a', 'Covenant of Redemption', [
+      'Parties of the Covenant of Redemption',
+      'Conditions and Promises',
+      'Suretyship of Christ',
+      'Eternal Foundation of the Covenant of Grace'
+    ]);
+    ensureSubtopics(tree, 'l8', 't8b', 'Covenant of Works', [
+      'Natural and Covenantal Relation',
+      'Condition and Promise of Life',
+      'Sacramental Tree'
+    ]);
     ensureSubtopics(tree, 'l8', 't8c', 'Covenant of Grace', [
       'Substance and Administration',
-      'Visible and Invisible Administration'
+      'Promise and Fulfillment',
+      'External and Internal Administration',
+      'Visible and Invisible Administration',
+      'Testament and Covenant'
+    ]);
+    ensureSubtopics(tree, 'l8', 't8d', 'Abrahamic Covenant', [
+      'Abrahamic Promises',
+      'Gospel to Abraham',
+      'Infant Inclusion Debate',
+      'Typological and Spiritual Fulfillment'
     ]);
     ensureSubtopics(tree, 'l8', 't8e', 'Mosaic Covenant', [
       'Mosaic Covenant Debates',
       'Republication',
       'Subservient Covenant View',
-      'Mixed Covenant Question'
+      'Mixed Covenant Question',
+      'Typological Kingdom',
+      'Works Principle at Sinai',
+      'Levitical Typology'
+    ]);
+    ensureSubtopics(tree, 'l8', 't8f', 'Davidic Covenant', [
+      'Royal Sonship',
+      'Temple and Kingdom'
     ]);
     ensureSubtopics(tree, 'l8', 't8g', 'New Covenant', [
       'New Covenant Membership',
+      'New Covenant Efficacy',
+      'Better Covenant',
+      'Visible Church and New Covenant',
       'Baptist vs Westminster Covenant Theology'
+    ]);
+    ensureSubtopics(tree, 'l8', 't8h', 'Comparative Covenant Theology', [
+      'Baptist vs Westminster Covenant Theology',
+      '1689 Federalism',
+      'Westminster Federalism',
+      'One Covenant, Multiple Administrations',
+      'Substance and Administration Debate'
     ]);
 
     ensureSubtopics(tree, 'l10', 't10a', 'Atonement', [
       'Active Obedience',
       'Passive Obedience',
+      "Christ's Whole Obedience",
       'Necessity of Atonement',
+      'Penal Substitution',
+      'Satisfaction',
+      'Propitiation',
+      'Expiation',
+      'Reconciliation',
+      'Redemption',
+      'Curse-Bearing',
       'Sufficiency of Atonement',
+      'Efficiency of Atonement',
       'Extent and Efficacy',
       'Particular Redemption',
-      'Satisfaction',
-      'Desertion of Christ',
+      'Definite Atonement',
+      'Impetration and Application',
+      'High Priestly Intercession and Atonement',
       'Christ Suffered in Soul',
+      'Desertion of Christ',
       'Christ Legally Guilty?',
       'Christ Morally Pure in Bearing Sin',
       'Paid to God, Not the Devil',
       'Incarnation apart from Redemption?',
       'Common Grace and the Death of Christ',
       'Reformed vs Aquinas on Atonement',
+      'Governmental Theory Critique',
+      'Moral Influence Theory Critique',
+      'Christus Victor and Penal Substitution',
       'Objections and Replies'
     ]);
 
     ensureSubtopics(tree, 'l10', 't10f', 'Justification', [
+      'Remission of Sins',
       'Double Imputation',
+      "Imputation of Christ's Righteousness",
+      'Active Obedience and Justification',
+      'Passive Obedience and Justification',
       'Faith as Instrument',
+      'Faith and Works',
       'Union with Christ and Justification',
       'Justification and Final Judgment',
+      'Justification from Eternity?',
+      'Assurance and Justification',
       'Roman Catholic Controversy',
+      'New Perspective on Paul Critique',
       'Federal Vision Critique'
     ]);
 
     ensureSubtopics(tree, 'l10', 't10k', 'Union with Christ', [
+      'Legal and Vital Union',
       'Union and Communion',
-      'Union with Christ as Architectonic Principle'
-    ]);
-
-    ensureSubtopics(tree, 'l3', 't3f', 'Modern Trinitarian Debates', [
-      'Eternal Functional Subordination Critique',
-      'Social Trinitarianism Critique',
-      'Relations of Origin'
-    ]);
-
-    ensureSubtopics(tree, 'l8', 't8h', 'Comparative Covenant Theology', [
-      'Baptist vs Westminster Covenant Theology',
-      '1689 Federalism',
-      'One Covenant, Multiple Administrations'
+      'Union with Christ as Architectonic Principle',
+      'Union with Christ as Ground',
+      'Union and the Ordo Salutis'
     ]);
 
     return tree;
@@ -173,7 +263,7 @@
   }
 
   function seedGranularWebsiteLinks() {
-    const seedKey = '5sa_granular_websites_v1';
+    const seedKey = '5sa_granular_websites_v2';
     if (localStorage.getItem(seedKey) === '1') return;
 
     removeWebsiteSeed('l3','t3a','One Essence Three Persons', e => /monergism/i.test(e.url || ''));
@@ -228,6 +318,27 @@
       url: 'https://www.opc.org/wcf.html#Chapter_1',
       description: 'Direct anchor link to Westminster Confession chapter 1, useful for authority, sufficiency, inspiration, perspicuity, and the self-authenticating character of Scripture.',
       tags: ['Scripture','Westminster Confession','Self-Authentication of Scripture','Sola Scriptura']
+    });
+
+    addWebsiteSeed('l8','t8c','Substance and Administration', {
+      title: 'OPC: Westminster Confession of Faith, Chapter 7',
+      url: 'https://www.opc.org/wcf.html#Chapter_7',
+      description: 'Direct access to Westminster Confession chapter 7 on God’s covenant with man, helpful for covenant-of-works and covenant-of-grace structure and administration questions.',
+      tags: ['Covenant Theology','Westminster Confession','Substance and Administration','Covenant of Grace']
+    });
+
+    addWebsiteSeed('l10','t10f','Faith as Instrument', {
+      title: 'OPC: Westminster Confession of Faith, Chapter 11',
+      url: 'https://www.opc.org/wcf.html#Chapter_11',
+      description: 'Direct access to Westminster Confession chapter 11 on justification, useful for faith as instrument, imputation, and the forensic character of justification.',
+      tags: ['Justification','Westminster Confession','Faith as Instrument','Imputation']
+    });
+
+    addWebsiteSeed('l10','t10a','Active Obedience', {
+      title: 'OPC: Westminster Confession of Faith, Chapters 8 and 11',
+      url: 'https://www.opc.org/wcf.html#Chapter_8',
+      description: 'Direct access to Westminster Confession chapter 8 on Christ the Mediator, especially useful for obedience, satisfaction, and redemption-accomplished discussions tied to active obedience.',
+      tags: ['Atonement','Westminster Confession','Active Obedience','Christ the Mediator']
     });
 
     addWebsiteSeed('l17','t17c','London Baptist Confession 1689', {
