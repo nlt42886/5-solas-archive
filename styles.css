@@ -249,6 +249,7 @@
   #search-results { padding: 20px 20px 60px 20px; }
   #tag-view      { padding: 20px 20px 60px 20px; }
   #resource-view { padding: 20px 20px 60px 20px; }
+  #bookmarks-view { padding: 20px 20px 60px 20px; }
   #compare-view  { padding: 20px; height: 100%; display: flex; flex-direction: column; }
 
   /* ===== WELCOME SCREEN ===== */
