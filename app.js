@@ -6044,177 +6044,272 @@ document.addEventListener('keydown', e => {
    REFORMED WEBSITES SEED
 ============================================================ */
 function seedReformedWebsites() {
-  const SEED_KEY = '5sa_websites_seed_v1';
+  const SEED_KEY = '5sa_websites_seed_v2';
   if (localStorage.getItem(SEED_KEY) === '1') return;
+  // Prevent v1 from running if it hasn't already
+  localStorage.setItem('5sa_websites_seed_v1', '1');
 
-  const sites = [
-    // ── Prolegomena ──────────────────────────────────────────
-    { locusId:'l1', topicId:'t1a', subtopicName:'Definition & Object', entry:{
-      title:'Monergism',
-      url:'https://www.monergism.com',
-      description:'The largest online index of Reformed and Calvinist theological resources — sermons, articles, books, and MP3s organized by doctrine. A first-stop reference for 5 Solas theology.',
-      tags:['Systematic Theology','Reformed','Sola Scriptura','TULIP','Monergism']
-    }},
-    { locusId:'l1', topicId:'t1a', subtopicName:'Definition & Object', entry:{
-      title:'Theopedia',
-      url:'https://www.theopedia.com',
-      description:'An online encyclopedia of biblical and Reformed Christianity. Comprehensive theological articles covering Reformed doctrine, church history, and key theologians.',
-      tags:['Systematic Theology','Reformed','Apologetics']
-    }},
-    { locusId:'l1', topicId:'t1a', subtopicName:'Definition & Object', entry:{
-      title:'Christian Classics Ethereal Library (CCEL)',
-      url:'https://www.ccel.org',
-      description:'Free online library of classic Christian texts including Calvin\'s Institutes, Owen\'s Works, Turretin\'s Institutes, Augustine, and thousands of Reformed and Puritan writings.',
-      tags:['Church History','Systematic Theology','Reformed','Puritanism']
-    }},
-    { locusId:'l1', topicId:'t1a', subtopicName:'Definition & Object', entry:{
-      title:'Reformed Forum',
-      url:'https://reformedforum.org',
-      description:'Home of the Christ the Center podcast. Confessional Reformed theology, Van Tillian apologetics, and biblical theology discussed by seminary professors and pastors.',
-      tags:['Systematic Theology','Reformed','Westminster Confession','Apologetics','Biblical Theology']
-    }},
-    { locusId:'l1', topicId:'t1a', subtopicName:'Theology as Science', entry:{
-      title:'Reformed Theological Seminary (RTS)',
-      url:'https://rts.edu',
-      description:'Confessional Reformed seminary with free OpenCourseWare covering systematic theology, church history, biblical studies, and hermeneutics. Multiple campuses across the US.',
-      tags:['Systematic Theology','Reformed','Westminster Confession','Hermeneutics']
-    }},
-    { locusId:'l1', topicId:'t1b', subtopicName:'Authority & Autopistia', entry:{
-      title:'Westminster Theological Seminary',
-      url:'https://www.wts.edu',
-      description:'Founded by J. Gresham Machen in 1929. Repository of presuppositional apologetics, biblical theology (Geerhardus Vos, Vern Poythress), and confessional Reformed theology. Extensive free resources.',
-      tags:['Sola Scriptura','Westminster Confession','Apologetics','Biblical Theology','Inerrancy']
-    }},
-    { locusId:'l1', topicId:'t1d', subtopicName:'Grammatical-Historical Method', entry:{
-      title:'Reformation21',
-      url:'https://www.reformation21.org',
-      description:'Online magazine of the Alliance of Confessing Evangelicals. Promotes confessional Reformed theology through rigorous articles on Scripture, doctrine, church, and culture.',
-      tags:['Confessional Standards','Westminster Confession','Reformed','Hermeneutics']
-    }},
-    // ── Theology Proper ──────────────────────────────────────
-    { locusId:'l2', topicId:'t2b', subtopicName:'Divine Simplicity', entry:{
-      title:'Ligonier Ministries',
-      url:'https://www.ligonier.org',
-      description:'R.C. Sproul\'s ministry. Extensive collection defending the classical theistic attributes of God, Reformed soteriology, biblical inerrancy, and confessional Presbyterianism.',
-      tags:['Classic Theism','Divine Simplicity','Reformed','Theology Proper','Systematic Theology']
-    }},
-    { locusId:'l2', topicId:'t2b', subtopicName:'Divine Simplicity', entry:{
-      title:'Tabletalk Magazine',
-      url:'https://tabletalkmagazine.com',
-      description:'Ligonier Ministries\' devotional magazine covering the whole of Reformed doctrine through daily Bible readings, theological articles, and pastoral guidance. Archives freely available online.',
-      tags:['Reformed','Systematic Theology','Sola Scriptura','Sanctification']
-    }},
-    // ── Divine Decrees ───────────────────────────────────────
-    { locusId:'l4', topicId:'t4c', subtopicName:'Unconditional Election', entry:{
-      title:'Desiring God',
-      url:'https://www.desiringgod.org',
-      description:'John Piper\'s ministry. Extensive biblical and theological resources defending TULIP, the doctrines of grace, and Christian Hedonism from a Reformed Baptist perspective.',
-      tags:['Election','Predestination','TULIP','Sola Gratia','Calvinism','Reformed']
-    }},
-    { locusId:'l4', topicId:'t4c', subtopicName:'Unconditional Election', entry:{
-      title:'Grace Online Library',
-      url:'https://www.graceonlinelibrary.org',
-      description:'Free Reformed theological articles and resources focused on the doctrines of grace, TULIP, monergism, and the Reformed confessions.',
-      tags:['TULIP','Monergism','Irresistible Grace','Unconditional Election','Reformed']
-    }},
-    // ── Covenant Theology ────────────────────────────────────
-    { locusId:'l8', topicId:'t8c', subtopicName:'One Covenant of Grace', entry:{
-      title:'Heidelblog',
-      url:'https://heidelblog.net',
-      description:'R. Scott Clark\'s blog from Westminster Seminary California. Rigorous defense of confessional Reformed covenant theology, law-gospel distinction, and the Two Kingdoms doctrine.',
-      tags:['Covenant Theology','Covenant of Grace','Westminster Confession','Reformed','Law and Gospel']
-    }},
-    { locusId:'l8', topicId:'t8c', subtopicName:'One Covenant of Grace', entry:{
-      title:'1689 Federalism',
-      url:'https://www.1689federalism.com',
-      description:'Dedicated to Particular Baptist covenant theology as expressed in the Second London Baptist Confession of 1689. Defends a distinct covenantal framework from a credobaptist perspective.',
-      tags:['Covenant Theology','London Baptist Confession 1689','Covenant of Grace','Credobaptism','New Covenant']
-    }},
-    // ── Soteriology ──────────────────────────────────────────
-    { locusId:'l10', topicId:'t10f', subtopicName:'Faith Alone / Sola Fide', entry:{
-      title:'Grace to You',
-      url:'https://www.gty.org',
-      description:'John MacArthur\'s ministry. Thousands of free expository sermons and articles defending the Reformed understanding of justification by faith alone, Scripture\'s authority, and the doctrines of grace.',
-      tags:['Sola Fide','Justification','Forensic Justification','Reformed','Sola Scriptura']
-    }},
-    { locusId:'l10', topicId:'t10h', subtopicName:'Progressive Sanctification', entry:{
-      title:'Crossway',
-      url:'https://www.crossway.org',
-      description:'Publisher of the ESV Bible and Reformed theological works. Free online articles on sanctification, the Christian life, and Reformed theology by leading evangelical scholars.',
-      tags:['Sanctification','Reformed','Sola Scriptura','Systematic Theology']
-    }},
-    // ── Ecclesiology ─────────────────────────────────────────
-    { locusId:'l11', topicId:'t11a', subtopicName:'Marks of the True Church', entry:{
-      title:'The Gospel Coalition',
-      url:'https://www.thegospelcoalition.org',
-      description:'A Reformed evangelical network of churches and ministers featuring theological articles, book reviews, and church resources across a broad confessional Reformed spectrum.',
-      tags:['Ecclesiology','Reformed','Gospel','Systematic Theology','Church Government']
-    }},
-    { locusId:'l11', topicId:'t11a', subtopicName:'Marks of the True Church', entry:{
-      title:'Founders Ministries',
-      url:'https://founders.org',
-      description:'Promoting the doctrines of grace within the Southern Baptist Convention. Resources on Calvinistic soteriology, church reform, and historic Baptist confessionalism.',
-      tags:['Credobaptism','Reformed','TULIP','London Baptist Confession 1689','Monergism']
-    }},
-    { locusId:'l11', topicId:'t11b', subtopicName:'Presbyterianism', entry:{
-      title:'Orthodox Presbyterian Church',
-      url:'https://www.opc.org',
-      description:'Official website of the OPC — a confessional Presbyterian denomination founded by J. Gresham Machen in 1936. Includes the Westminster Standards, committee reports, and church-finding resources.',
-      tags:['Presbyterianism','Westminster Confession','Church Government','Presbyterian']
-    }},
-    { locusId:'l11', topicId:'t11b', subtopicName:'Presbyterianism', entry:{
-      title:'Presbyterian Church in America',
-      url:'https://www.pcanet.org',
-      description:'Official website of the PCA — a large conservative Presbyterian denomination committed to the Westminster Standards. Includes denominational resources, committee reports, and church search.',
-      tags:['Presbyterianism','Westminster Confession','Church Government','Presbyterian']
-    }},
-    { locusId:'l11', topicId:'t11b', subtopicName:'Presbyterianism', entry:{
-      title:'Covenant Theological Seminary',
-      url:'https://www.covenantseminary.edu',
-      description:'The PCA\'s denominational seminary. Free online courses covering Reformed systematic theology, church history, biblical studies, and pastoral ministry.',
-      tags:['Presbyterian','Westminster Confession','Reformed','Church Government','Systematic Theology']
-    }},
-    // ── Sacraments / Baptism ─────────────────────────────────
-    { locusId:'l12', topicId:'t12b', subtopicName:"Believer's Baptism (Credobaptism)", entry:{
-      title:'Credo Magazine',
-      url:'https://credomag.com',
-      description:'A confessional Reformed Baptist magazine covering systematic theology, church history, and Reformed Baptist confessionalism. Defends believer\'s baptism within a Calvinist soteriology.',
-      tags:['Credobaptism','London Baptist Confession 1689','Reformed','Confessional Standards','Systematic Theology']
-    }},
-    // ── Polemics ─────────────────────────────────────────────
-    { locusId:'l15', topicId:'t15b', subtopicName:'Five Arminian Articles', entry:{
-      title:'Monergism — TULIP Resources',
-      url:'https://www.monergism.com/topics/predestination-election/calvinism-vs-arminianism',
-      description:'Monergism\'s dedicated collection of articles, sermons, and books comparing Calvinism and Arminianism. Covers all five points of Calvinism against the Remonstrant articles.',
-      tags:['TULIP','Arminianism','Calvinism','Predestination','Irresistible Grace','Monergism']
-    }},
-    // ── Confessional Standards ───────────────────────────────
-    { locusId:'l17', topicId:'t17a', subtopicName:'Westminster Confession of Faith', entry:{
-      title:'Banner of Truth',
-      url:'https://banneroftruth.org',
-      description:'Publisher and online resource for Puritan and Reformed books, sermons, and articles. Dedicated to recovering the Reformed faith through the writings of Puritan and post-Reformation divines.',
-      tags:['Puritanism','Westminster Confession','Reformed','Church History','Systematic Theology']
-    }},
-    { locusId:'l17', topicId:'t17a', subtopicName:'Westminster Confession of Faith', entry:{
-      title:'A Puritan\'s Mind',
-      url:'https://www.apuritansmind.com',
-      description:'Extensive online library of Puritan and Reformed writings. Includes works by Thomas Watson, John Owen, William Perkins, Francis Turretin, and many other Puritan and Scholastic divines.',
-      tags:['Puritanism','Westminster Confession','Reformed','Systematic Theology','Church History']
-    }},
-    { locusId:'l17', topicId:'t17a', subtopicName:'Westminster Confession of Faith', entry:{
-      title:'The Puritan Board',
-      url:'https://www.puritanboard.com',
-      description:'The largest online forum for confessional Reformed Christians. Discusses theology, church life, and Reformed doctrine from a Westminster Standards perspective. Extensive historical archives.',
-      tags:['Westminster Confession','Reformed','Puritanism','Confessional Standards','Systematic Theology']
-    }},
-  ];
+  // ── Remove the 25 generic v1 homepage entries ─────────────
+  function rmByTitle(lId, tId, stName, secId, title) {
+    const key = subtopicKey(lId, tId, stName);
+    setEntries(key, secId, getEntries(key, secId).filter(e => e.title !== title));
+  }
+  // Prolegomena
+  rmByTitle('l1','t1a','Definition & Object',      'websites','Monergism');
+  rmByTitle('l1','t1a','Definition & Object',      'websites','Theopedia');
+  rmByTitle('l1','t1a','Definition & Object',      'websites','Christian Classics Ethereal Library (CCEL)');
+  rmByTitle('l1','t1a','Definition & Object',      'websites','Reformed Forum');
+  rmByTitle('l1','t1a','Theology as Science',      'websites','Reformed Theological Seminary (RTS)');
+  rmByTitle('l1','t1b','Authority & Autopistia',   'websites','Westminster Theological Seminary');
+  rmByTitle('l1','t1d','Grammatical-Historical Method','websites','Reformation21');
+  // Theology Proper
+  rmByTitle('l2','t2b','Divine Simplicity',        'websites','Ligonier Ministries');
+  rmByTitle('l2','t2b','Divine Simplicity',        'websites','Tabletalk Magazine');
+  // Divine Decrees
+  rmByTitle('l4','t4c','Unconditional Election',   'websites','Desiring God');
+  rmByTitle('l4','t4c','Unconditional Election',   'websites','Grace Online Library');
+  // Covenant Theology
+  rmByTitle('l8','t8c','One Covenant of Grace',    'websites','Heidelblog');
+  rmByTitle('l8','t8c','One Covenant of Grace',    'websites','1689 Federalism');
+  // Soteriology
+  rmByTitle('l10','t10f','Faith Alone / Sola Fide','websites','Grace to You');
+  rmByTitle('l10','t10h','Progressive Sanctification','websites','Crossway');
+  // Ecclesiology
+  rmByTitle('l11','t11a','Marks of the True Church','websites','The Gospel Coalition');
+  rmByTitle('l11','t11a','Marks of the True Church','websites','Founders Ministries');
+  rmByTitle('l11','t11b','Presbyterianism',        'websites','Orthodox Presbyterian Church');
+  rmByTitle('l11','t11b','Presbyterianism',        'websites','Presbyterian Church in America');
+  rmByTitle('l11','t11b','Presbyterianism',        'websites','Covenant Theological Seminary');
+  // Sacraments
+  rmByTitle('l12','t12b',"Believer's Baptism (Credobaptism)",'websites','Credo Magazine');
+  // Polemics
+  rmByTitle('l15','t15b','Five Arminian Articles', 'websites','Monergism \u2014 TULIP Resources');
+  // Confessional Standards
+  rmByTitle('l17','t17a','Westminster Confession of Faith','websites','Banner of Truth');
+  rmByTitle('l17','t17a','Westminster Confession of Faith','websites',"A Puritan's Mind");
+  rmByTitle('l17','t17a','Westminster Confession of Faith','websites','The Puritan Board');
 
-  sites.forEach(({locusId, topicId, subtopicName, entry}) => {
-    const key = subtopicKey(locusId, topicId, subtopicName);
-    const arr = getEntries(key, 'websites');
-    const domain = (entry.url || '').replace(/^https?:\/\/(www\.)?/,'').split('/')[0];
-    const exists = arr.some(e => (e.url||'').replace(/^https?:\/\/(www\.)?/,'').startsWith(domain));
-    if (!exists) addEntry(key, 'websites', { ...entry, seeAlso: [], pinned: false });
+  // ── Helpers ───────────────────────────────────────────────
+  const bookExists = (key, title) => getEntries(key,'books').some(e => e.title === title);
+  const webExists  = (key, url)   => getEntries(key,'websites').some(e => e.url === url);
+
+  function addBook(lId, tId, stName, entry) {
+    const key = subtopicKey(lId, tId, stName);
+    if (!bookExists(key, entry.title))
+      addEntry(key, 'books', { seeAlso: [], pinned: false, ...entry });
+  }
+  function addWeb(lId, tId, stName, entry) {
+    const key = subtopicKey(lId, tId, stName);
+    if (!webExists(key, entry.url))
+      addEntry(key, 'websites', { seeAlso: [], pinned: false, ...entry });
+  }
+
+  // ── Primary Source Books ──────────────────────────────────
+
+  // Prolegomena — Nature of Theology
+  addBook('l1','t1a','Definition & Object', {
+    title:  'Institutes of the Christian Religion',
+    author: 'John Calvin',
+    link:   'https://www.ccel.org/ccel/calvin/institutes.html',
+    notes:  'The definitive systematic theology of the Reformation, in four books. Bk I: Knowledge of God the Creator and Scripture. Bk II: Knowledge of God the Redeemer in Christ. Bk III: Grace received by faith — the ordo salutis. Bk IV: The external means — church and sacraments. Full text freely available at CCEL.',
+    tags:   ['Systematic Theology','Reformed','Sola Scriptura','Theology Proper','Soteriology','Ecclesiology']
+  });
+  addBook('l1','t1a','Definition & Object', {
+    title:  'Reformed Dogmatics (4 vols.)',
+    author: 'Herman Bavinck',
+    link:   '',
+    notes:  'The most comprehensive modern Reformed dogmatic. Vol. 1: Prolegomena (Scripture, revelation, theology as science). Vol. 2: God and Creation (attributes, Trinity, creation, providence). Vol. 3: Sin and Salvation (anthropology, Christ, soteriology). Vol. 4: Holy Spirit, Church, and New Creation. English translation by John Vriend (Baker Academic).',
+    tags:   ['Systematic Theology','Reformed','Prolegomena','Theology Proper','Soteriology','Ecclesiology']
+  });
+  addBook('l1','t1a','Theology as Science', {
+    title:  'Institutes of Elenctic Theology (3 vols.)',
+    author: 'Francis Turretin',
+    link:   '',
+    notes:  'The most rigorous scholastic treatment of Reformed theology. Vol. 1: Prolegomena, Scripture, God, Trinity, Divine Decrees. Vol. 2: Creation, Providence, Covenant, Christology. Vol. 3: Soteriology, Ecclesiology, Sacraments, Eschatology. Translated by George Musgrave Giger; edited by James T. Dennison Jr. (P&R Publishing).',
+    tags:   ['Systematic Theology','Reformed','Scholasticism','Prolegomena','Confessional Standards']
+  });
+  addBook('l1','t1a','Theology as Science', {
+    title:  'Theoretical-Practical Theology (7 vols.)',
+    author: 'Peter van Mastricht',
+    link:   '',
+    notes:  'Each locus follows a fourfold method: exegetical, doctrinal, elenctic (polemical), and practical. Jonathan Edwards called it "much better than Turretin." English translation by Todd Rester (Reformation Heritage Books, 2018–). Essential for understanding high Reformed orthodoxy.',
+    tags:   ['Systematic Theology','Reformed','Scholasticism','Prolegomena']
+  });
+  addBook('l1','t1a','Theology as Science', {
+    title:  'Systematic Theology',
+    author: 'Louis Berkhof',
+    link:   '',
+    notes:  'Standard introductory text in confessional Reformed seminaries. Covers Prolegomena, Theology Proper, Anthropology, Soteriology, Ecclesiology, and Eschatology with clarity and precision. English translation widely used.',
+    tags:   ['Systematic Theology','Reformed','Prolegomena']
+  });
+
+  // Prolegomena — Holy Scripture
+  addBook('l1','t1b','Inspiration & Theopneustia', {
+    title:  'The Inspiration and Authority of the Bible',
+    author: 'B. B. Warfield',
+    link:   '',
+    notes:  'The Reformed locus classicus for the doctrine of inerrancy. Includes "Inspiration" (1881, co-authored with A. A. Hodge), "The Biblical Idea of Inspiration," and "The Church Doctrine of Inspiration." Defines verbal plenary inspiration and defends it exegetically and historically against liberal criticism.',
+    tags:   ['Inspiration','Inerrancy','Infallibility','Sola Scriptura','Canon of Scripture']
+  });
+
+  // Covenant Theology
+  addBook('l8','t8c','One Covenant of Grace', {
+    title:  'The Economy of the Covenants Between God and Man (2 vols.)',
+    author: 'Herman Witsius',
+    link:   '',
+    notes:  'Classic federal theology integrating exegesis and scholastic precision. Bk I: The Covenant of Works — condition, promise, penalty, and federal headship of Adam. Bk II: The Covenant of Grace — its nature, parties, conditions, and successive dispensations from Adam through the New Covenant. English translation by William Crookshank (1990 reprint, den Dulk Foundation).',
+    tags:   ['Covenant Theology','Covenant of Grace','Covenant of Works','Federal Headship','Pactum Salutis']
+  });
+
+  // Soteriology — Ordo Salutis
+  addBook('l10','t10b','Overview & Order', {
+    title:  "The Christian's Reasonable Service (4 vols.)",
+    author: 'Wilhelmus \u00e0 Brakel',
+    link:   '',
+    notes:  'Dutch Further Reformation systematic theology organized around the ordo salutis. Vol. 1: Theology Proper, Anthropology, Christology. Vol. 2: Soteriology — effectual calling through glorification. Vol. 3–4: Practical and ethical theology. Translated by Bartel Elshout (Reformation Heritage Books).',
+    tags:   ['Ordo Salutis','Soteriology','Systematic Theology','Reformed','Sanctification']
+  });
+
+  // Soteriology — Atonement
+  addBook('l10','t10a','Definite / Limited Atonement', {
+    title:  'The Death of Death in the Death of Christ',
+    author: 'John Owen',
+    link:   '',
+    notes:  'The most thorough defense of particular (definite) atonement in the English language. Pt. 1: Establishes the nature, design, and end of Christ\'s death from Scripture. Pts. 2–4: Refutes universal atonement through Scripture, patristics, and logic. J. I. Packer\'s introduction in Banner of Truth edition is the best entry point.',
+    tags:   ['Definite Atonement','Limited Atonement','Particular Redemption','TULIP','Penal Substitution','Soteriology']
+  });
+  addBook('l10','t10a','Penal Substitution', {
+    title:  'Redemption Accomplished and Applied',
+    author: 'John Murray',
+    link:   '',
+    notes:  'Concise and definitive Reformed treatment. Pt. 1 (Accomplished): necessity, nature, perfection, and extent of atonement — defends penal substitution and definite atonement. Pt. 2 (Applied): the ordo salutis from effectual calling through glorification. Essential introductory text (Eerdmans).',
+    tags:   ['Atonement','Penal Substitution','Definite Atonement','Ordo Salutis','Soteriology','TULIP']
+  });
+
+  // Soteriology — Justification
+  addBook('l10','t10f','Forensic Justification', {
+    title:  'The Doctrine of Justification by Faith',
+    author: 'John Owen',
+    link:   '',
+    notes:  'Owen\'s most comprehensive treatment of forensic justification. Defends the imputation of Christ\'s active and passive obedience as the formal ground of justification. Refutes Roman Catholic, Arminian, and Socinian errors. Essential for understanding Reformation-era debates on Sola Fide (Works, vol. 5, Banner of Truth).',
+    tags:   ['Justification','Forensic Justification','Imputation','Sola Fide','Active Obedience','Soteriology']
+  });
+
+  // Soteriology — Sanctification
+  addBook('l10','t10h','Progressive Sanctification', {
+    title:  'The Mortification of Sin',
+    author: 'John Owen',
+    link:   '',
+    notes:  'Classic Puritan treatment of progressive sanctification. Central thesis: only the regenerate can truly mortify sin, and all sin-killing power flows from the Holy Spirit through union with Christ. Key chapters address the danger of unmortified sin and practical means of mortification (Works, vol. 6, Banner of Truth).',
+    tags:   ['Sanctification','Progressive Sanctification','Mortification','Union with Christ','Holy Spirit']
+  });
+
+  // Biblical Theology
+  addBook('l16','t16a','Geerhardus Vos & BT', {
+    title:  'Biblical Theology: Old and New Testaments',
+    author: 'Geerhardus Vos',
+    link:   '',
+    notes:  'The foundational text of Reformed biblical theology. Traces the progressive history of special revelation through the Mosaic epoch (Pentateuch), the prophets, and the NT (the Gospels, Paul, the Epistle to the Hebrews). Distinguishes biblical theology from systematic theology as a discipline while showing their complementarity (Eerdmans / Banner of Truth).',
+    tags:   ['Biblical Theology','Redemptive History','Typology','Covenant Theology','Special Revelation']
+  });
+
+  // ── Specific Online Texts — Confessional Standards ────────
+
+  addWeb('l17','t17a','Westminster Confession of Faith', {
+    title:       'Westminster Confession of Faith — Full Text (OPC)',
+    url:         'https://www.opc.org/wcf.html',
+    description: 'The complete text of the Westminster Confession of Faith (1646), presented chapter by chapter with Scripture proof texts. The doctrinal standard of confessional Presbyterian churches worldwide. Hosted by the Orthodox Presbyterian Church.',
+    tags:        ['Westminster Confession','Confessional Standards','Reformed','Presbyterian','Systematic Theology']
+  });
+  addWeb('l17','t17a','Westminster Larger Catechism', {
+    title:       'Westminster Larger Catechism — Full Text (OPC)',
+    url:         'https://www.opc.org/lc.html',
+    description: 'The complete text of the Westminster Larger Catechism (1647), 196 questions and answers. Designed for public catechesis and a more thorough doctrinal exposition than the Shorter Catechism. Includes Scripture proof texts for each answer.',
+    tags:        ['Westminster Larger Catechism','Westminster Confession','Confessional Standards','Reformed','Presbyterian']
+  });
+  addWeb('l17','t17a','Westminster Shorter Catechism', {
+    title:       'Westminster Shorter Catechism — Full Text (OPC)',
+    url:         'https://www.opc.org/sc.html',
+    description: 'The complete text of the Westminster Shorter Catechism (1647), 107 questions and answers. The primary catechism used for children\'s instruction in Presbyterian churches. Begins with the famous summary of man\'s chief end: "to glorify God and to enjoy him forever."',
+    tags:        ['Westminster Shorter Catechism','Westminster Confession','Confessional Standards','Reformed','Presbyterian']
+  });
+  addWeb('l17','t17b','Heidelberg Catechism', {
+    title:       'Heidelberg Catechism — Full Text (CRCNA)',
+    url:         'https://www.crcna.org/welcome/beliefs/confessions/heidelberg-catechism',
+    description: 'The complete text of the Heidelberg Catechism (1563), 129 questions organized around the three parts of human misery, redemption in Christ, and gratitude. One of the Three Forms of Unity; the most warmly devotional of the Reformed confessions.',
+    tags:        ['Heidelberg Catechism','Confessional Standards','Reformed','Three Forms of Unity','Soteriology']
+  });
+  addWeb('l17','t17b','Belgic Confession', {
+    title:       'Belgic Confession — Full Text (CRCNA)',
+    url:         'https://www.crcna.org/welcome/beliefs/confessions/belgic-confession',
+    description: 'The complete text of the Belgic Confession (1561), authored by Guido de Brès. 37 articles covering Scripture, the Trinity, Creation, soteriology, the church, and sacraments. One of the Three Forms of Unity, used in Continental Reformed churches.',
+    tags:        ['Belgic Confession','Confessional Standards','Reformed','Three Forms of Unity','Ecclesiology']
+  });
+  addWeb('l17','t17b','Canons of Dort', {
+    title:       'Canons of Dort — Full Text (CRCNA)',
+    url:         'https://www.crcna.org/welcome/beliefs/confessions/canons-dort',
+    description: 'The complete text of the Canons of the Synod of Dort (1618–19). Five heads of doctrine responding to the Arminian Remonstrance: Total Depravity, Unconditional Election, Definite Atonement, Irresistible Grace, Perseverance of the Saints (TULIP). One of the Three Forms of Unity.',
+    tags:        ['Canons of Dort','TULIP','Confessional Standards','Arminianism','Reformed','Three Forms of Unity']
+  });
+  addWeb('l17','t17c','London Baptist Confession 1689', {
+    title:       'Second London Baptist Confession of Faith (1689) — Full Text',
+    url:         'https://founders.org/1689-confession/',
+    description: 'The complete text of the Second London Baptist Confession of Faith (1689), the definitive doctrinal standard of Particular (Calvinist) Baptists. Closely follows the Westminster Confession in structure and doctrine, with modifications on baptism (believer\'s only), the church, and the Lord\'s Supper.',
+    tags:        ['London Baptist Confession 1689','Confessional Standards','Credobaptism','Reformed','Covenant Theology']
+  });
+
+  // ── Specific Online Texts — CCEL Primary Source ───────────
+
+  addWeb('l1','t1a','Definition & Object', {
+    title:       "Calvin's Institutes of the Christian Religion — Full Text (CCEL)",
+    url:         'https://www.ccel.org/ccel/calvin/institutes.html',
+    description: 'The complete text of the 1559 edition of Calvin\'s Institutes in the Henry Beveridge English translation, freely readable online. Organized by book and chapter; includes full Scripture index. The foundational text of Reformed systematic theology.',
+    tags:        ['Systematic Theology','Reformed','Sola Scriptura','Theology Proper','Soteriology','Calvin']
+  });
+
+  // ── Stanford Encyclopedia of Philosophy — Philosophical Theology ──
+
+  addWeb('l2','t2a','Cosmological Argument', {
+    title:       'SEP: Cosmological Argument',
+    url:         'https://plato.stanford.edu/entries/cosmological-argument/',
+    description: 'Stanford Encyclopedia of Philosophy scholarly article surveying kalam, Leibnizian, and Thomistic forms of the cosmological argument. Covers the argument\'s history, logical structure, objections, and contemporary defenses. Essential reference for understanding the philosophical case for God\'s existence from causation and contingency.',
+    tags:        ['Apologetics','Natural Theology','Cosmological Argument','Classic Theism','Theology Proper']
+  });
+  addWeb('l2','t2a','Ontological Argument', {
+    title:       'SEP: Ontological Arguments for God\'s Existence',
+    url:         'https://plato.stanford.edu/entries/ontological-arguments/',
+    description: 'Stanford Encyclopedia of Philosophy scholarly article covering Anselm\'s original argument, Descartes\' version, modal ontological arguments (Plantinga), and the main objections (Kant, Gaunilo). Comprehensive survey of the argument from perfect-being theology.',
+    tags:        ['Apologetics','Natural Theology','Ontological Argument','Classic Theism','Theology Proper']
+  });
+  addWeb('l2','t2a','Teleological Argument', {
+    title:       'SEP: Teleological Arguments for God\'s Existence',
+    url:         'https://plato.stanford.edu/entries/teleological-arguments/',
+    description: 'Stanford Encyclopedia of Philosophy scholarly article on design arguments, including Paley\'s watchmaker argument, the fine-tuning argument (Collins, Swinburne), and evolutionary objections. Covers the argument\'s history from Aquinas through contemporary analytic philosophy of religion.',
+    tags:        ['Apologetics','Natural Theology','Teleological Argument','Classic Theism','Theology Proper']
+  });
+  addWeb('l2','t2b','Divine Simplicity', {
+    title:       'SEP: Divine Simplicity',
+    url:         'https://plato.stanford.edu/entries/divine-simplicity/',
+    description: 'Stanford Encyclopedia of Philosophy scholarly article on the doctrine that God has no parts — no real distinction between essence and existence, attributes and essence, or persons and essence. Covers Aquinas, the Reformed scholastics, and contemporary debates between classical theists and critics (Plantinga, Dolezal).',
+    tags:        ['Divine Simplicity','Classic Theism','Theology Proper','Aseity','God\'s Attributes']
+  });
+  addWeb('l3','t3a','One Essence Three Persons', {
+    title:       'SEP: The Trinity',
+    url:         'https://plato.stanford.edu/entries/trinity/',
+    description: 'Stanford Encyclopedia of Philosophy scholarly article on the doctrine of the Trinity. Covers the biblical and patristic development, the Nicene settlement, and contemporary analytic models (Social Trinitarianism, Relative Identity, Reduplication). Engages the logical consistency objections and defenses from Plantinga, Leftow, and others.',
+    tags:        ['Trinity','Theology Proper','Nicene Creed','Trinitarian Ontology','Eternal Generation']
+  });
+  addWeb('l4','t4b','Double Predestination', {
+    title:       'SEP: Predestination',
+    url:         'https://plato.stanford.edu/entries/predestination/',
+    description: 'Stanford Encyclopedia of Philosophy scholarly article on divine predestination and election. Covers Augustinian, Calvinist, Arminian, and Molinist positions; the compatibility of predestination with free will; and responses to the problem of evil from election. Essential philosophical-theological reference.',
+    tags:        ['Predestination','Election','Double Predestination','Divine Decree','Reprobation','Arminianism']
+  });
+  addWeb('l4','t4e','Middle Knowledge / Molinism', {
+    title:       'SEP: Foreknowledge and Free Will',
+    url:         'https://plato.stanford.edu/entries/free-will-foreknowledge/',
+    description: 'Stanford Encyclopedia of Philosophy scholarly article on the compatibility of divine foreknowledge with human free will. Covers the Boethian (timelessness), Molinist (middle knowledge), open theist, and compatibilist responses. The central issue for evaluating Arminian and Calvinist accounts of election and sovereignty.',
+    tags:        ['Foreknowledge','Free Will','Middle Knowledge','Molinism','Open Theism','Divine Decree']
   });
 
   localStorage.setItem(SEED_KEY, '1');
