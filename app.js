@@ -296,7 +296,7 @@ let resSortBy = 'created';
 let topicTypeFilters = new Set(); // empty = "All"
 let topicSearch = '';
 let topicTagFilter = null;
-let topicSortBy = 'pinned'; // 'pinned' | 'newest' | 'title' | 'author' | 'source'
+let topicSortBy = 'newest'; // 'newest' | 'title' | 'author' | 'source'
 
 // Tag view type filter state
 let tagViewTypeFilters = new Set(); // empty = "All"
@@ -735,7 +735,7 @@ function clearTopicFilters() {
   topicTypeFilters = new Set();
   topicSearch = '';
   topicTagFilter = null;
-  topicSortBy = 'pinned';
+  topicSortBy = 'newest';
   renderSubtopicView();
 }
 
@@ -798,7 +798,7 @@ function renderSubtopicView() {
 
   // ── Sort select ──
   const sortOptsHtml = [
-    ['pinned','Bookmarked First'],['newest','Newest'],
+    ['newest','Newest'],
     ['title','Title A–Z'],['author','Author A–Z'],['source','Source A–Z']
   ].map(([v,l]) => `<option value="${v}"${topicSortBy===v?' selected':''}>${l}</option>`).join('');
 
@@ -864,25 +864,6 @@ function renderSubtopicView() {
       </div>`
     : '';
 
-  // ── Featured (pinned) block ──
-  const pinnedItems = [];
-  sectionDataFinal.forEach(({sec, filtered}) =>
-    filtered.filter(e => e.pinned).forEach(e => pinnedItems.push({e, sec}))
-  );
-  const featuredHtml = pinnedItems.length
-    ? `<div class="section-block featured-block" id="sb___featured__">
-        <div class="section-header" onclick="toggleSection('__featured__')">
-          <span class="section-icon">🔖</span>
-          <span class="section-name">Bookmarked</span>
-          <span class="section-count">${pinnedItems.length}</span>
-          <span class="section-toggle">▾</span>
-        </div>
-        <div class="section-body">
-          ${pinnedItems.map(({e, sec}) => renderEntryCard(e, sec.id, key)).join('')}
-        </div>
-      </div>`
-    : '';
-
   // ── Section blocks ──
   let sectionsHtml = '';
   sectionDataFinal.forEach(({sec, raw, filtered}) => {
@@ -929,7 +910,6 @@ function renderSubtopicView() {
     ${controlsHtml}
     ${tagBarHtml}
     ${statsRowHtml}
-    ${featuredHtml}
     ${sectionsHtml}
   `;
   updateStats();
