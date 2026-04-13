@@ -537,11 +537,8 @@ function renderTree(filter = '') {
           const key = subtopicKey(locus.id, topic.id, st);
           const isActive = currentSubtopicKey === key;
           const stCount = countEntriesForSubtopicKey(key);
-          const studySt = getStudyStatus(key);
-          const studyDot = studySt ? `<span class="study-dot ${studySt}" title="${studySt}"></span>` : '';
           stHtml += `<div class="tree-subtopic ${stCount > 0 ? 'has-entries' : 'empty'}${isActive?' active':''}" onclick="selectSubtopic('${locus.id}','${topic.id}','${escAttr(st)}','${escAttr(locus.name)}','${escAttr(topic.name)}')">
             <span class="st-label">${escHtml(st)}</span>
-            ${studyDot}
             <span class="tree-subtopic-count ${stCount > 0 ? 'has-entries' : ''}">${stCount}</span>
           </div>`;
           anySt = true;
@@ -868,8 +865,8 @@ function renderSubtopicView() {
   const featuredHtml = pinnedItems.length
     ? `<div class="section-block featured-block" id="sb___featured__">
         <div class="section-header" onclick="toggleSection('__featured__')">
-          <span class="section-icon">★</span>
-          <span class="section-name">Featured References</span>
+          <span class="section-icon">🔖</span>
+          <span class="section-name">Bookmarked</span>
           <span class="section-count">${pinnedItems.length}</span>
           <span class="section-toggle">▾</span>
         </div>
@@ -908,15 +905,10 @@ function renderSubtopicView() {
     sectionsHtml = `<div class="empty-state">No entries match the current filters. <button class="clear-filters-btn" style="margin-left:8px;" onclick="clearTopicFilters()">Clear filters</button></div>`;
   }
 
-  const studyStatus = getStudyStatus(key);
-  const studyLabels = { '': '☐ Study Queue', queued: '📌 Queued', studying: '📖 Studying', done: '✅ Done' };
-  const studyClass  = studyStatus ? `study-${studyStatus}` : '';
   const toolbarHtml = `<div id="subtopic-toolbar">
     <button class="toolbar-btn" onclick="window.print()" title="Print / Save as PDF">🖨 Print</button>
     <button class="toolbar-btn" onclick="collapseAllSections()">⊟ Collapse All</button>
     <button class="toolbar-btn" onclick="expandAllSections()">⊞ Expand All</button>
-    <span class="toolbar-spacer"></span>
-    <button class="toolbar-btn ${escAttr(studyClass)}" onclick="cycleStudyStatus('${escAttr(key)}');renderSubtopicView()" title="Toggle study queue status">${studyLabels[studyStatus]||studyLabels['']}</button>
   </div>`;
 
   el.innerHTML = `
@@ -1027,11 +1019,11 @@ function renderEntryCard(e, secId, key, showPath) {
       <span class="entry-card-title">${escHtml(e.title||'(untitled)')}</span>
       <div class="entry-card-actions">
         ${cardKey ? `
-        <button class="entry-action-btn" onclick="event.stopPropagation();togglePinEntry('${secId}','${e.id}','${escAttr(cardKey)}')" title="${e.pinned?'Unpin':'Pin'}">⚑</button>
+        <button class="entry-action-btn${e.pinned?' bookmarked':''}" onclick="event.stopPropagation();togglePinEntry('${secId}','${e.id}','${escAttr(cardKey)}')" title="${e.pinned?'Remove Bookmark':'Add Bookmark'}">🔖</button>
         <button class="entry-action-btn" onclick="event.stopPropagation();openEditModal('${secId}','${e.id}','${escAttr(cardKey)}')" title="Edit">✎</button>
         <button class="entry-action-btn del" onclick="event.stopPropagation();confirmDelete('${secId}','${e.id}','${escAttr(cardKey)}')" title="Delete">✕</button>
         ` : `
-        <button class="entry-action-btn" disabled style="opacity:.3;" title="Pin">⚑</button>
+        <button class="entry-action-btn" disabled style="opacity:.3;" title="Bookmark">🔖</button>
         <button class="entry-action-btn" disabled style="opacity:.3;" title="Edit">✎</button>
         <button class="entry-action-btn del" disabled style="opacity:.3;" title="Delete">✕</button>
         `}
@@ -1059,7 +1051,7 @@ function openEntryDetail(secId, entryId, stKey) {
   const createdHtml = entry.created ? `<div class="entry-meta" style="margin-top:10px;"><span>${new Date(entry.created).toLocaleDateString()}</span></div>` : '';
   const actions = `
     <div class="entry-detail-actions">
-      <button class="entry-action-btn" onclick="togglePinFromDetail()" title="${entry.pinned ? 'Unpin' : 'Pin'}">⚑</button>
+      <button class="entry-action-btn${entry.pinned?' bookmarked':''}" onclick="togglePinFromDetail()" title="${entry.pinned ? 'Remove Bookmark' : 'Add Bookmark'}">🔖</button>
       <button class="entry-action-btn" onclick="openEditFromDetail()" title="Edit">✎</button>
       <button class="entry-action-btn del" onclick="deleteFromDetail()" title="Delete">✕</button>
     </div>`;
@@ -1106,6 +1098,8 @@ function togglePinFromDetail() {
   if (currentSubtopicKey === s.stKey) renderSubtopicView();
   if (currentTab === 'tags') _buildTagView();
   if (currentTab === 'resource') _buildResourceView();
+  const bv = document.getElementById('bookmarks-view');
+  if (bv && bv.style.display !== 'none') renderBookmarksView();
   openEntryDetail(s.secId, s.entryId, s.stKey);
 }
 function openEditFromDetail() {
@@ -1928,6 +1922,8 @@ function togglePinEntry(secId, entryId, stKey) {
   if (currentSubtopicKey === key) renderSubtopicView();
   if (currentTab === 'tags') _buildTagView();
   if (currentTab === 'resource') _buildResourceView();
+  const bv = document.getElementById('bookmarks-view');
+  if (bv && bv.style.display !== 'none') renderBookmarksView();
 }
 
 /* ============================================================
@@ -2001,7 +1997,7 @@ function goToEntry(stKey, locusName, topicName) {
    VIEWS
 ============================================================ */
 function hideAllViews() {
-  ['welcome','locus-view','topic-view','subtopic-view','search-results','recent-view','tag-view','resource-view','compare-view','study-queue-view','scripture-index-view'].forEach(id => {
+  ['welcome','locus-view','topic-view','subtopic-view','search-results','recent-view','tag-view','resource-view','compare-view','bookmarks-view','scripture-index-view'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -2053,10 +2049,11 @@ function showView(name) {
     });
     el.innerHTML = html;
   }
-  if (name === 'study-queue') {
-    const el = document.getElementById('study-queue-view');
+  if (name === 'bookmarks') {
+    document.getElementById('breadcrumb').innerHTML = `<span class="bc-item current">🔖 Bookmarks</span>`;
+    const el = document.getElementById('bookmarks-view');
     el.style.display = 'block';
-    renderStudyQueueView();
+    renderBookmarksView();
     return;
   }
   if (name === 'compare') {
@@ -5655,68 +5652,108 @@ function expandAllSections() {
 }
 
 /* ============================================================
-   STUDY QUEUE
+   BOOKMARKS
 ============================================================ */
-const STUDY_KEY = '5sa_study';
-function getStudyDB() {
-  try { return JSON.parse(localStorage.getItem(STUDY_KEY) || '{}'); } catch { return {}; }
-}
-function saveStudyDB(db) {
-  try { localStorage.setItem(STUDY_KEY, JSON.stringify(db)); } catch {}
-}
-function getStudyStatus(subtopicKey) {
-  return getStudyDB()[subtopicKey] || '';
-}
-function setStudyStatus(subtopicKey, status) {
-  const db = getStudyDB();
-  if (status) db[subtopicKey] = status; else delete db[subtopicKey];
-  saveStudyDB(db);
-}
-function cycleStudyStatus(subtopicKey) {
-  const cycle = { '': 'queued', queued: 'studying', studying: 'done', done: '' };
-  const next = cycle[getStudyStatus(subtopicKey)] ?? 'queued';
-  setStudyStatus(subtopicKey, next);
-  // Refresh sidebar dots
-  renderTree();
+function renderBookmarksView() {
+  const el = document.getElementById('bookmarks-view');
+  if (!el) return;
+
+  const allBookmarked = allEntries().filter(({entry}) => entry.pinned);
+
+  if (!allBookmarked.length) {
+    el.innerHTML = `<h2>🔖 Bookmarks</h2><div class="empty-state">No bookmarks yet.<br>Click the 🔖 icon on any entry to bookmark it.</div>`;
+    return;
+  }
+
+  // Persistent filter state stored on the element
+  const activeSecFilter  = el.dataset.secFilter  || '';
+  const activeSortBy     = el.dataset.sortBy     || 'newest';
+  const activeTagFilter  = el.dataset.tagFilter  || '';
+  const activeLocusFilter = el.dataset.locusFilter || '';
+
+  // Apply filters
+  let filtered = allBookmarked.slice();
+  if (activeSecFilter)   filtered = filtered.filter(({secId}) => secId === activeSecFilter);
+  if (activeTagFilter)   filtered = filtered.filter(({entry}) => (entry.tags||[]).includes(activeTagFilter));
+  if (activeLocusFilter) filtered = filtered.filter(({stKey}) => stKey.startsWith(activeLocusFilter + '__'));
+
+  // Apply sort
+  if (activeSortBy === 'newest')  filtered.sort((a,b) => (b.entry.created||0)-(a.entry.created||0));
+  else if (activeSortBy === 'oldest') filtered.sort((a,b) => (a.entry.created||0)-(b.entry.created||0));
+  else if (activeSortBy === 'title')  filtered.sort((a,b) => (a.entry.title||'').localeCompare(b.entry.title||''));
+  else if (activeSortBy === 'author') filtered.sort((a,b) => (a.entry.author||'').localeCompare(b.entry.author||''));
+
+  // Section type filter chips
+  const secChips =
+    `<button class="topic-filter-chip topic-filter-all${!activeSecFilter?' active':''}" onclick="bookmarkFilter('sec','')">All</button>` +
+    SECTIONS.map(s => {
+      const cnt = allBookmarked.filter(b => b.secId === s.id).length;
+      if (!cnt) return '';
+      return `<button class="topic-filter-chip${activeSecFilter===s.id?' active':''}" onclick="bookmarkFilter('sec','${s.id}')">${s.icon} ${s.name.replace(/ \/ Resources/,'').replace(/ \/ Bookmarks/,'')} <span class="bm-chip-cnt">${cnt}</span></button>`;
+    }).join('');
+
+  // Locus filter
+  const loci = getFullTree();
+  const locusOpts = `<option value="">All Loci</option>` +
+    loci.filter(l => allBookmarked.some(b => b.stKey.startsWith(l.id+'__')))
+        .map(l => `<option value="${l.id}"${activeLocusFilter===l.id?' selected':''}>${escHtml(l.name)}</option>`).join('');
+
+  // Sort options
+  const sortOpts = [['newest','Newest'],['oldest','Oldest'],['title','Title A–Z'],['author','Author A–Z']]
+    .map(([v,lbl]) => `<option value="${v}"${activeSortBy===v?' selected':''}>${lbl}</option>`).join('');
+
+  // Tag chips from all bookmarked entries
+  const tagSet = new Set();
+  allBookmarked.forEach(({entry}) => (entry.tags||[]).forEach(t => tagSet.add(t)));
+  const tagChipsHtml = [...tagSet].sort().map(t =>
+    `<button class="topic-tag-chip${activeTagFilter===t?' active':''}" onclick="bookmarkFilter('tag','${escAttr(t)}')">${escHtml(t)}</button>`
+  ).join('');
+
+  const filtersActive = activeSecFilter || activeTagFilter || activeLocusFilter;
+
+  let html = `<h2>🔖 Bookmarks <span style="color:var(--text3);font-size:13px;font-weight:400;">${filtered.length}${filtersActive ? ' of '+allBookmarked.length : ''}</span></h2>
+  <div class="topic-controls">
+    <div class="topic-filter-bar">${secChips}</div>
+    <div class="topic-search-row">
+      <div class="topic-sort-wrap" style="margin-left:0;">
+        <span class="topic-sort-label">Locus:</span>
+        <select class="topic-sort-select" onchange="bookmarkFilter('locus',this.value)">${locusOpts}</select>
+      </div>
+      <div class="topic-sort-wrap">
+        <span class="topic-sort-label">Sort:</span>
+        <select class="topic-sort-select" onchange="bookmarkFilter('sort',this.value)">${sortOpts}</select>
+      </div>
+      ${filtersActive ? `<button class="clear-filters-btn" style="margin-left:auto;" onclick="bookmarkClearFilters()">✕ Clear filters</button>` : ''}
+    </div>
+    ${tagChipsHtml ? `<div class="topic-tag-bar">${tagChipsHtml}</div>` : ''}
+  </div>`;
+
+  if (!filtered.length) {
+    html += `<div class="empty-state">No bookmarks match the current filters.</div>`;
+  } else {
+    html += filtered.map(({stKey, secId, entry}) => renderEntryCard(entry, secId, stKey, true)).join('');
+  }
+
+  el.innerHTML = html;
 }
 
-function renderStudyQueueView() {
-  const el = document.getElementById('study-queue-view');
+function bookmarkFilter(type, value) {
+  const el = document.getElementById('bookmarks-view');
   if (!el) return;
-  const db = getStudyDB();
-  const grouped = { studying: [], queued: [], done: [] };
-  const tree = getFullTree();
-  Object.entries(db).forEach(([key, status]) => {
-    if (!grouped[status]) return;
-    const parts = key.split('__');
-    const locus = tree.find(l => l.id === parts[0]);
-    const topic = locus?.topics.find(t => t.id === parts[1]);
-    const stName = (parts[2] || '').replace(/_/g, ' ');
-    grouped[status].push({ key, stName, locusName: locus?.name || parts[0], topicName: topic?.name || parts[1] });
-  });
-  const groupLabels = { studying: '📖 Studying', queued: '📌 Queued', done: '✅ Done' };
-  let html = `<h2>Study Queue</h2>`;
-  let anyItems = false;
-  ['studying', 'queued', 'done'].forEach(status => {
-    const items = grouped[status];
-    if (!items.length) return;
-    anyItems = true;
-    html += `<div class="study-queue-group">
-      <div class="study-queue-group-title">${groupLabels[status]} (${items.length})</div>`;
-    items.forEach(({key, stName, locusName, topicName}) => {
-      const parts = key.split('__');
-      html += `<div class="study-queue-item" onclick="goToEntry('${escAttr(key)}','${escAttr(locusName)}','${escAttr(topicName)}')">
-        <span class="study-dot ${status}"></span>
-        <div class="study-queue-item-text">
-          <div class="study-queue-item-name">${escHtml(stName)}</div>
-          <div class="study-queue-item-path">${escHtml(locusName)} › ${escHtml(topicName)}</div>
-        </div>
-      </div>`;
-    });
-    html += `</div>`;
-  });
-  if (!anyItems) html += `<div class="empty-state">No subtopics in your study queue yet.<br>Open any subtopic and use the toolbar to add it.</div>`;
-  el.innerHTML = html;
+  if (type === 'sec')    el.dataset.secFilter   = el.dataset.secFilter === value ? '' : value;
+  else if (type === 'tag')    el.dataset.tagFilter   = el.dataset.tagFilter === value ? '' : value;
+  else if (type === 'locus')  el.dataset.locusFilter = value;
+  else if (type === 'sort')   el.dataset.sortBy      = value;
+  renderBookmarksView();
+}
+
+function bookmarkClearFilters() {
+  const el = document.getElementById('bookmarks-view');
+  if (!el) return;
+  delete el.dataset.secFilter;
+  delete el.dataset.tagFilter;
+  delete el.dataset.locusFilter;
+  renderBookmarksView();
 }
 
 /* ============================================================
