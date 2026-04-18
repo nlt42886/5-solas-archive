@@ -1764,3 +1764,17 @@ kbd {
   border-bottom: 1px solid var(--border);
   margin-bottom: 8px;
 }
+
+
+/* GitHub source link — subtle, not prominently visible */
+#github-link {
+  display: block;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--text3);
+  opacity: 0.18;
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: opacity 0.3s;
+}
+#github-link:hover { opacity: 0.55; }
